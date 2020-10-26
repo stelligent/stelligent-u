@@ -1,0 +1,30 @@
+[
+    {
+      "ParameterKey": "PrivateIp",
+      "ParameterValue": "10.0.0.0"
+    },
+    {
+      "ParameterKey": "VPCMask",
+      "ParameterValue": "16"
+    },
+    {
+      "ParameterKey": "IAMUserOwnerOfResources",
+      "ParameterValue": "test.user"
+    },
+    {
+      "ParameterKey": "EC2InstanceAmi",
+      "ParameterValue": "ami-0bce08e823ed38bdd"
+    },
+    {
+      "ParameterKey": "EC2InstanceType",
+      "ParameterValue": "t2.micro"
+    },
+    {
+      "ParameterKey": "EC2KeyName",
+      "ParameterValue": "test-user-key"
+    },
+     {
+      "ParameterKey": "IAMUserOwnerIp",
+      "ParameterValue": "XX.XXX.XXX.XXX"
+    }
+  ]

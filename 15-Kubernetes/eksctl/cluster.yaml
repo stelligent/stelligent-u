@@ -1,0 +1,15 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: stelligent-u-cluster
+  region: us-east-1
+  # availabilityZones: ["us-east-1a", "us-east-1b"]
+
+managedNodeGroups:
+  - name: ng-1
+    instanceType: t3.small
+    desiredCapacity: 2
+  - name: ng-2
+    instanceType: t3.small
+    desiredCapacity: 2

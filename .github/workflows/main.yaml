@@ -1,0 +1,25 @@
+---
+name: master
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  linting:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set Up ruby 2.7
+        uses: actions/setup-ruby@v1
+        with:
+          ruby-version: "2.7"
+
+      - name: Install dependencies
+        run: gem install mdl
+
+      - name: Checkout the code
+        uses: actions/checkout@v1
+
+      - name: Lint
+        run: mdl $GITHUB_WORKSPACE

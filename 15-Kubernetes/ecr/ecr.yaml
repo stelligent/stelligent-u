@@ -1,0 +1,37 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Kubernetes ECR Repository"
+
+Parameters:
+  Prefix:
+    Type: String
+    Description: ECR Repostory Prefix
+
+Resources:
+
+  KubernetesECR:
+    Type: AWS::ECR::Repository
+    Properties: 
+      RepositoryName: !Sub "${Prefix}-kubernetes"
+      RepositoryPolicyText: 
+        Version: "2012-10-17"
+        Statement: 
+          - 
+            Sid: AllowPushPull
+            Effect: Allow
+            Principal: 
+              AWS: 
+                - !Sub "arn:aws:iam::${AWS::AccountId}:root"
+            Action: 
+              - "ecr:GetDownloadUrlForLayer"
+              - "ecr:BatchGetImage"
+              - "ecr:BatchCheckLayerAvailability"
+              - "ecr:PutImage"
+              - "ecr:InitiateLayerUpload"
+              - "ecr:UploadLayerPart"
+              - "ecr:CompleteLayerUpload"
+              - "ecr:GetAuthorizationToken"
+
+Outputs:
+  ECRRepoName:
+    Value: !Ref KubernetesECR
+    Description: ECR Repository Name

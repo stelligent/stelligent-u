@@ -1,0 +1,53 @@
+beforeAllowTraffic:
+  Type: AWS::Serverless::Function
+  Properties:
+    Handler: lifecycleHook.handler
+    Policies:
+      - Version: "2012-10-17"
+        Statement:
+        - Effect: "Allow"
+          Action:
+            - "codedeploy:PutLifecycleEventHookExecutionStatus"
+          Resource:
+            !Sub 'arn:aws:codedeploy:${AWS::Region}:${AWS::AccountId}:deploymentgroup:${ServerlessDeploymentApplication}/*'
+      - Version: "2012-10-17"
+        Statement:
+        - Effect: "Allow"
+          Action:
+            - "lambda:InvokeFunction"
+          Resource: !Ref <Function>.Version
+    Runtime: nodejs8.10
+    FunctionName: 'CodeDeployHook_beforeAllowTraffic'
+    DeploymentPreference:
+      Enabled: false
+    Timeout: 5
+    Environment:
+      Variables:
+        NewVersion: !Ref <Function>.Version
+
+afterAllowTraffic:
+  Type: AWS::Serverless::Function
+  Properties:
+    Handler: lifecycleHook.handler
+    Policies:
+      - Version: "2012-10-17"
+        Statement:
+        - Effect: "Allow"
+          Action:
+            - "codedeploy:PutLifecycleEventHookExecutionStatus"
+          Resource:
+            !Sub 'arn:aws:codedeploy:${AWS::Region}:${AWS::AccountId}:deploymentgroup:${ServerlessDeploymentApplication}/*'
+      - Version: "2012-10-17"
+        Statement:
+        - Effect: "Allow"
+          Action:
+            - "lambda:InvokeFunction"
+          Resource: !Ref <Function>.Version
+    Runtime: nodejs8.10
+    FunctionName: 'CodeDeployHook_afterAllowTraffic'
+    DeploymentPreference:
+      Enabled: false
+    Timeout: 5
+    Environment:
+      Variables:
+        NewVersion: !Ref <Function>.Version

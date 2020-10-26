@@ -1,0 +1,64 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Resources:
+  WebServerAsg:
+    Type: 'AWS::AutoScaling::AutoScalingGroup'
+    Properties:
+      AutoScalingGroupName: 'AutomationBoxes'
+      VPCZoneIdentifier:
+        - 'REPLACE_WITH_PUBLIC_SUBNET_IN_AZ1' # Find public subnets within the default VPC or 
+        - 'REPLACE_WITH_PUBLIC_SUBNET_IN_AZ2'
+      DesiredCapacity: '3'
+      HealthCheckType: 'ELB'
+      HealthCheckGracePeriod: 30 
+      LaunchConfigurationName: !Ref WebServersLC
+      MaxSize: '3'
+      MinSize: '3'
+
+  WebServersLC:
+    Type: 'AWS::AutoScaling::LaunchConfiguration'
+    Properties:
+      ImageId: 'REPLACE_WITH_AMAZON_LINUXV1_AMI'
+      InstanceType: 't2.micro'
+      LaunchConfigurationName: 'SimpleWebServerLC'
+      SecurityGroups:
+        - 'REPLACE'
+      UserData: 
+        Fn::Base64:
+          Fn::Sub: |
+            #!/bin/bash -xe
+
+            yum install -y aws-cfn-bootstrap
+
+            # Install the files and packages from the metadata
+            /opt/aws/bin/cfn-init -v \
+              --stack ${AWS::StackName} \
+              --resource WebServersLC \
+              --configsets All \
+              --region ${AWS::Region}
+
+            # Signal the status from cfn-init
+            /opt/aws/bin/cfn-signal -e $? \
+              --stack ${AWS::StackName} \
+              --resource WebServersLC \
+              --region ${AWS::Region}
+
+    Metadata:
+      'AWS::CloudFormation::Init':
+        configSets:
+          All:
+            - ConfigureStelligentProject
+        ConfigureStelligentProject:
+          packages:
+            yum:
+              nginx: []
+          files:
+            /usr/share/nginx/html/index.html:
+              content: '<p>Automation for the People</p>'
+              mode: '000644'
+              owner: root
+              group: root
+          services:
+            sysvinit:
+              nginx:
+                enabled: 'true'
+                ensureRunning: 'true'

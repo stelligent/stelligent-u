@@ -1,0 +1,256 @@
+Description: Jenkins Continuous Learning
+Parameters:
+  PrivateIp:
+    Type: String
+    Description: Private Ip used for the VPC
+    Default: 10.0.0.0
+  VPCMask:
+    Type: String
+    Description: Mask used for the VPC
+    Default: 16
+  IAMUserOwnerOfResources:
+    Type: String
+    Description: IAM user that is owner of this CFN stack
+  EC2InstanceAmi:
+    Type: AWS::EC2::Image::Id
+    Description: EC2 Instance AMI
+    Default: ami-0bce08e823ed38bdd
+  EC2KeyName:
+    Type: String
+    Description: Name of the EC2 keys used for ssh
+  IAMUserOwnerIp:
+    Type: String
+    Description: IP of the Iam user owner
+Resources:
+  MyVpc:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: !Join ['/', [!Ref PrivateIp, !Ref VPCMask ] ]
+      Tags: &ResourceTags
+        -
+          Key: user
+          Value: !Ref IAMUserOwnerOfResources
+        -
+          Key: stack
+          Value: !Ref "AWS::StackId"
+  MySubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref MyVpc
+      CidrBlock: !Join ['/', [!Ref PrivateIp, '25' ] ]
+      Tags:
+        -
+          Key: user
+          Value: !Ref IAMUserOwnerOfResources
+        -
+          Key: stack
+          Value: !Ref "AWS::StackId"
+  MyInternetGateway:
+    Type: AWS::EC2::InternetGateway
+  AttachInternetGatewayToVpc:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      InternetGatewayId: !Ref MyInternetGateway
+      VpcId: !Ref MyVpc
+  MyRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref MyVpc
+  SubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref MyRouteTable
+      SubnetId: !Ref MySubnet
+  MyRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref MyRouteTable
+      GatewayId: !Ref MyInternetGateway
+      DestinationCidrBlock: '0.0.0.0/0'
+  MyEC2SecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow ICMP/ping & SSH access
+      GroupName:  !Join ['-', [!Ref 'AWS::StackName', SecurityGroup] ]
+      VpcId: !Ref MyVpc
+      SecurityGroupIngress:
+        -
+          FromPort: 22
+          ToPort: 22
+          IpProtocol: tcp
+          CidrIp: 0.0.0.0/0
+        -
+          FromPort: -1
+          ToPort: -1
+          IpProtocol: icmp
+          CidrIp: 0.0.0.0/0
+  MyEC2InstanceIp:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+      InstanceId: !Ref MyEC2Instance
+  MyEC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      SubnetId: !Ref MySubnet
+      KeyName: !Ref EC2KeyName
+      ImageId: !Ref EC2InstanceAmi
+      SecurityGroupIds:
+        - !Ref MyEC2SecurityGroup
+      Tags:
+        -
+          Key: user
+          Value: !Ref IAMUserOwnerOfResources
+        -
+          Key: stack
+          Value: !Ref "AWS::StackId"
+  MyNetworkAcl:
+    Type: AWS::EC2::NetworkAcl
+    Properties:
+      VpcId: !Ref MyVpc
+  MyNetworkEntryMySubnetIngressAllTraffic:
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+      NetworkAclId: !Ref MyNetworkAcl
+      RuleNumber: 100
+      RuleAction: deny
+      Protocol: -1
+      Egress: True
+      CidrBlock: 0.0.0.0/0
+  MyNetworkEntryMySubnetIngressIamOwner:
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+      NetworkAclId: !Ref MyNetworkAcl
+      RuleNumber: 101
+      RuleAction: allow
+      Protocol: 6
+      CidrBlock: !Join ['/', [!Ref IAMUserOwnerIp, '32' ] ]
+      PortRange:
+        From: 22
+        To: 22
+  MyNetworkEntryMySubnetEgressIamOwner:
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+      NetworkAclId: !Ref MyNetworkAcl
+      RuleNumber: 101
+      RuleAction: allow
+      Protocol: -1
+      Egress: True
+      CidrBlock: !Join ['/', [!Ref IAMUserOwnerIp, '32' ] ]
+  MyNetworkEntryMySecondSubnetIngressAllTraffic:
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+      NetworkAclId: !Ref MyNetworkAcl
+      RuleNumber: 200
+      RuleAction: allow
+      Protocol: -1
+      CidrBlock: !Join ['/', ["10.0.0.128", '25' ] ]
+  MyNetworkEntryMySecondSubnetIngressAllSsh:
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+      NetworkAclId: !Ref MyNetworkAcl
+      RuleNumber: 201
+      RuleAction: allow
+      Protocol: 6
+      CidrBlock: !Join ['/', ["10.0.0.128", '25' ] ]
+      PortRange:
+        From: 22
+        To: 22
+  MyNetworkEntryMySecondSubnetIngressAllPing:
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+      NetworkAclId: !Ref MyNetworkAcl
+      RuleNumber: 202
+      RuleAction: allow
+      Protocol: 6
+      CidrBlock: !Join ['/', ["10.0.0.128", '25' ] ]
+      Icmp:
+        Code: -1
+        Type: -1
+  MyNetworkEntryMySecondSubnetIngressAllHttp:
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+      NetworkAclId: !Ref MyNetworkAcl
+      RuleNumber: 203
+      RuleAction: allow
+      Protocol: 6
+      CidrBlock: !Join ['/', ["10.0.0.128", '25' ] ]
+      PortRange:
+        From: 80
+        To: 80
+  MyNetworkEntryMySecondSubnetEgressAllTraffic:
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+      NetworkAclId: !Ref MyNetworkAcl
+      RuleNumber: 204
+      RuleAction: allow
+      Egress: True
+      Protocol: -1
+      CidrBlock: !Join ['/', ["10.0.0.128", '25' ] ]
+  MySecondSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref MyVpc
+      CidrBlock: !Join ['/', ["10.0.0.128", '25' ] ]
+      Tags:
+        -
+          Key: user
+          Value: !Ref IAMUserOwnerOfResources
+        -
+          Key: stack
+          Value: !Ref "AWS::StackId"
+  MySecondRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref MyVpc
+  SecondSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref MySecondRouteTable
+      SubnetId: !Ref MySecondSubnet
+  MySecondRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref MySecondRouteTable
+      NatGatewayId: !Ref MyNatGateway
+      DestinationCidrBlock: '0.0.0.0/0'
+  MyNatGatewayInstanceIp:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+  MyNatGateway:
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId: !GetAtt [ MyNatGatewayInstanceIp, AllocationId ]
+      SubnetId: !Ref MySubnet
+  MySecondEC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      SubnetId: !Ref MySecondSubnet
+      KeyName: !Ref EC2KeyName
+      ImageId: !Ref EC2InstanceAmi
+      SecurityGroupIds:
+        - !Ref MyEC2SecurityGroup
+      Tags:
+        -
+          Key: user
+          Value: !Ref IAMUserOwnerOfResources
+        -
+          Key: stack
+          Value: !Ref "AWS::StackId"
+Outputs:
+  MyVpcOutput:
+    Description: Id of MyVpc
+    Value: !Ref MyVpc
+  MySubnetOutput:
+    Description: Id of MyVpc
+    Value: !Ref MySubnet
+  MyEC2InstanceOutput:
+    Description: Id of MyEC2Instance
+    Value: !Ref MyEC2Instance
+  MyEC2InstancePrivateIpOutput:
+    Description: Private Ip address of MyEC2Instance
+    Value: !GetAtt [MyEC2Instance, PrivateIp]
+  MyEC2InstancePublicIpOutput:
+    Description: Public Ip address of MyEC2Instance
+    Value: !GetAtt [MyEC2Instance, PublicIp]
