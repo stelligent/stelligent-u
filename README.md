@@ -1,3 +1,5 @@
+![](images/logo.png)
+
 # Welcome to Stelligent U
 
 Welcome to the technical side of Stelligent University,
