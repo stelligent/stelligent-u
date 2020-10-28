@@ -1,3 +1,5 @@
+<img src="images/logo.png" width=25% height=25%>
+
 # Welcome to Stelligent U
 
 Welcome to the technical side of Stelligent University,
