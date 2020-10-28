@@ -1,4 +1,4 @@
-![](images/logo.png)
+<img src="images/logo.png" width=25% height=25%>
 
 # Welcome to Stelligent U
 
