@@ -90,7 +90,7 @@ full list:
 them for a practical purposes: client side encryption of S3 objects.
 
 Ruby SDK for Encryption client:
-[https://docs.aws.amazon.com/sdk-for-ruby/v3/api/Aws/S3/Encryption.html](https://docs.aws.amazon.com/sdk-for-ruby/v3/api/Aws/S3/Encryption.html)
+[https://docs.aws.amazon.com/sdk-for-ruby/v3/api/Aws/S3/EncryptionV2/Client.html](https://docs.aws.amazon.com/sdk-for-ruby/v3/api/Aws/S3/EncryptionV2/Client.html)
 
 #### Lab 10.2.1: Client Side Encryption of S3 Object
 
