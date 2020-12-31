@@ -218,7 +218,9 @@ Test it out with the AWS console.
 
 #### Lab 4.1.8: Network ACL
 
-Add Network ACLs to your VPC stack.
+Add network ACLs to your VPC stack.
+
+*TIP: [network ACLs are stateless](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-network-acls.html)
 
 First, add one on the public subnet:
 
@@ -240,10 +242,6 @@ Add another ACL to your private subnet:
 
 - Allow all ports for egress traffic, but restrict replies to the
   public subnet.
-
-- The [Network ACL is stateless](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-network-acls.html)
-  , on the public ACL the return traffic from this private subnet
-  will need to be allowed.
 
 _Verify again that you can reach your instance._
 
@@ -328,7 +326,7 @@ connection from your private VPC to S3.
   endpoint:
 
   - Change the egress NACL rules on the subnet where the endpoint is
-    attached so that they allow all traffic (see "Network ACL rules" in
+    attached so that they allow all traffic (see "network ACL rules" in
     [Troubleshoot Issues Connecting to S3 from VPC Endpoints](https://aws.amazon.com/premiumsupport/knowledge-center/connect-s3-vpc-endpoint/).
 
   - In the bucket's [policy document](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-endpoints-s3.html#vpc-endpoints-policies-s3),
