@@ -242,7 +242,8 @@ Add another ACL to your private subnet:
   public subnet.
 
 - The [Network ACL is stateless](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-network-acls.html), 
-on the public ACL the return traffic from this private subnet will need to be allowed.
+  on the public ACL the return traffic from this private subnet
+  will need to be allowed.
 
 _Verify again that you can reach your instance._
 
