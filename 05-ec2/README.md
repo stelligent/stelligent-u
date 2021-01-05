@@ -310,7 +310,7 @@ Userdata docs to debug.
 
 - Recreate your stack so [UserData will execute](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html#user-data-shell-scripts)
 
-Compare those same metrics with the values received from Lab 5.2.1.
+Compare those same metrics with the values received from Lab 5.3.1.
 Record your results.
 
 ##### Task: Private Subnet
@@ -413,7 +413,7 @@ Use the AWS CLI to describe the newly-created EBS Snapshot. Save the output.
 
 #### Lab 5.4.3: Attaching Snapshots
 
-Repeat Lab 5.3.1, but modify the EBS volume to utilize the EBS Snapshot ID
+Repeat Lab 5.4.1, but modify the EBS volume to utilize the EBS Snapshot ID
 as its source. This approach allows a failed instance to be rehydrated
 using a recent snapshot, reducing or avoiding Volume data loss.
 
