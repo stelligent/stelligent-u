@@ -197,7 +197,7 @@ Run the command `kubectl get pods`.  The results should show that there
 are not any pods deployed in the default namespace.
 
 - Run the command:
-  `kubectl run --generator=run-pod/v1 busybox --image=busybox:latest --sleep 3000`
+  `kubectl run --generator=run-pod/v1 busybox --image=busybox:latest -- sleep 3000`
 
 > The result of the command should be `pod/busybox created`
 
@@ -252,7 +252,7 @@ and used in to lock in pod configuration.
 
 - Run the command:
   `kubectl run --generator=run-pod/v1 busybox --image=busybox:latest \
-  --dry-run -o=yaml --sleep 3000 > busybox-pod-definition-lab23.yaml`
+  --dry-run -o=yaml -- sleep 3000 > busybox-pod-definition-lab23.yaml`
 
 - Open `busybox-pod-definition-lab22.yaml`
   - Compare this definition file to the file
