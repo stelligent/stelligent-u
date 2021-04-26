@@ -56,3 +56,6 @@ Related topics to extend your knowledge about CDK:
   in ~100 lines!
 
 - [Exploring CDK Internals (YouTube)](https://youtu.be/X8G3G3SnCuI)
+
+- CDK Workshop site is statically generated, and [managed via CDK](https://github.com/aws-samples/aws-cdk-intro-workshop/tree/master/cdkworkshop.com)
+  
