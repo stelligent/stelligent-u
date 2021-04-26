@@ -1,52 +1,58 @@
+# 1. Topic 19: AWS Cloud Development Kit (CDK)
 
-
-# 1. Topic 99: AWS Cloud Development Kit (CDK)
-
-- [1. Topic 99: AWS Cloud Development Kit (CDK)](#1-topic-99-aws-cloud-development-kit-cdk)
+- [1. Topic 19: AWS Cloud Development Kit (CDK)](#1-topic-19-aws-cloud-development-kit-cdk)
   - [1.1. Conventions](#11-conventions)
-  - [1.2. Lesson 99.1: Introduction to CDK](#12-lesson-991-introduction-to-cdk)
-    - [1.2.1. Principle 99.1](#121-principle-991)
-    - [1.2.2. Practice 99.1](#122-practice-991)
+  - [1.2. Lesson 19.1: Introduction to CDK](#12-lesson-191-introduction-to-cdk)
+    - [1.2.1. Principle 19.1](#121-principle-191)
+    - [1.2.2. Practice 19.1](#122-practice-191)
   - [1.3. References](#13-references)
   - [1.4. Additional Reading / Videos](#14-additional-reading--videos)
+
 ****
 
 ## 1.1. Conventions
 
-* CDK templates can be any supported language. XX Python preferred?
+- CDK templates can be any supported language. XX Python preferred?
 
-* Do NOT copy and paste templates from the internet at large
+- Do NOT copy and paste templates from the internet at large
 
-* DO use the [CDK Developer Guide](https://docs.aws.amazon.com/cdk/latest/guide/home.html) and [CDK API Reference](https://docs.aws.amazon.com/cdk/api/latest/docs/aws-construct-library.html)
+- DO use the [CDK Developer Guide](https://docs.aws.amazon.com/cdk/latest/guide/home.html)
+  and [CDK API Reference](https://docs.aws.amazon.com/cdk/api/latest/docs/aws-construct-library.html)
 
-* DO utilize every link in this document; note how the AWS documentation is
+- DO utilize every link in this document; note how the AWS documentation is
   laid out
 
-* DO use the [AWS CDK Toolkit (cdk command)](https://docs.aws.amazon.com/cdk/latest/guide/cli.html)
+- DO use the [AWS CDK Toolkit (cdk command)](https://docs.aws.amazon.com/cdk/latest/guide/cli.html)
   (NOT the Console) unless otherwise specified.
 
-## 1.2. Lesson 99.1: Introduction to CDK
+## 1.2. Lesson 19.1: Introduction to CDK
 
-### 1.2.1. Principle 99.1
+### 1.2.1. Principle 19.1
 
 A CDK template is an alternate interface to build AWS resources, comparable to CloudFormation.
 
-### 1.2.2. Practice 99.1
+### 1.2.2. Practice 19.1
 
-A CDK Template, like a CFN Template, is a set of instructions for creating AWS resources. In CDK, code defines an "App", which creates one or more Stacks. A Template is rendered or "synthesized" into a CloudFormation Template. This can be examined for issues, or can be deployed to create a CFN Stack and the assocated real AWS resources like SQS Queues and Lambda functions.
+A CDK Template, like a CFN Template, is a set of instructions for creating AWS
+resources. In CDK, code defines an "App", which creates one or more Stacks. A
+Template is rendered or "synthesized" into a CloudFormation Template. This can
+be examined for issues, or can be deployed to create a CFN Stack and the
+assocated real AWS resources like SQS Queues and Lambda functions.
 
 ## 1.3. References
 
-* [AWS CDK Examples (GitHub)](https://github.com/aws-samples/aws-cdk-examples)
+- [AWS CDK Examples (GitHub)](https://github.com/aws-samples/aws-cdk-examples)
 
-* [AWS CDK Workshop](https://cdkworkshop.com/)
+- [AWS CDK Workshop](https://cdkworkshop.com/)
 
 ## 1.4. Additional Reading / Videos
 
 Related topics to extend your knowledge about CDK:
 
-* [good CDK blog posts](https://garbe.io/category/cdk/)
+- [good CDK blog posts](https://garbe.io/category/cdk/)
 
-* CDK: there's a [CRUD app written via API Gateway integrations](https://github.com/aws-samples/aws-cdk-examples/blob/master/python/my-widget-service/my_widget_service/my_widget_service_stack.py) in ~100 lines! 
+- CDK: there's a [CRUD app written via API Gateway
+  integrations](https://github.com/aws-samples/aws-cdk-examples/blob/master/python/my-widget-service/my_widget_service/my_widget_service_stack.py)
+  in ~100 lines!
 
-* [Exploring CDK Internals (YouTube)](https://youtu.be/X8G3G3SnCuI)
+- [Exploring CDK Internals (YouTube)](https://youtu.be/X8G3G3SnCuI)
