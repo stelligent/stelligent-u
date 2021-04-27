@@ -39,7 +39,7 @@ TODO
   and
   [CDK API
   Reference](https://docs.aws.amazon.com/cdk/api/latest/docs/aws-construct-library.html)
-  sections.
+  sections. The Guide is available by running `cdk docs`
 
 - Familiariity with [AWS CloudFormation](https://aws.amazon.com/cloudformation/)
   is useful, as CDK outputs a CFN template.
@@ -51,7 +51,7 @@ TODO
   command)](https://docs.aws.amazon.com/cdk/latest/guide/cli.html) (NOT the
   Console) unless otherwise specified.
 
-- Consider installing the AWS Toolkit for [Visual Studio Code](https://docs.aws.amazon.com/cdk/latest/guide/vscode.html)
+- Consider installing the [AWS Toolkit for Visual Studio Code](https://docs.aws.amazon.com/cdk/latest/guide/vscode.html)
 
 - Note that the CDK requires more setup than raw CloudFormation, it
   needs to be _bootstrapped_: [CDK Bootstrapping](https://docs.aws.amazon.com/cdk/latest/guide/bootstrapping.html)
