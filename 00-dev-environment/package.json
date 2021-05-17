@@ -1,0 +1,12 @@
+{
+  "name": "hello",
+  "version": "1.0.0",
+  "description": "hello world",
+  "main": "index.js",
+  "author": "Barrett Harber <barrett.harber@stelligent.com>",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "start": "node index.js"
+  }
+}
