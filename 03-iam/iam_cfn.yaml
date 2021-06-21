@@ -13,12 +13,16 @@ Resources:
               AWS: arn:aws:iam::324320755747:user/jory.garrido.labs
             Action:
               - 'sts:AssumeRole'
-      Policies:
-        - PolicyName: jory-stelliu-role
-          PolicyDocument:
-            Version: "2012-10-17"
-            Statement:
-              - Effect: Allow
-                Action:
-                  - 'iam:GetAccountSummary'
-                Resource: '*'
+      ManagedPolicyArns:
+        - !Ref IAMReadManagedPolicy
+
+  IAMReadManagedPolicy:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      Description: Policy for granting IAM read permissions
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action: 'iam:GetAccountSummary'
+            Resource: '*'
