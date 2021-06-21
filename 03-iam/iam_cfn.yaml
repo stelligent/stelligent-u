@@ -14,7 +14,7 @@ Resources:
             Action:
               - 'sts:AssumeRole'
       ManagedPolicyArns:
-        - !Ref IAMReadManagedPolicy
+        - arn:aws:iam::aws:policy/IAMReadOnlyAccess
 
   IAMPolicy2:
     Type: 'AWS::IAM::Role'
@@ -28,7 +28,8 @@ Resources:
             Action:
               - 'sts:AssumeRole'
       ManagedPolicyArns:
-        - !Ref IAMReadManagedPolicy
+        - arn:aws:iam::aws:policy/IAMReadOnlyAccess
+        - arn:aws:iam::aws:policy/AmazonEC2ReadOnlyAccess
 
   IAMReadManagedPolicy:
     Type: 'AWS::IAM::ManagedPolicy'
