@@ -168,6 +168,8 @@ stack's two roles in order to pass those values to the CLI function. You
 probably used the AWS web console to get the ARN for each role. What
 could you have done to your CFN template to make that unnecessary?_
 
+> You can `!Ref` the policy resource to get the arn for the managed policy you create.
+
 #### Task: Stack Outputs
 
 Institute that change from the Question above. Recreate the stack as per
@@ -180,6 +182,7 @@ Lab 3.1.5, and demonstrate how to retrieve the ARNs.
 *AWS service roles and other IAM principals can assume customer created
 roles, enabling a principle-of-least-privilege of permissions for AWS
 services and applications.*
+
 
 ### Practice 3.2
 
