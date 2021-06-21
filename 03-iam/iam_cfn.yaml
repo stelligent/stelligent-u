@@ -16,10 +16,24 @@ Resources:
       ManagedPolicyArns:
         - !Ref IAMReadManagedPolicy
 
+  IAMPolicy2:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS: arn:aws:iam::324320755747:user/jory.garrido.labs
+            Action:
+              - 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - !Ref IAMReadManagedPolicy
+
   IAMReadManagedPolicy:
     Type: 'AWS::IAM::ManagedPolicy'
     Properties:
-      Description: Policy for granting IAM read permissions
+      Description: Reusable policy for granting IAM read permissions.
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
