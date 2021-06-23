@@ -15,3 +15,34 @@ Resources:
               - 'sts:AssumeRole'
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/ReadOnlyAccess
+
+  Bucket:
+    Type: AWS::S3::Bucket
+    Properties: 
+      AccessControl: Private
+      BucketName: jory-testing-role-lab
+
+  BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties: 
+      Bucket: !Ref Bucket
+      PolicyDocument:
+        Statement:
+          - Action: 's3:ListBucket'
+            Effect: Allow
+            Resource: !Sub
+              - arn:aws:s3:::${BucketName}
+              - { BucketName: !Ref Bucket}
+            Principal:
+              AWS:
+                - !Sub
+                  - 'arn:aws:iam::${AccountID}:role/${RoleName}'
+                  - { AccountID: !Ref AWS::AccountId, RoleName: !Ref IAMPolicy }
+            Condition:
+              StringEquals:
+                s3:prefix:
+                  - ""
+                  - "home/"
+                  - "home/David"
+                s3:delimiter: 
+                  - "/"
