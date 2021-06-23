@@ -359,6 +359,8 @@ tests]](https://smartbear.com/learn/automated-testing/negative-testing/)
 that could be automated in order to confirm the permissions for the
 Role?_
 
+> I used the policy simulator for a lot of things. I find it helpful to include tests that you expect should fail and also tests that you expect to pass. I really should have written python or bash for automated testing, though. Looks like I get to do that next.
+
 #### Task: Positive and Negative Tests
 
 Code at least one new positive and one new negative test.
@@ -369,10 +371,14 @@ _Is it possible to limit uploads of objects with a specific prefix (e.g.
 starting with "lebowski/") to an S3 bucket using IAM conditions? If not, how else
 could this be accomplished?_
 
+> Yes! You can do it similarly to the `ListBucket` command and specify the prefix in the resource name rather than as a `StringLike` conditional.
+
 #### Task: Limiting Uploads
 
 Research and review the best method to limit uploads with a specific prefix to
 an S3 bucket.
+
+> To set a file size limit, you can set the `content-length-range` to whatever sizes you need. Then specify the prefix in the resource of the policy.
 
 ## Further Reading
 
