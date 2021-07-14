@@ -320,6 +320,7 @@ Outputs:
         - Ref: IDE
     Description: Cloud9 environment        
 ```
+> If you have issues connecting to the environment, it's quite likely you created a private subnet without an igw- route, and thus cannot access your resources.
 
 #### Lab 0.1.4: Clone Repository
 
