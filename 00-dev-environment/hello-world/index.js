@@ -9,5 +9,5 @@ const server = createServer((req, res) => {
 
 server.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}/`);
-  console.log('Hello World!');
+  console.log('<h1>Hello World</h1>');
 });
