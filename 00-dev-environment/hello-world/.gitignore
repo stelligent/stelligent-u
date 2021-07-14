@@ -1,0 +1,15 @@
+/.idea
+/.vscode
+/.DS_Store
+
+/build
+/coverage
+
+/cache
+/tmp
+/.npmrc
+/.env
+/.env.*
+/*.log*
+
+node_modules/
