@@ -1,0 +1,14 @@
+{
+  "name": "hello-world",
+  "version": "1.0.0",
+  "description": "A simple Hello World app developed for part 0 of stelligent-u",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "debug": "node --inspect-brk index.js"
+  },
+  "keywords": [],
+  "author": "Matthew Morgan",
+  "license": "ISC"
+}
