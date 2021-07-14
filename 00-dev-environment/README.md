@@ -36,8 +36,8 @@
 
 ### Principle 0.1
 
-_A reliable, repeatable process to create your development environment
-leads to a solution others can contribute to._
+*A reliable, repeatable process to create your development environment
+leads to a solution others can contribute to.*
 
 The following labs will prepare you to work through the Stelligent
 new hire training over the next 8 weeks. During the training you
@@ -321,6 +321,8 @@ Outputs:
     Description: Cloud9 environment        
 ```
 > If you have issues connecting to the environment, it's quite likely you created a private subnet without an igw- route, and thus cannot access your resources.
+> Or apparently I created my subnet in us-west-2d which doesn't support t2 instances.  Fascinating.
+> Much more painful than it should have been.
 
 #### Lab 0.1.4: Clone Repository
 
