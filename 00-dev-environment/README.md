@@ -25,6 +25,7 @@
 ## Conventions
 
 - Do NOT store AWS credentials in code repositories.
+
   - [Managing access keys](https://docs.aws.amazon.com/general/latest/gr/aws-access-keys-best-practices.html)
   - [Configuration and credentials files](https://docs.aws.amazon.com/cli/latest/userguide/cli-config-files.html)
 
@@ -35,8 +36,8 @@
 
 ### Principle 0.1
 
-*A reliable, repeatable process to create your development environment
-leads to a solution others can contribute to.*
+_A reliable, repeatable process to create your development environment
+leads to a solution others can contribute to._
 
 The following labs will prepare you to work through the Stelligent
 new hire training over the next 8 weeks. During the training you
@@ -66,6 +67,8 @@ _Never_ commit credentials to a git repo.
   ways. The first way would be to request the token from STS via the CLI.
 
 ##### Option 1: Getting Credentials via STS command
+
+> This was the method I was most familiar with, as I had created a console alias ages ago so I could generate temp creds for use in remote machines. This has the downside of exposing creds to the shell.
 
 ```shell
 aws sts get-session-token \
@@ -106,20 +109,48 @@ authorized to in the labs account. These tokens will last approximately
 ###### Exercise 0.1.1: MFA Script
 
 1. Create a script to automate the gathering and assigning of the temporary
-  AWS MFA credentials from Option 1.
+   AWS MFA credentials from Option 1.
+
+> This is a shell alias I used previously for this purpose.
+
+```shell
+alias gettempcreds=$(aws sts get-session-token --duration-seconds 129600 | jq -r '.Credentials | " export AWS_ACCESS_KEY_ID='\''" + .AccessKeyId + "'\'' AWS_SECRET_ACCESS_KEY='\''" + .SecretAccessKey + "'\'' AWS_SESSION_TOKEN='\''" + .SessionToken + "'\''"' | xsel -b)
+```
+
+> This was used on a linux system (xsel -b) to copy onto clipboard for paste into an SSH session.
+> The output contains a leading space so it is not recorded in shell history.
+
 1. Try to reduce the amount of manual input as much as possible.
+
+> By setting the `mfa_serial` in the `~/.aws/config` I was able to use native prompts to achieve this goal.
 
 ###### Question 0.1.1: 1
 
-What method did you use to store the aws credentials?  What are some other
+What method did you use to store the aws credentials? What are some other
 options?
+
+> Previously, I would manage credentials as env vars in my `~/.zshrc`. As a result I couldn't commit this to a .dotfiles repo, but it gave me the ability to swap between creds by changing which variables are active for a given account.
+
+> export AWS_ACCESS_KEY_ID=$IVL_AWS_ACCESS_KEY_ID
+
+> export AWS_SECRET_ACCESS_KEY=$IVL_AWS_SECRET_ACCESS_KEY
+
+> export IVL_AWS_ACCESS_KEY_ID='AKIA1234567890...S'
+
+> export IVL_AWS_SECRET_ACCESS_KEY='f12345678901...w'
+
+> This is a very manual process and much more cumbersome than the aws-vault stuff below.
 
 ###### Question 0.1.1: 2
 
 Which AWS environment variable cannot be set in order to run the
 `aws sts get-session-token` command?
 
+> This seems like a trick question? The only one you can't know ahead of time is the MFA code, but TOTP codes last up to 60s, so that is long enough to set it and make a call quickly. If you haven't added MFA to your `~/.aws/config` than either of the AWS keys can be set in env and you can still call `aws sts get-session-token`.
+
 ##### Option 2: Using AWS Vault to automatically handle your temporary tokens
+
+> I found a GUI version of this at https://github.com/Noovolari/leapp
 
 If you would rather not have to manually get STS tokens and add them to your
 credentials file you can use [aws-vault](https://github.com/99designs/aws-vault).
@@ -147,14 +178,24 @@ Now you can execute any command using aws-vault. Example:
 You want to set an alias in your .bashrc or .zshrc to something like this:
 `alias aws-myprofile="aws-vault exec MY_PROFILE -- aws"`
 
+> As a shortcut, you can also add alias commands to `~/.aws/cli/alias`
+
+```shell
+[toplevel]
+whoami = sts get-caller-identity --query Arn --output text
+```
+> This will allow me to use `aws whoami` in place of commands that ask for the owner-arn
+
 #### Lab 0.1.2: GitHub
 
 1. Create a new repository from the [Stelligent-U repository template](https://github.com/stelligent/stelligent-u/generate)
 1. Select the owner of the repository
 1. Name the new private repository
 1. Generate ssh keys and
-  test access. Use [this GitHub guide](https://help.github.com/articles/connecting-to-github-with-ssh/)
-  to get access and clone the private repo to your laptop.
+   test access. Use [this GitHub guide](https://help.github.com/articles/connecting-to-github-with-ssh/)
+   to get access and clone the private repo to your laptop.
+
+> I elected to fork the repo instead, which achieves the same result. I already have ssh keys on my github profile.
 
 #### Lab 0.1.3: Cloud9 Environment
 
@@ -171,6 +212,114 @@ CLI commands as you did in [lab 0.1.1](#lab-011-aws-access-keys):
 
 - `list-buckets`
 - `describe-instances`
+
+> `aws cloud9 create-environment-ec2 --name my-demo-env --description "My demonstration development environment." --instance-type t2.micro --subnet-id subnet-1fab8aEX --automatic-stop-time-minutes 60 --owner-arn arn:aws:iam::123456789012:user/MyDemoUser`
+
+> In order to use this command we will first need to provide a value for `--subnet-id` so I will need to create a VPC.
+> To do this I will first run the command:
+
+VPC Creation: `aws ec2 create-vpc --cidr-block 10.0.0.0/16 --no-amazon-provided-ipv6-cidr-block --output yaml-stream`
+> This returns the following YAML-Stream when we create the VPC
+
+```yaml
+- Vpc:
+    CidrBlock: 10.0.0.0/16
+    CidrBlockAssociationSet:
+    - AssociationId: vpc-cidr-assoc-080a4924d43986cfb
+      CidrBlock: 10.0.0.0/16
+      CidrBlockState:
+        State: associated
+    DhcpOptionsId: dopt-0065f7d5d4ddc917a
+    InstanceTenancy: default
+    Ipv6CidrBlockAssociationSet: []
+    IsDefault: false
+    OwnerId: '324320755747'
+    State: pending
+    VpcId: vpc-0768b9b45373f3b83
+```
+> This returns the follwing YAML-Stream when we create the Subnet
+
+Subnet Creation: `aws ec2 create-subnet --cidr-block 10.10.0.0/18 --availability-zone us-west-2a --vpc-id vpc-0768b9b45373f3b83 --output yaml-stream`
+
+```yaml
+- Subnet:
+    AssignIpv6AddressOnCreation: false
+    AvailabilityZone: us-west-2a
+    AvailabilityZoneId: usw2-az1
+    AvailableIpAddressCount: 251
+    CidrBlock: 10.0.1.0/24
+    DefaultForAz: false
+    Ipv6CidrBlockAssociationSet: []
+    MapPublicIpOnLaunch: false
+    OwnerId: '324320755747'
+    State: available
+    SubnetArn: arn:aws:ec2:us-west-2:324320755747:subnet/subnet-081b02e0cb7082ca5
+    SubnetId: subnet-081b02e0cb7082ca5
+    VpcId: vpc-0768b9b45373f3b83
+```
+> Now that we have a subnet, we can create our cloud9 instance
+
+`aws cloud9 create-environment-ec2 --description "demo dev env for Matthew Morgan" --name mcm-dev-env --instance-type t3.micro --automatic-stop-time-minutes 30 --owner-arn `aws whoami` --subnet-id subnet-081b02e0cb7082ca5`
+
+> Which will return an Environment id like {"environmentId": "079d761679ee4236aeade608e1e2e4c1"}.
+
+> From this point we can query our environments with `aws cloud9 describe-environments --environment-id 079d761679ee4236aeade608e1e2e4c1` which will return something like:
+```yaml
+- environments:
+  - arn: arn:aws:cloud9:us-west-2:324320755747:environment:079d761679ee4236aeade608e1e2e4c1
+    connectionType: CONNECT_SSH
+    description: demo dev env for Matthew Morgan
+    id: 079d761679ee4236aeade608e1e2e4c1
+    lifecycle:
+      status: CREATING
+    managedCredentialsStatus: DISABLED_BY_DEFAULT
+    name: mcm-dev-env
+    ownerArn: arn:aws:iam::324320755747:user/matthew.morgan.labs
+    type: ec2
+```
+> And we can connect to our ide by going to https://us-west-2.console.aws.amazon.com/cloud9/ide/{environmentId}
+
+> Of course this is much harder than it needs to be. We could automate this futher using CloudFormation, Terraform, Ansible, etc.
+> Example of a cloudformation Template for Cloud9 below:
+
+```yaml
+Parameters:
+  EC2InstanceType:
+    Default: t3.micro
+    Description: EC2 instance type on which IDE runs
+    Type: String
+  AutoHibernateTimeout:
+    Default: 30
+    Description: How many minutes idle before shutting down the IDE
+    Type: Number
+  SubnetIdentifier:
+    Description: SubnetId
+    Type: AWS::EC2::Subnet::Id
+Resources:
+  IDE:
+    Type: AWS::Cloud9::EnvironmentEC2
+    Properties:
+      Repositories:
+      - RepositoryUrl: https://github.com/stelligent/mu-cloud9.git
+        PathComponent: github.com/stelligent/mu-cloud9
+      Description: Cloud9 IDE
+      AutomaticStopTimeMinutes:
+        Ref: AutoHibernateTimeout
+      SubnetId:
+        Ref: SubnetIdentifier
+      InstanceType:
+        Ref: EC2InstanceType
+      Name:
+        Ref: AWS::StackName
+Outputs:
+  Cloud9URL:
+    Value:
+      Fn::Join:
+      - ''
+      - - https://console.aws.amazon.com/cloud9/home/environments/
+        - Ref: IDE
+    Description: Cloud9 environment        
+```
 
 #### Lab 0.1.4: Clone Repository
 
