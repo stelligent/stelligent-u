@@ -1,0 +1,7 @@
+Resources:
+  vpcPeeringConnection:
+    Type: 'AWS::EC2::VPCPeeringConnection'
+    Properties:
+      VpcId: !ImportValue kpu-VpcId
+      PeerVpcId: vpc-081547d1a94e1b564
+      PeerRegion: us-east-1

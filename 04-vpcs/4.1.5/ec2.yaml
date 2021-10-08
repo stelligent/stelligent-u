@@ -1,0 +1,54 @@
+Parameters:
+  LatestAmiId:
+    Type: 'AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>'
+    Default: '/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2'
+
+Resources:
+  SecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      VpcId: !ImportValue kpu-VpcId
+      GroupDescription: SSH-ICMP
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: icmp
+          FromPort: 8
+          ToPort: -1
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: user
+          Value: karol.pucynski.labs
+        - Key: stelligent-u-lesson
+          Value: '4.1'
+        - Key: stelligent-u-lab
+          Value: '4'
+
+  Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !Ref LatestAmiId
+      InstanceType: t2.nano
+      KeyName: kpu-labs
+      NetworkInterfaces:
+        - GroupSet: [!Ref SecurityGroup]
+          AssociatePublicIpAddress: true
+          DeviceIndex: '0'
+          DeleteOnTermination: true
+          SubnetId: !ImportValue kpu-SubnetId
+      Tags:
+        - Key: user
+          Value: karol.pucynski.labs
+        - Key: stelligent-u-lesson
+          Value: '4.1'
+        - Key: stelligent-u-lab
+          Value: '4'
+
+Outputs:
+  Instance:
+    Value: !Ref Instance
+
+  PrivateIp:
+    Value: !GetAtt Instance.PrivateIp

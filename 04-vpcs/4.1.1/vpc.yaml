@@ -1,0 +1,35 @@
+Parameters:
+  CidrBlock:
+    Type: String
+    Default: "10.0.0.0/16"
+
+Resources:
+  Subnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: !Select [0, !Cidr [!GetAtt VPC.CidrBlock , 1, 8]]
+      Tags:
+        - Key: user
+          Value: karol.pucynski.labs
+        - Key: stelligent-u-lesson
+          Value: '4.1'
+        - Key: stelligent-u-lab
+          Value: '4'
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: !Ref CidrBlock
+      Tags:
+        - Key: user
+          Value: karol.pucynski.labs
+        - Key: stelligent-u-lesson
+          Value: '4.1'
+        - Key: stelligent-u-lab
+          Value: '4.1.1'
+Outputs:
+  VpcID:
+    Value: !Ref VPC
+  SubnetID:
+    Value: !Ref Subnet 
+

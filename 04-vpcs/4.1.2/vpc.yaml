@@ -1,0 +1,78 @@
+Parameters:
+  CidrBlock:
+    Type: String
+    Default: "10.0.0.0/16"
+
+Resources:
+  Subnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: !Select [0, !Cidr [!GetAtt VPC.CidrBlock , 1, 8]]
+      Tags:
+        - Key: user
+          Value: karol.pucynski.labs
+        - Key: stelligent-u-lesson
+          Value: '4.1'
+        - Key: stelligent-u-lab
+          Value: '4'
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: !Ref CidrBlock
+      Tags:
+        - Key: user
+          Value: karol.pucynski.labs
+        - Key: stelligent-u-lesson
+          Value: '4.1'
+        - Key: stelligent-u-lab
+          Value: '4'
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: user
+          Value: karol.pucynski.labs
+        - Key: stelligent-u-lesson
+          Value: '4.1'
+        - Key: stelligent-u-lab
+          Value: '4'
+  VPCGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref VPC
+      InternetGatewayId: !Ref InternetGateway
+  RouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: user
+          Value: karol.pucynski.labs
+        - Key: stelligent-u-lesson
+          Value: '4.1'
+        - Key: stelligent-u-lab
+          Value: '4'
+  Route:
+    Type: AWS::EC2::Route
+    DependsOn: VPCGatewayAttachment
+    Properties:
+      RouteTableId: !Ref RouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+  SubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref Subnet
+      RouteTableId: !Ref RouteTable
+
+Outputs:
+  VpcId:
+    Value: !Ref VPC
+    Export:
+      Name: kpu-VpcId
+  SubnetId:
+    Value: !Ref Subnet 
+    Export:
+      Name: kpu-SubnetId
+
