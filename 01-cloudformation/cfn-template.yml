@@ -1,7 +1,27 @@
 AWSTemplateFormatVersion: 2010-09-09
+Description: Lab 1.1.2 CFN Template to Create S3 Bucket
+
+Parameters:
+  BucketName:
+    Description: "The name of the bucket"
+    Type: "String"
+    Default: "jw-not-valid-bucket-name"
+  OwnerName:
+    Description: "Owner of the bucket"
+    Type: String
+    Default: "SRE"
 
 Resources:
   S3Bucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: "jw-m01p1.1.2-sandbox-useast1"
+      BucketName: !Ref BucketName
+      Tags:
+        - 
+          Key: "Owner"
+          Value: !Ref OwnerName
+
+Outputs:
+  S3Bucket:
+    Description: S3 bucket has been created
+    Value: !Ref S3Bucket

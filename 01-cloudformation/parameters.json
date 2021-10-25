@@ -1,0 +1,10 @@
+[
+    {
+        "ParameterKey": "BucketName",
+        "ParameterValue": "jw-m01x1.1.2-sandbox-useast1"
+    },
+    {
+        "ParameterKey": "OwnerName",
+        "ParameterValue": "jwatson-sre"
+    }
+]
