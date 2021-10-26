@@ -6,4 +6,11 @@ Resources:
   Bucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: "ph-t11-train-us-east-1"
+      BucketName: !Ref BucketName 
+        
+
+"Parameters" : 
+  BucketName:
+    Type: "String"
+    Description: "Name of Bucket for THUNDERSTACK"
+    Default: "ph-example-bucket-name-1"
