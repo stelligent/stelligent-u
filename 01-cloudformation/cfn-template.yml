@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: Lab 1.1.2 CFN Template to Create S3 Bucket
+Description: Lab 1.1.3 CFN Template to Create S3 Bucket
 
 Parameters:
   BucketName:
@@ -15,7 +15,11 @@ Resources:
   S3Bucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Ref BucketName
+      BucketName: !Join
+          - '-'
+          - - !Ref AWS::AccountId
+            - !Ref BucketName
+            - !Ref AWS::Region
       Tags:
         - 
           Key: "Owner"
