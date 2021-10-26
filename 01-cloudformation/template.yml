@@ -1,0 +1,11 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description:
+  Randy is making his first CFN template from scratch
+
+Resources:
+  RandysS3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: rt-m01u1-train-use1
