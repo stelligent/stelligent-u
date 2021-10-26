@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: Lab 1.1.3 CFN Template to Create S3 Bucket
+Description: Lab 1.1.4 CFN Template to Create S3 Bucket
 
 Parameters:
   BucketName:
@@ -11,15 +11,26 @@ Parameters:
     Type: String
     Default: "SRE"
 
+Conditions:
+  PreferredRegion: !Equals 
+    - !Ref AWS::Region
+    - us-east-2
+
 Resources:
   S3Bucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Join
-          - '-'
-          - - !Ref AWS::AccountId
-            - !Ref BucketName
-            - !Ref AWS::Region
+      BucketName:
+        !If
+          - PreferredRegion
+          - !Join
+            - '-'
+            - - !Ref AWS::AccountId
+              - !Ref BucketName
+          - !Join
+            - '-'
+            - - !Ref AWS::Region
+              - !Ref BucketName
       Tags:
         - 
           Key: "Owner"
