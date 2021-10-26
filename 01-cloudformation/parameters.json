@@ -2,5 +2,9 @@
     {
     "ParameterKey" :   "BucketName",         
     "ParameterValue" : "ph-t11-train-us-east-1"
+    },
+    {
+    "ParameterKey" : "OwnerName",
+    "ParameterValue" : "phowell-sre"
     }
 ]
