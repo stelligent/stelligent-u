@@ -1,10 +1,23 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: A stack for making an S3 Bucket
 
+Parameters:
+  BucketName:
+    Description: "Name of the bucket"
+    Type: String
+    Default: "Andrew-Wells-s3-bucket"
+  OwnerName:
+    Description: "The owner of the bucket"
+    Type: String
+    Default: "SRE"
+
 Resources:
   Bucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: aw-m11-train-us-east-1
-      AccessControl: PublicRead
-#Exec aws cloudformation create-stack --stack-name andrewwellsm11 --template-body file://template.yml
+      BucketName: !Ref BucketName
+      Tags:
+        -
+          Key: "Owner"
+          Value: !Ref OwnerName
+#Exec aws cloudformation create-stack --stack-name andrewwellsm12 --template-body file://template.yml --parameters file://parameters.json
