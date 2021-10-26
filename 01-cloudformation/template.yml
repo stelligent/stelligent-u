@@ -10,16 +10,18 @@ Parameters:
     Description: "The owner of the bucket"
     Type: String
     Default: "SRE"
+  
+Conditions:
+  PreferredRegion: !Equals 
+    - !Ref AWS::Region
+    - us-east-1
 
 Resources:
   Bucket:
     Type: AWS::S3::Bucket
     Properties:
       BucketName:
-        !Join
-          - '-'
-          - - !Ref AWS::AccountId 
-            - !Ref BucketName 
+        - !If [PreferredRegion, !Join ['-', [!Ref AWS::Region, !Ref BucketName]], !Join ['-', [!Ref AWS::AccountId, !Ref BucketName]]]
       Tags:
         -
           Key: "Owner"
