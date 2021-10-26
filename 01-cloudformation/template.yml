@@ -1,0 +1,9 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description:
+  Make an S3 Bucket
+
+Resources:
+  Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: "ph-t11-train-us-east-1"
