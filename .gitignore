@@ -10,3 +10,4 @@ __pycache__
 *.code-workspace
 
 .ruby-version
+*.pem
