@@ -178,6 +178,7 @@ This keeps the resources when the stack is deleted.(Example: my stack created an
 
 Demonstrate 2 ways to code string combination/substitution using
 built-in CFN functions.
+
 !Sub
   - String
   - Var1Name: Var1Value
@@ -186,6 +187,7 @@ FN::Sub
   - String
   - Var1Name: Var1Value
     Var2Name: Var2Value
+    
 ## Lesson 1.2: Integration with Other AWS Resources
 
 ### Principle 1.2
