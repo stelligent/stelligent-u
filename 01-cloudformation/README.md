@@ -160,6 +160,8 @@ name.
 
 _Why do we prefer the YAML format for CFN templates?_
 
+> YAML is more human readable than JSON. JSON is a programmatic format that JavaScript uses.
+
 #### Question: Protecting Resources
 
 _What else can you do to prevent resources in a stack from being deleted?_
@@ -167,6 +169,8 @@ _What else can you do to prevent resources in a stack from being deleted?_
 See [DeletionPolicy](https://aws.amazon.com/premiumsupport/knowledge-center/cloudformation-accidental-updates/).
 
 _How is that different from applying Termination Protection?_
+
+> Termination Protection applies to nested stacks.
 
 #### Task: String Substitution
 
