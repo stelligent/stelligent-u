@@ -1,0 +1,36 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Lab 1.2.2 Exposing Resource Details via Exports
+
+Parameters:
+  paramUserName:
+    Description: Unique name for a new user
+    Type: String
+    AllowedPattern: "^[a-zA-Z][a-zA-Z0-9]{1,64}$"
+    ConstraintDescription: User name must be between 1 and 64 alphanumeric characters in length, starting with an uppercase or lowercase character of the alphabet.
+  paramUserPassword:
+    Description: Account password for a new user
+    Type: String    
+    NoEcho: 'true' # mask the parameter value as asterisks (*****) to prevent it from being displayed in the console, CLI, or API
+    AllowedPattern: ^[a-zA-Z][a-zA-Z0-9!@#$%&]{8,32}$
+    ConstraintDescription: Password must be between 8 and 32 characters, start with lowercase or uppercase letter, and can be alphanumeric with the following special characters !@#$%&
+
+Resources:
+  CFNUser:
+    Type: AWS::IAM::User
+    Properties:
+      UserName: !Ref 'paramUserName'
+      LoginProfile:
+        Password: !Ref 'paramUserPassword'
+      ManagedPolicyArns:
+        - 'arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess'
+
+Outputs:
+  outputName:
+    Description: User name
+    Value: !Ref CFNUser
+  outputArn:
+    Description: User ARN
+    Value: !GetAtt CFNUser.Arn
+  outputPolicy:
+    Description: Policy ARN
+    Value: 'arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess'
