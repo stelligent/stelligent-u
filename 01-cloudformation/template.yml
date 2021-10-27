@@ -13,6 +13,26 @@ Parameters :
     Type: String
     Default: "SRE"
   
+Conditions:
+  PreferredRegion: !Equals 
+    - !Ref AWS::Region
+    - us-east-2
+Resources:
+  S3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName:
+        !If #Fn::If
+          - PreferredRegion
+          - !Join #Fn::Join
+            - '-'
+            - - !Ref AWS::AccountId
+              - !Ref BucketName
+          - !Join #Fn::Join
+            - '-'
+            - - !Ref AWS::Region
+              - !Ref BucketName
+  
 
 Resources:
   Bucket:
