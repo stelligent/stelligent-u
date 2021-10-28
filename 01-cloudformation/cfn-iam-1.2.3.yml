@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: Lab 1.2.1 Cross-Referencing Resources within a CFN Template
+Description: Lab 1.2.3 Importing another Stack's Exports
 
 Parameters:
   paramUserName:
@@ -21,28 +21,8 @@ Resources:
       UserName: !Ref 'paramUserName'
       LoginProfile:
         Password: !Ref 'paramUserPassword'
-      #ManagedPolicyArns:
-      #  - 'arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess'
-  CFNS3ReadOnlyPolicy:
-    Type: AWS::IAM::ManagedPolicy
-    Properties:
-      ManagedPolicyName: 
-        !Join
-          - '-'
-          -
-            - 'CFNS3ROManagedPolicy'
-            - !Ref AWS::Region
-      PolicyDocument:
-        Version: 2012-10-17
-        Statement:
-        - Effect: Allow
-          Action:
-            - 's3:Get*'
-            - 's3:List*'
-            - 's3-object-lambda:Get*'
-            - 's3-object-lambda:List*'
-          Resource: '*'
-      Users: [!Ref 'CFNUser']
+      ManagedPolicyArns:
+        - !ImportValue CFNS3ReadOnlyPolicy
 
 Outputs:
   outputUserName:
@@ -51,6 +31,3 @@ Outputs:
   outputUserArn:
     Description: User ARN
     Value: !GetAtt CFNUser.Arn
-  outputPolicyArn:
-    Description: Policy ARN
-    Value: !Ref CFNS3ReadOnlyPolicy

@@ -231,6 +231,8 @@ Delete your CFN stacks in the same order you created them in. Did you
 succeed? If not, describe how you would _identify_ the problem, and
 resolve it yourself.
 
+> aws cloudformation list-exports
+
 ### Retrospective 1.2
 
 #### Task: Policy Tester

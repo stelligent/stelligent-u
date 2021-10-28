@@ -21,16 +21,38 @@ Resources:
       UserName: !Ref 'paramUserName'
       LoginProfile:
         Password: !Ref 'paramUserPassword'
-      ManagedPolicyArns:
-        - 'arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess'
+      #ManagedPolicyArns:
+      #  - 'arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess'
+  CFNS3ReadOnlyPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: 
+        !Join
+          - '-'
+          -
+            - 'CFNS3ROManagedPolicy'
+            - !Ref AWS::Region
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+        - Effect: Allow
+          Action:
+            - 's3:Get*'
+            - 's3:List*'
+            - 's3-object-lambda:Get*'
+            - 's3-object-lambda:List*'
+          Resource: '*'
+      Users: [!Ref 'CFNUser']
 
 Outputs:
-  outputName:
+  outputUserName:
     Description: User name
     Value: !Ref CFNUser
-  outputArn:
+  outputUserArn:
     Description: User ARN
     Value: !GetAtt CFNUser.Arn
-  outputPolicy:
+  outputPolicyArn:
     Description: Policy ARN
-    Value: 'arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess'
+    Value: !Ref CFNS3ReadOnlyPolicy
+    Export: 
+      Name: CFNS3ReadOnlyPolicy

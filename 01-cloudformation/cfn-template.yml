@@ -25,12 +25,14 @@ Resources:
           - PreferredRegion
           - !Join
             - '-'
-            - - !Ref AWS::AccountId
-              - !Ref BucketName
+            - 
+               - !Ref AWS::AccountId 
+               - !Ref BucketName
           - !Join
             - '-'
-            - - !Ref AWS::Region
-              - !Ref BucketName
+            -
+               - !Ref AWS::Region
+               - !Ref BucketName
       Tags:
         - 
           Key: "Owner"
