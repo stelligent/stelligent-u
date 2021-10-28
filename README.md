@@ -21,7 +21,7 @@ For further information, please see:
 
 ## Audience
 
-This is a series of lessons originally written for new Associate Engineers at
+This is a series of lessons originally written for new Engineers at
 Stelligent. The goal of this material is to prepare all of our engineers for
 their first engagements as Stelligent engineers. Any topic or principal
 presented here is part of our technical knowledge baseline: this is what we
