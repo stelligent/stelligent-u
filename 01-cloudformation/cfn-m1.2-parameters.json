@@ -1,0 +1,10 @@
+[
+    {
+    "ParameterKey" :   "UserName",         
+    "ParameterValue" : "ph-121-user"
+    },
+    {
+    "ParameterKey" : "PolicyName",
+    "ParameterValue" : "PH-ReadOnlyS3Policy"
+    }
+]

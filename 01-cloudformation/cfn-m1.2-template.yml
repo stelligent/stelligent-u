@@ -1,0 +1,34 @@
+Parameters :
+  UserName: 
+    Type: String
+  PolicyName:
+    Type: String
+
+
+Resources:
+  TestUser:
+    Type: AWS::IAM::User
+    Properties:
+        UserName: !Ref UserName
+
+  ReadOnlyS3Policy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: !Ref PolicyName
+      Users:
+        - !Ref UserName
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          -
+            Sid: AllowAllUsersToListAccounts
+            Effect: Allow
+            Action:
+              - s3:GetObject
+            Resource: "*"
+
+Output:
+  PolicyARN:
+    Value: !Ref PolicyName
+    Export:
+      Name: PolicyName
