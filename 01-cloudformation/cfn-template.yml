@@ -36,7 +36,8 @@ Resources:
       Tags:
         - 
           Key: "Owner"
-          Value: !Ref OwnerName
+          #Value: !Ref OwnerName
+          Value: '{{resolve:ssm:jw-owner-param}}'
 
 Outputs:
   S3Bucket:

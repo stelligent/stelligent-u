@@ -240,6 +240,10 @@ resolve it yourself.
 Show how to use the IAM policy tester to demonstrate that the user
 cannot perform 'Put' actions on any S3 buckets.
 
+<img src="../images/jw-retro12-policy-tester-gui_2021-10-28.png">
+<br/>
+<img src="../images/jw-retro12-policy-tester-cli_2021-10-28.png">
+
 #### Task: SSM Parameter Store
 
 Using the AWS Console, create a Systems Manager Parameter Store
@@ -247,6 +251,10 @@ parameter in the same region as the first Stack, and provide a value for
 that parameter. Modify the first Stack's template so that it utilizes
 this Parameter Store parameter value as the IAM User's name. Update the
 first stack. Finally, tear it down.
+
+<img src="../images/jw-retro12-param-created_2021-10-28.png">
+<br/>
+<img src="../images/jw-retro12-param-used_2021-10-28.png">
 
 ## Lesson 1.3: Portability & Staying DRY
 
