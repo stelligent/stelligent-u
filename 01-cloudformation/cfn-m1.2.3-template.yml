@@ -1,0 +1,14 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Parameters :
+  UserName: 
+    Type: String
+
+
+Resources:
+  TestUser:
+    Type: AWS::IAM::User
+    Properties:
+      UserName: !Ref UserName
+      ManagedPolicyArns:
+        - !ImportValue PolicyName #Matches the import from the stack it is exported from... To others this is obvious but you're learning

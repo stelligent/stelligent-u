@@ -1,3 +1,5 @@
+AWSTemplateFormatVersion: 2010-09-09
+
 Parameters :
   UserName: 
     Type: String
@@ -14,9 +16,14 @@ Resources:
   ReadOnlyS3Policy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
-      ManagedPolicyName: !Ref PolicyName
+      ManagedPolicyName: 
+        !Join
+          - '-'
+          -
+            - 'ROS3ManagedPolicy'
+            - !Ref AWS::Region
       Users:
-        - !Ref UserName
+        - !Ref 'UserName'
       PolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -27,8 +34,8 @@ Resources:
               - s3:GetObject
             Resource: "*"
 
-Output:
+Outputs:
   PolicyARN:
-    Value: !Ref PolicyName
+    Value: !Ref ReadOnlyS3Policy
     Export:
       Name: PolicyName
