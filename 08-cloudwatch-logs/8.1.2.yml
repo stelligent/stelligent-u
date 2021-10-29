@@ -36,7 +36,7 @@ Resources:
             /usr/bin/apt-get update -y
             /usr/bin/apt-get install -y python3-pip
             python3 -m pip install https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-py3-2.0-9.tar.gz
-            /usr/local/bin/cfn-init -v --stack ${AWS::StackName} --resource EC2Instance --configsets default --region ${AWS::Region}
+            /usr/local/bin/cfn-init -v --stack ${AWS::StackName} --resource EC2 --configsets default --region ${AWS::Region}
             /usr/local/bin/cfn-signal --exit-code $? --stack ${AWS::StackName} --resource EC2Instance --region ${AWS::Region}
   EC2:
     Type: AWS::EC2::Instance
