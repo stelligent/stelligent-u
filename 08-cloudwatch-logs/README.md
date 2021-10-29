@@ -72,7 +72,7 @@ repo:
 - We need to generate a Cloud Watch configuration file to be included in your Cloud Formation Template.
   The simplest way to approach this is to start an EC2 instance with the Cloud Watch agent installed and use the wizard it provides.
   For the example Cloud Formation template the wizard is in `/opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-config-wizard`
-  You will need to add references to the log streams definde in 8.1.1
+  You will need to add references to the log streams defined in 8.1.1
   [Documentation on generating the template file](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/create-cloudwatch-agent-configuration-file.html) for reference.
 
 - The wizard will prompt you to use `collectd`, but we do not recommend this as it can cause the agent to fail to start
