@@ -67,7 +67,7 @@ of the
 repo:
 
 - [Documentation](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/install-CloudWatch-Agent-on-first-instance.html)
-  for installing the Cloud Watch agent, for reference. 
+  for installing the Cloud Watch agent, for reference.
   The example template installs the agent.
 
 - We need to generate a Cloud Watch configuration file to be included
@@ -87,7 +87,8 @@ repo:
   own VPC ID's and Subnet ID generated in other lessons,
   or provide appropriate code in the resources section.
 
-- Once you have added the Cloud Watch configuration to your Cloud Formation template, delete the running stack, and relaunch.
+- Once you have added the Cloud Watch configuration to your Cloud Formation template,
+  delete the running stack, and relaunch.
 
 - Use the AWS CLI to display the log events for your group and stream from 8.1.1.
 
