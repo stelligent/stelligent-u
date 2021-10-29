@@ -241,6 +241,7 @@ the Managed Policy ARN created by and exported from the previous Stack.
 Delete your CFN stacks in the same order you created them in. Did you
 succeed? If not, describe how you would _identify_ the problem, and
 resolve it yourself.
+They actually did delete!!!
 
 ### Retrospective 1.2
 
