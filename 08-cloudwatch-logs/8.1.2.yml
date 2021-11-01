@@ -1,22 +1,8 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Mappings:
-  RegionMap:
-    us-east-1:
-      vpcId: # Fill in your VPC ID
-      subnetId: # Fill in your Subnet ID
-      imageId: ami-03d315ad33b9d49c4
-    us-east-2:
-      vpcId: # Fill in your VPC ID
-      subnetId: # Fill in your Subnet ID
-      imageId: ami-0996d3051b72b5b2c
-    us-west-2:
-      vpcId: # Fill in your VPC ID
-      subnetId: # Fill in your Subnet ID
-      imageId: ami-0928f4202481dfdf6
-    us-west-1:
-      vpcId: # Fill in your VPC ID
-      subnetId: # Fill in your Subnet ID
-      imageId: ami-0ebef2838fb2605b7
+Parameters:
+  UbuntuAMI:
+    Type: "AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>"
+    Default: '/aws/service/canonical/ubuntu/server/20.04/stable/current/amd64/hvm/ebs-gp2/ami-id'
 Resources:
   LaunchTemplate:
     Type: AWS::EC2::LaunchTemplate
@@ -24,12 +10,13 @@ Resources:
       LaunchTemplateName: EC2LaunchTemplate
       LaunchTemplateData:
         InstanceType: t3.nano
+        ImageId: !Ref UbuntuAMI
         IamInstanceProfile:
           Name: !Ref InstanceProfile
         NetworkInterfaces:
           - DeviceIndex: 0
             AssociatePublicIpAddress: True
-            SubnetId: !FindInMap [ RegionMap, !Ref "AWS::Region", subnetId ]
+            SubnetId: #Fill in your subnet ID
         UserData:
           Fn::Base64: !Sub |
             #!/bin/bash -xe
@@ -44,7 +31,6 @@ Resources:
       LaunchTemplate:
         LaunchTemplateId: !Ref LaunchTemplate
         Version: "1"
-      ImageId: !FindInMap [ RegionMap, !Ref "AWS::Region", imageId ]
     CreationPolicy:
       ResourceSignal:
         Timeout: PT5M
@@ -96,4 +82,4 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: 'Stelligent-U 08 CloudWatch'
-      VpcId: !FindInMap [ RegionMap, !Ref "AWS::Region", vpcId ]
+      VpcId: #Fill in your VPC ID
