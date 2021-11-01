@@ -102,7 +102,7 @@ Use the AWS CLI to create Lambda functions:
 
 - Use the "aws cloudformation deploy" command to
   create the CloudFormation stack. Note: The "deploy" command will
-  need an S3 bucket to temporarily store the deployment package when 
+  need an S3 bucket to temporarily store the deployment package when
   template file size is greater than 51,200 bytes.
 
 - Use the API gateway to make a test call to the lambda to confirm
