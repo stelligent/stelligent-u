@@ -1,0 +1,9 @@
+{
+  
+    "regions" : [
+      "us-east-01",
+      "us-east-02",
+      "us-west-01",
+      "us-west-02" 
+  ]
+}
