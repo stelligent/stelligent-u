@@ -148,31 +148,46 @@ name.
   to one of them.
 
 - Try to delete the Stack using the AWS CLI. What happens?
-
+An error occurred (ValidationError) when calling the DeleteStack operation: Stack [THUNDERSTACK] cannot be deleted while TerminationProtection is enabled
 - Remove termination protection and try again.
-
+PS C:\Users\phowell\stelligentU\stelligent-u\01-cloudformation> aws cloudformation delete-stack --stack-name THUNDERSTACK --region us-east-2
+PS C:\Users\phowell\stelligentU\stelligent-u\01-cloudformation>
 - List the S3 buckets in both regions once this lesson's Stacks have been
   deleted to ensure their removal.
-
+ph-t11-train-us-east-1
 ### Retrospective 1.1
 
 #### Question: Why YAML
 
 _Why do we prefer the YAML format for CFN templates?_
-
+can self-reference, support complex datatypes, embed block literals, support comments, and is more readible to humans
 #### Question: Protecting Resources
 
 _What else can you do to prevent resources in a stack from being deleted?_
+Set the DeletionPolicy attribute to prevent the deletion of an individual resource at the stack level.
+Use AWS Identity and Access Management (IAM) policies to restrict the ability of users to delete or update a stack and its resources.
+Assign a stack policy to prevent updates to stack resources.
+Enable termination protection to prevent users from deleting the stack from the AWS CloudFormation console or AWS Command Line Interface (AWS CLI).
 
 See [DeletionPolicy](https://aws.amazon.com/premiumsupport/knowledge-center/cloudformation-accidental-updates/).
 
 _How is that different from applying Termination Protection?_
+This keeps the resources when the stack is deleted.(Example: my stack created an S3 bucket. That wouldn't have been deleted when I deleted the stack)
 
 #### Task: String Substitution
 
 Demonstrate 2 ways to code string combination/substitution using
 built-in CFN functions.
 
+!Sub
+  - String
+  - Var1Name: Var1Value
+    Var2Name: Var2Value
+FN::Sub
+  - String
+  - Var1Name: Var1Value
+    Var2Name: Var2Value
+    
 ## Lesson 1.2: Integration with Other AWS Resources
 
 ### Principle 1.2
@@ -226,6 +241,7 @@ the Managed Policy ARN created by and exported from the previous Stack.
 Delete your CFN stacks in the same order you created them in. Did you
 succeed? If not, describe how you would _identify_ the problem, and
 resolve it yourself.
+They actually did delete!!!
 
 ### Retrospective 1.2
 
