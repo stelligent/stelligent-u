@@ -136,7 +136,7 @@ For further reading, see the S3 [Access Policy Language Overview](https://docs.a
 ##### Question: Sync vs Copy
 
 _What makes "sync" a better choice than "cp" for some S3 uploads?_
-
+sync allows for a multi-part upload for large objects.
 #### Lab 2.1.3: Exclude Private Objects When Uploading to a Bucket
 
 Add a private file to your data directory. Then, upload the directory to your
@@ -146,12 +146,14 @@ bucket again **without including the private file**.
 
 - Did you find two different ways to accomplish this task? If not, make sure to
   read the [documentation on sync flags](https://docs.aws.amazon.com/cli/latest/reference/s3/sync.html).
+aws s3 sync ./data s3://stelligent-u-phowell-leaky-bucket/data/ --exclude "*.PRIVATE"
 
 #### Lab 2.1.4: Clean Up
 
 Clean up: remove your bucket. What do you have to do before you can
 remove it?
-
+empty the bucket 
+aws s3 rm s3://stelligent-u-phowell-leaky-bucket/ --recursive
 ### Retrospective 2.1
 
 For additional s3 commands and reference see the
