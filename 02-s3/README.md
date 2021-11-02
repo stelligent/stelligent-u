@@ -183,7 +183,7 @@ directory with the "aws s3 sync" command.
 
 _After this, can you download one of your files from the bucket without using
 your API credentials?_
-
+aws s3 cp s3://s3://stelligent-u-phowell/Private.txt ./data/
 #### Lab 2.2.2: Use the CLI to Restrict Access to Private Data
 
 You just made "private.txt" publicly readable. Ensure that only the
