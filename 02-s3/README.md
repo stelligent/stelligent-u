@@ -193,7 +193,7 @@ permissions of the other files.
 
 _How could you use "aws s3 cp" or "aws s3 sync" command to modify the
 permissions on the file?_
-
+aws s3 sync .\data\  s3://stelligent-u-phowell/ --acl public-read-write --exclude "*" --include "Private.txt"
 (Hint: see the list of [Canned ACLs](https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#canned-acl).)
 
 ##### Question: Changing Permissions
