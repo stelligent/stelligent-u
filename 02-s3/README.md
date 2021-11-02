@@ -147,6 +147,7 @@ bucket again **without including the private file**.
 - Did you find two different ways to accomplish this task? If not, make sure to
   read the [documentation on sync flags](https://docs.aws.amazon.com/cli/latest/reference/s3/sync.html).
 aws s3 sync ./data s3://stelligent-u-phowell-leaky-bucket/data/ --exclude "*.PRIVATE"
+aws s3 cp ./data s3://stelligent-u-phowell-leaky-bucket/data/ --exclude "*.PRIVATE"
 
 #### Lab 2.1.4: Clean Up
 
@@ -199,7 +200,7 @@ aws s3 sync .\data\  s3://stelligent-u-phowell/ --acl public-read-write --exclud
 ##### Question: Changing Permissions
 
 _Is there a way you can change the permissions on the file without re-uploading it?_
-
+aws s3api put-object-acl --bucket stelligent-u-phowell --key data/private.txt --acl private
 #### Lab 2.2.3: Using the API from the CLI
 
 The [aws s3api command](https://docs.aws.amazon.com/cli/latest/reference/s3api/index.html#s3api)
