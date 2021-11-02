@@ -120,12 +120,13 @@ Add an object to your bucket:
 ##### Question: Copying to Top Level
 
 _How would you copy the contents of the directory to the top level of your bucket?_
+aws s3 cp s3://stelligent-u-phowell-leaky-bucket/data/ s3://stelligent-u-phowell-leaky-bucket/  --recursive
 
 ##### Question: Directory Copying
 
 _How would you copy the contents and include the directory name in the s3 object
 paths?_
-
+aws s3 cp s3://stelligent-u-phowell-leaky-bucket/data/ s3://stelligent-u-phowell-leaky-bucket  --recursive
 ##### Question: Object Access
 
 _[Can anyone else see your file yet](https://docs.aws.amazon.com/AmazonS3/latest/dev/s3-access-control.html)?_
