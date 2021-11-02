@@ -188,7 +188,7 @@ your API credentials?_
 You just made "private.txt" publicly readable. Ensure that only the
 bucket owner can read or write that file without changing the
 permissions of the other files.
-
+aws s3api put-onject-acl --bucket stelligent-u-phowell --key data/private.txt --acl private
 ##### Question: Modify Permissions
 
 _How could you use "aws s3 cp" or "aws s3 sync" command to modify the
