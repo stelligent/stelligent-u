@@ -4,7 +4,7 @@ Parameters:
     Type: "AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>"
     Default: '/aws/service/canonical/ubuntu/server/20.04/stable/current/amd64/hvm/ebs-gp2/ami-id'
   VPCID:
-    Type: String
+    Type: 'AWS::EC2::VPC::Id'
   SubnetID:
     Type: String
 Resources:
