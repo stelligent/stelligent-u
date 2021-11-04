@@ -3,6 +3,10 @@ Parameters:
   UbuntuAMI:
     Type: "AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>"
     Default: '/aws/service/canonical/ubuntu/server/20.04/stable/current/amd64/hvm/ebs-gp2/ami-id'
+  VPCID:
+    Type: String
+  SubnetID:
+    Type: String
 Resources:
   LaunchTemplate:
     Type: AWS::EC2::LaunchTemplate
@@ -16,7 +20,7 @@ Resources:
         NetworkInterfaces:
           - DeviceIndex: 0
             AssociatePublicIpAddress: True
-            SubnetId: #Fill in your subnet ID
+            SubnetId: !Ref SubnetID
         UserData:
           Fn::Base64: !Sub |
             #!/bin/bash -xe
@@ -82,4 +86,4 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: 'Stelligent-U 08 CloudWatch'
-      VpcId: #Fill in your VPC ID
+      VpcId: !Ref VPCID
