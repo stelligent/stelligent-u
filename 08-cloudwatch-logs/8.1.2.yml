@@ -6,7 +6,7 @@ Parameters:
   VPCID:
     Type: 'AWS::EC2::VPC::Id'
   SubnetID:
-    Type: String
+    Type: 'AWS::EC2::Subnet::Id'
 Resources:
   LaunchTemplate:
     Type: AWS::EC2::LaunchTemplate
