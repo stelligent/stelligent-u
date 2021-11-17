@@ -28,7 +28,6 @@
   - [Managing access keys](https://docs.aws.amazon.com/general/latest/gr/aws-access-keys-best-practices.html)
   - [Configuration and credentials files](https://docs.aws.amazon.com/cli/latest/userguide/cli-config-files.html)
 
-- DO use the Cloud9 environment for all training work unless otherwise specified.
 - DO use the [AWS documentation and user guides](https://aws.amazon.com/documentation/).
 
 ## Lesson 0.1: Setting up your development environment
@@ -39,9 +38,9 @@
 leads to a solution others can contribute to.*
 
 The following labs will prepare you to work through the Stelligent
-new hire training over the next 8 weeks. During the training you
+new hire training. During the training you
 will be using AWS access keys for programmatic access to an AWS account,
-GitHub code repositories, and AWS Cloud9 for your development environment.
+GitHub code repositories, and, optionally, AWS Cloud9 for your development environment.
 
 ### Practice 0.1
 
@@ -156,7 +155,7 @@ You want to set an alias in your .bashrc or .zshrc to something like this:
   test access. Use [this GitHub guide](https://help.github.com/articles/connecting-to-github-with-ssh/)
   to get access and clone the private repo to your laptop.
 
-#### Lab 0.1.3: Cloud9 Environment
+#### Lab 0.1.3: Cloud9 Environment (Optional)
 
 AWS Cloud 9 is a resource to quickly re-create a stock development
 environment accessible from almost anywhere in a browser. You can use
@@ -174,11 +173,11 @@ CLI commands as you did in [lab 0.1.1](#lab-011-aws-access-keys):
 
 #### Lab 0.1.4: Clone Repository
 
-Work with your GitHub repo in your Cloud9 development environment. Start
+Work with your GitHub repo in your development environment. Start
 at [step 3 of this user guide](https://docs.aws.amazon.com/cloud9/latest/user-guide/sample-github.html#sample-github-install-git)
 to configure the Cloud9 instance to work with GitHub.
 
-1. Install git in Cloud9.
+1. Install git in your development environment.
 
 1. Clone the repository to your Cloud9 environment. To gain
    access to the repository try using either
@@ -201,7 +200,7 @@ keys?_
 Configure Cloud9 to work with the programming language you will be using
 to complete the training work. In your Cloud9 Editor, perform the following:
 
-- Please choose either Ruby, Python, Go or NodeJS
+- Please choose either Python, Ruby, Go or NodeJS
 - Create a new branch off master
 - In the 00-dev-environment directory, develop a small "hello world!"
   application in that language
