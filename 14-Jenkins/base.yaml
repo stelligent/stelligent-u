@@ -14,7 +14,7 @@ Parameters:
   EC2InstanceAmi:
     Type: AWS::EC2::Image::Id
     Description: EC2 Instance AMI
-    Default: ami-0bce08e823ed38bdd
+    Default: ami-014534a11156c1a0d
   EC2KeyName:
     Type: String
     Description: Name of the EC2 keys used for ssh
