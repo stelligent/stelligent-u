@@ -18,9 +18,14 @@ Parameters:
   EC2KeyName:
     Type: String
     Description: Name of the EC2 keys used for ssh
+    Default: <If using this parameter, provide default name>
   IAMUserOwnerIp:
     Type: String
     Description: IP of the Iam user owner
+    Default: <If using this parameter,provide default IP>
+  EC2InstanceType:
+    Type: String
+    Default: <If using this parameter, provide instance>  
 Resources:
   MyVpc:
     Type: AWS::EC2::VPC
@@ -95,6 +100,7 @@ Resources:
       SubnetId: !Ref MySubnet
       KeyName: !Ref EC2KeyName
       ImageId: !Ref EC2InstanceAmi
+      InstanceType: !Ref EC2InstanceType
       SecurityGroupIds:
         - !Ref MyEC2SecurityGroup
       Tags:
@@ -167,6 +173,9 @@ Resources:
       Icmp:
         Code: -1
         Type: -1
+      PortRange:
+        From:  
+        To:
   MyNetworkEntryMySecondSubnetIngressAllHttp:
     Type: AWS::EC2::NetworkAclEntry
     Properties:
@@ -187,6 +196,9 @@ Resources:
       Egress: True
       Protocol: -1
       CidrBlock: !Join ['/', ["10.0.0.128", '25' ] ]
+      PortRange:
+        From:
+        To:   
   MySecondSubnet:
     Type: AWS::EC2::Subnet
     Properties:
