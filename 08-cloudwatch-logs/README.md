@@ -67,34 +67,30 @@ of the
 repo:
 
 - [Documentation](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/install-CloudWatch-Agent-on-first-instance.html)
-  for installing the Cloud Watch agent. This is handled in the template, but
-  in case it is needed for reference
+  for installing the Cloud Watch agent, for reference.
+  The example template installs the agent.
 
-- We need to generate a template file to be used when running.
+- We need to generate a Cloud Watch configuration file to be included
+  in your Cloud Formation Template. The simplest way to approach this
+  is to start an EC2 instance with the Cloud Watch agent installed and
+  use the wizard it provides. For the example Cloud Formation template
+  the wizard is in
+  `/opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-config-wizard`
+  You will need to add references to the log streams defined in 8.1.1
   [Documentation on generating the template file](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/create-cloudwatch-agent-configuration-file.html)
-  The template file is quite complex, so the use of the wizard is recommended, and
-  then editing the template file. In order to run the wizard, we need to have a
-  running instance. Recommend launching the stack, running the wizard and then copying
-  the generated file to S3 to be referenced in the template.
+  for reference.
 
-- Recommend not using `collectd` as it can cause the agent to fail to start
+- The wizard will prompt you to use `collectd`, but we do not recommend this
+  as it can cause the agent to fail to start
 
-- Modify the template mappings to reference your own VPC ID's and Subnet ID in your
-  account that you will launch resources into
+- Modify the template mappings to reference your
+  own VPC ID's and Subnet ID generated in other lessons,
+  or provide appropriate code in the resources section.
 
-- Modify the template so that the S3 config file is copied to the EC2 instance during
-  the CloudFormation Init
+- Once you have added the Cloud Watch configuration to your Cloud Formation template,
+  delete the running stack, and relaunch.
 
-- Modify the template so that the following run command references the config file:
-
-  ```shell
-  /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl \
-  -a fetch-config -m ec2 -s
-  ```
-
-- Delete the running stack, and relaunch
-
-- Use the AWS CLI to display the log events for your group and stream.
+- Use the AWS CLI to display the log events for your group and stream from 8.1.1.
 
 > *Note:* logs may take several minutes to appear.
 
