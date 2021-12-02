@@ -64,6 +64,8 @@ _Never_ commit credentials to a git repo.
   credentials using your MFA device and STS. You can do this in a few
   ways. The first way would be to request the token from STS via the CLI.
 
+*NOTE*
+1. You will need to obtain your 
 ##### Option 1: Getting Credentials via STS command
 
 ```shell
@@ -97,8 +99,21 @@ aws_secret_access_key = wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
 aws_session_token = AQoDYXdzEJr...<remainder of security token>
 ```
 
-Now set AWS_PROFILE to temp in your env, or set the --profile flag to temp when
-running awscli. You should be able to access any of the resources you're
+Now set AWS_PROFILE to temp in your env:
+```shell
+$ export AWS_ACCESS_KEY_ID=<temp aws_access_key_id >
+$ export AWS_SECRET_ACCESS_KEY=<temp aws_secret_access_key>
+$ export AWS_DEFAULT_REGION=<region>
+```
+
+or set the --profile flag to temp when
+running awscli:
+
+```shell
+aws s3 ls --profile temp
+```
+
+You should be able to access any of the resources you're
 authorized to in the labs account. These tokens will last approximately
 12 hours before needing to be reset using the process above.
 
