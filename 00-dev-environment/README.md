@@ -100,9 +100,9 @@ aws_session_token = AQoDYXdzEJr...<remainder of security token>
 Now set AWS_PROFILE to temp in your env:
 
 ```shell
-$ export AWS_ACCESS_KEY_ID=<temp aws_access_key_id >
-$ export AWS_SECRET_ACCESS_KEY=<temp aws_secret_access_key>
-$ export AWS_DEFAULT_REGION=<region>
+export AWS_ACCESS_KEY_ID=<temp aws_access_key_id >
+export AWS_SECRET_ACCESS_KEY=<temp aws_secret_access_key>
+export AWS_DEFAULT_REGION=<region>
 ```
 
 or set the --profile flag to temp when
