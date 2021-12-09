@@ -64,8 +64,6 @@ _Never_ commit credentials to a git repo.
   credentials using your MFA device and STS. You can do this in a few
   ways. The first way would be to request the token from STS via the CLI.
 
-*NOTE*
-1. You will need to obtain your 
 ##### Option 1: Getting Credentials via STS command
 
 ```shell
@@ -100,6 +98,7 @@ aws_session_token = AQoDYXdzEJr...<remainder of security token>
 ```
 
 Now set AWS_PROFILE to temp in your env:
+
 ```shell
 $ export AWS_ACCESS_KEY_ID=<temp aws_access_key_id >
 $ export AWS_SECRET_ACCESS_KEY=<temp aws_secret_access_key>
@@ -117,13 +116,13 @@ You should be able to access any of the resources you're
 authorized to in the labs account. These tokens will last approximately
 12 hours before needing to be reset using the process above.
 
-###### Exercise 0.1.1: MFA Script
+##### Exercise 0.1.1: MFA Script
 
 1. Create a script to automate the gathering and assigning of the temporary
   AWS MFA credentials from Option 1.
 1. Try to reduce the amount of manual input as much as possible.
 
-###### Question 0.1.1: 1
+##### Question 0.1.1: 1
 
 What method did you use to store the aws credentials?  What are some other
 options?
