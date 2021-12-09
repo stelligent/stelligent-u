@@ -55,8 +55,8 @@
   (NOT the Console) unless otherwise specified.
 
 * Helpful tools to check syntax and formating in CFN templates:
-  * cfn-lint: <https://github.com/aws-cloudformation/cfn-lint>
-  * Cloudformation template validation: <https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-validate-template.html>
+  - cfn-lint: <https://github.com/aws-cloudformation/cfn-lint>
+  - Cloudformation template validation: <https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-validate-template.html>
 
 ## Lesson 1.1: Introduction to CloudFormation
 
