@@ -46,8 +46,10 @@ GitHub code repositories, and, optionally, AWS Cloud9 for your development envir
 
 #### Lab 0.1.1: AWS Access Keys
 
-Add your AWS access key and secret key to your laptop. You
-will need to [install the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-welcome.html)
+Add your AWS access key and secret key to your laptop before enabling MFA. You won't
+be able to retrieve your token if the access key and secret key are not added
+to your credentials file.You will need to
+[install the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-welcome.html)
 and then run some simple commands to confirm access using your keys:
 
 - [list-buckets](https://docs.aws.amazon.com/cli/latest/reference/s3api/list-buckets.html)
@@ -97,18 +99,32 @@ aws_secret_access_key = wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
 aws_session_token = AQoDYXdzEJr...<remainder of security token>
 ```
 
-Now set AWS_PROFILE to temp in your env, or set the --profile flag to temp when
-running awscli. You should be able to access any of the resources you're
+Now set AWS_PROFILE to temp in your env:
+
+```shell
+export AWS_ACCESS_KEY_ID=<temp aws_access_key_id >
+export AWS_SECRET_ACCESS_KEY=<temp aws_secret_access_key>
+export AWS_DEFAULT_REGION=<region>
+```
+
+or set the --profile flag to temp when
+running awscli:
+
+```shell
+aws s3 ls --profile temp
+```
+
+You should be able to access any of the resources you're
 authorized to in the labs account. These tokens will last approximately
 12 hours before needing to be reset using the process above.
 
-###### Exercise 0.1.1: MFA Script
+##### Exercise 0.1.1: MFA Script
 
 1. Create a script to automate the gathering and assigning of the temporary
   AWS MFA credentials from Option 1.
 1. Try to reduce the amount of manual input as much as possible.
 
-###### Question 0.1.1: 1
+##### Question 0.1.1: 1
 
 What method did you use to store the aws credentials?  What are some other
 options?
