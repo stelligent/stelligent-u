@@ -268,7 +268,7 @@ unhealthy.
 
 Simply killing a failing server feels like an easy remedy when all your
 infrastructure is code and your systems are
-[immutable](https://stelligent.com/resources/glossary/).
+[immutable](https://stelligent.com/glossary/).
 It's usually helpful to know why something failed, though, and when you
 have to do some debugging, the ASG system offers a few options,
 including [placing a server on standby](https://docs.aws.amazon.com/autoscaling/ec2/userguide/as-enter-exit-standby.html#standby-instance-health-status)
