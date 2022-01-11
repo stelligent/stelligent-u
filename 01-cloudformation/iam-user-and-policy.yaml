@@ -1,0 +1,36 @@
+Parameters:
+  IAMUserName:
+    Type: String
+
+Resources:
+  ksSandboxMp:
+    Type: AWS::IAM::ManagedPolicy
+    Properties: 
+      Description: kshenk test policy
+      ManagedPolicyName: ks-test-policy
+      Path: /
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - s3:GetObject
+              - s3:ListAllMyBuckets
+              - s3:ListBucket
+              - s3:ListBucketMultipartUploads
+              - s3:ListBucketVersions
+              - s3:ListMultipartUploadParts
+            Resource: 'arn:aws:s3:::*/*'
+  ksSandboxUser:
+    Type: AWS::IAM::User
+    Properties: 
+      UserName: !Ref IAMUserName
+      ManagedPolicyArns:
+        - !Ref ksSandboxMp  
+
+Outputs:
+  ManagedPolicyARN:
+    Description: The managed policy ARN returned from ksSandboxMp
+    Value: !Ref ksSandboxMp
+    Export:
+      Name: ManagedPolicyArn

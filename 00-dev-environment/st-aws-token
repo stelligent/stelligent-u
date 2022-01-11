@@ -1,0 +1,129 @@
+#!/usr/bin/env bash
+
+## We can accept this as an argument up-front... if we dont' get it here
+## we'll ask for it later.
+MFA_TOKEN="$1"; shift
+
+_FNAME_BASE="aws_mfa_auth"
+_FNAME="${_FNAME_BASE}_$(date "+%s")"
+_TMP_FILE="/root/.aws/$_FNAME"
+_LOCAL_FILE="$HOME/.aws/$_FNAME"
+AWS_CLI_IMAGE_NAME="amazon/aws-cli"
+AWS_CLI_VERSION="2.2.11"
+AWS_CLI_IMAGE="$AWS_CLI_IMAGE_NAME:$AWS_CLI_VERSION"
+AWS_DEFAULT_REGION="us-east-2"
+
+CREDS_FILES=($(find $HOME/.aws -type f -name 'credentials-*'))
+SELECTED_ACCOUNT=""
+
+[[ "${#CREDS_FILES[@]}" -eq 0 ]] && {
+    echo "Could not find any 'credentials-*' files in $HOME/.aws" >&2 && exit 1
+}
+
+function mangle_filename() {
+    local abs_file="$1"; shift
+    [[ -z "$abs_file" ]] && echo "ERROR: mangle_filename requires an absolute file as an argument" >&2 && return 1
+
+    echo "$(basename "$abs_file")" | sed 's/credentials-//' && return 0
+    return 1
+}
+
+## dig values out of the creds file by key
+function get_config_val() {
+    local key="$1"; shift
+    local file="${1:-$ORIG_CREDS}"; shift
+
+    val="$(awk -F= ' $1 ~/'$key'/ { print $2 } ' $file | tr -d '"' | xargs)"
+    echo "$val"
+    [[ -n "$val" ]] && return 0
+    return 1
+}
+
+[[ "${#CREDS_FILES[@]}" -eq 1 ]] && {
+    ORIG_CREDS="${CREDS_FILES[@]}"
+    echo "Using: $ORIG_CREDS"
+} || {
+    counter=1
+    echo
+    for f in ${CREDS_FILES[@]}
+    do
+        display="Account: $(mangle_filename "$f")"
+        echo "  [$counter] $display"
+        ((counter++))
+    done
+    echo
+    while [[ "$ORIG_CREDS" == "" ]]
+    do
+        read -p "Enter the number for the credentials file to use: " num
+        ## subtract one to line up with 0-based index
+        ((num--))
+        ORIG_CREDS="${CREDS_FILES[num]}"
+        [[ -z "$ORIG_CREDS" ]] && echo "ERROR: You must chose a valid option." >&2
+    done
+}
+
+SELECTED_ACCOUNT="$(mangle_filename "$ORIG_CREDS")"
+echo " --> Inferred account $SELECTED_ACCOUNT from $(basename "$ORIG_CREDS")"
+
+## can't do much without this
+while [[ -z "$MFA_TOKEN" ]]
+do
+    read -p "Enter MFA Token: " MFA_TOKEN
+    [[ -z "$MFA_TOKEN" ]] && echo "ERROR: You must enter a token..." >&2
+done
+
+## Pull up some docker to run the aws-cli stuff
+docker run \
+    --rm -it \
+    -v $HOME/.aws:/root/.aws \
+    -e AWS_ACCESS_KEY_ID="$(get_config_val "aws_access_key_id")" \
+    -e AWS_SECRET_ACCESS_KEY="$(get_config_val "aws_secret_access_key")" \
+    -e AWS_DEFAULT_REGION="$AWS_DEFAULT_REGION" \
+    --entrypoint bash \
+    $AWS_CLI_IMAGE \
+    -lc "aws sts get-session-token \
+        --serial-number arn:aws:iam::324320755747:mfa/$SELECTED_ACCOUNT \
+        --token-code $MFA_TOKEN > $_TMP_FILE"
+
+## we look ok so far ?
+[[ "$?" -ne 0 ]] || [[ ! -f "$_LOCAL_FILE" ]] && {
+    echo "ERROR: Unable to get session token" >&2 && exit 1
+}
+
+key_id="$(jq -r '.Credentials.AccessKeyId' $_LOCAL_FILE)"
+secret="$(jq -r '.Credentials.SecretAccessKey' $_LOCAL_FILE)"
+token="$(jq  -r '.Credentials.SessionToken' $_LOCAL_FILE)"
+expiration="$(jq  -r '.Credentials.Expiration' $_LOCAL_FILE)"
+
+## if we don't have these something is amiss.
+[[ -n "$key_id" ]] && [[ -n "$secret" ]] && [[ -n "$token" ]] || {
+    echo "ERROR: Unable to proceed.
+    key_id: $key_id
+    secret: $secret
+    token: $token"
+    exit 1
+}
+
+## These are no longer needed...
+rm $HOME/.aws/${_FNAME_BASE}*
+
+## Write our creds file
+echo "[default]
+output = json
+region = $AWS_DEFAULT_REGION
+aws_access_key_id = $key_id
+aws_secret_access_key = $secret
+aws_session_token = $token
+" > $HOME/.aws/credentials
+
+echo "Expires: $expiration"
+
+## Verify we are who we think we are... 
+docker run \
+    --rm -it \
+    -v $HOME/.aws:/root/.aws \
+    $AWS_CLI_IMAGE \
+        sts get-caller-identity
+
+exit $?
+    

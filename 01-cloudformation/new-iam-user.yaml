@@ -1,0 +1,8 @@
+
+Resources:
+  ksNewSandboxUser:
+    Type: AWS::IAM::User
+    Properties: 
+      UserName: 'kshenk.new.user'
+      ManagedPolicyArns:
+        - !ImportValue ManagedPolicyArn

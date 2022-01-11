@@ -1,0 +1,15 @@
+Description: >
+  01-cloudformation 1.3.x
+
+Parameters:
+  FriendlyBucketName:
+    Type: String
+    Default: kshenk-s3-auto
+
+Resources:
+  kyleshenklabsstelligent:
+    Type: AWS::S3::Bucket
+    Description: Automatic AWS S3 Bucket Configuration
+    Properties:
+      BucketName: !Sub '${AWS::Region}-${AWS::AccountId}-${FriendlyBucketName}'
+

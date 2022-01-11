@@ -1,0 +1,16 @@
+Parameters:
+  BucketNameParameter:
+    Type: String
+
+Conditions:
+  IsPreferredRegion: !Equals
+    - !Ref AWS::Region
+    - us-east-2
+
+Resources:
+  kyleshenklabsstelligent:
+    Type: AWS::S3::Bucket
+    Description: Basic AWS S3 Bucket Configuration
+    Properties:
+      BucketName: !If [ IsPreferredRegion, !Sub '${AWS::AccountId}-kshenk', !Sub '${AWS::AccountId}-kshenk-${AWS::Region}' ]
+
