@@ -122,7 +122,7 @@ policy:
 
 - Update the Stack. *Did the stack update work?*
 
-  - Query the stack to determine its state.
+  - Using the CLI, query the stack to determine its state.
   - If the stack update was not successful,
     [troubleshoot and determine why](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-update-behaviors.html#update-replacement).
 
@@ -143,7 +143,7 @@ Replace the customer managed policy with
 #### Lab 3.1.5: Policy Simulator
 
 Read about the [AWS Policy Simulator](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_testing-policies.html)
-tool and practice using it.
+tool and practice using it either using the web console or using `simulate-custom-policy`/`simulate-principal-policy` in the IAM CLI.
 
 - Using the two roles in your stack, simulate the ability of each role
   to perform the following actions (using the AWS CLI):

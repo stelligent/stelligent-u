@@ -48,7 +48,7 @@ GitHub code repositories, and, optionally, AWS Cloud9 for your development envir
 
 Add your AWS access key and secret key to your laptop before enabling MFA. You won't
 be able to retrieve your token if the access key and secret key are not added
-to your credentials file.You will need to
+to your credentials file. You will need to
 [install the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-welcome.html)
 and then run some simple commands to confirm access using your keys:
 
@@ -161,6 +161,16 @@ Now you can execute any command using aws-vault. Example:
 
 You want to set an alias in your .bashrc or .zshrc to something like this:
 `alias aws-myprofile="aws-vault exec MY_PROFILE -- aws"`
+
+#### (For Stelligentistas) Option 3: Using Auto-MFA
+
+This section is specific for Stelligentistas going through their training Asana board.
+Located in your Asana card for "Topic 0: Development Environment", you'll find a bash script called "auto-mfa.sh" attached.
+This script is specific to our training envrionment, but can be changed down the line to accomadate other AWS accounts if need be.
+
+It's recommended that you download this script somewhere you'll be able to get to it easily. Once downloaded, make it executable (If on Unix-like: `chmod +x auto-mfa.sh`) and make sure you have the [jq utility installed on your system](https://stedolan.github.io/jq/).
+
+The script will automatically create an AWS profile and fetch the authentication token for you upon first run. Each subsequent run will refresh the authentication token.
 
 #### Lab 0.1.2: GitHub
 

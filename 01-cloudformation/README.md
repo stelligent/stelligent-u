@@ -73,6 +73,8 @@ inherently linked.
 Read through [Template Anatomy](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html)
 and get familiar with the basic parts of a CloudFormation template.
 
+When CloudFormation was initally released, it could only be written in JSON. When AWS allowed CloudFormation to be written in YAML, it became very popular due to JSON's fundamental design choice of object-based formatting, which is not optimal for the CloudFormation usecase. AWS documentation for CloudFormation has examples and syntax for both languages, but you'll come across times when user-created documentation is only available due to the exposure time that the JSON formatting has over YAML.
+
 #### Lab 1.1.1: CloudFormation Template Requirements
 
 Create the *most minimal CFN template possible* that can be used to
@@ -220,6 +222,8 @@ the Managed Policy ARN created by and exported from the previous Stack.
 
 - [List all the Stack Imports](https://docs.aws.amazon.com/cli/latest/reference/cloudformation/list-imports.html)
   in that stack's region.
+
+Circular dependencies should be avoided at all costs as it'll prevent you from destroying the stack. While CloudFormation has some safeguards to prevent that from happening, it's still possible to accidentally create a circular dependency. Generally, they can be resolved by removing the import before attempting to destroy the stack. In the case where that does not resolve the circular dependency, you'll need to create a ticket with AWS support to resolve the issue.
 
 #### Lab 1.2.4: Import/Export Dependencies
 

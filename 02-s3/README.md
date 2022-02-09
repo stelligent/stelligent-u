@@ -97,7 +97,7 @@ in this series. In this practice session, we'll get familiar with the
 #### Lab 2.1.1: Create a Bucket
 
 S3 buckets are located in regions, but their names are globally unique.
-Using "aws s3", create a bucket:
+Using `aws s3` (Not `aws s3api`), create a bucket:
 
 - Use the us-west-2 region.
 

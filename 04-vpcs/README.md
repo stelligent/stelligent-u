@@ -131,7 +131,7 @@ Launch an EC2 instance into your VPC.
 
 ##### Question: Post Launch
 
-_After you launch your new stack, can you ssh to the instance?_
+_At this point, why can't you ssh into your instance yet?_
 
 ##### Question: Verify Connectivity
 
@@ -146,7 +146,7 @@ Add a security group to your EC2 stack:
 
 ##### Question: Connectivity
 
-_Can you ssh to your instance yet?_
+_Try connecting to your instance via ssh. Why aren't you able to at this point?_
 
 #### Lab 4.1.6: Elastic IP
 
@@ -162,7 +162,7 @@ reachable from anywhere outside your VPC.
 
 ##### Question: Ping
 
-_Can you ping your instance now?_
+_Can you ping your instance?_
 
 ##### Question: SSH
 
@@ -189,9 +189,9 @@ existing instance stack.
 
 - The new subnet must have a unique netblock.
 
-- The NAT gateway should be the default route for the new subnet.
+- The existing NAT gateway should be the default route for the new subnet.
 
-- Aside from the subnet association, configure this instance just like
+- Aside from the subnet association, configure the new EC2 instance just like
   the first one.
 
 - This instance will not have an Elastic IP.
@@ -212,7 +212,7 @@ instance?_
 ##### Question: Recreating the Gateway
 
 _If you recreate the NAT gateway and detach the Elastic IP from the public EC2
-instance, can you still reach the instance from the outside?_
+instance, can you still reach the instance from outside the VPC?_
 
 Test it out with the AWS console.
 
@@ -220,19 +220,19 @@ Test it out with the AWS console.
 
 Add Network ACLs to your VPC stack.
 
-First, add one on the public subnet:
+First, create an ACL and attach it to the public subnet:
 
 - It applies to all traffic (0.0.0.0/0).
 
-- Only allows ssh traffic from your IP address.
+- Only allows ssh traffic from your [IP address](https://ipinfo.io/).
 
 - Allows egress traffic to anything.
 
 ##### Question: EC2 Connection
 
-_Can you still reach your EC2 instances?_
+_Can you still reach your EC2 instances by ssh? Can you ping it? Why are/aren't able you to connect to it?_
 
-Add another ACL to your private subnet:
+Create another ACL and attach it to your private subnet:
 
 - Only allow traffic from the public subnet.
 
