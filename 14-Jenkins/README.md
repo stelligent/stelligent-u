@@ -143,7 +143,7 @@ To do this, the process would require 2 steps.
 
 Now that Jenkins is configured in the proper manner, you may begin
 exploring the facilities that it offers. Out of the box, it is pretty
-basic but there are a few things you should be aware and why/when to
+basic but there are a few things you should be aware of and why/when to
 use them.
 
 - [Script console](https://wiki.jenkins.io/display/JENKINS/Jenkins+Script+Console)
