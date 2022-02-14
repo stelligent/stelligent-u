@@ -62,7 +62,7 @@ of plugins to support building, deploying and automating any project.*
 
 Let's start off by [creating the Jenkins infrastructure](https://aws.amazon.com/getting-started/projects/setup-jenkins-build-server/).
 
-#### Lab 14.1.1: Installation with CloudFormation
+#### Lab 14.1.1: Creating the Infrastructure with CloudFormation
 
 Jenkins, operating as a CI/CD server, can be hosted on-premise with a
 dedicated machine or hosted [in the cloud](https://d1.awsstatic.com/Projects/P5505030/aws-project_Jenkins-build-server.pdf).
@@ -81,11 +81,11 @@ to do this you will need the following:
 You may work off of the provided `base.yaml` template.
 
 Once you have created the CloudFormation template, launch it and navigate
-to the Jenkins instance when complete. Finish the installation by
-installing Jenkins on the EC2 instance, and starting the service. Finally,
-following the admin install wizard by navigating to the instance IP at the
-correct port. Verify that Jenkins is set up and ready for use by ensuring
-the "Welcome to Jenkins!" prompt is present and you can:
+to the Jenkins instance when complete. Install Jenkins on the EC2 instance, 
+and starting the service. Finally, following the admin install wizard by 
+navigating to the instance IP at the correct port. Verify that Jenkins is 
+set up and ready for use by ensuring the "Welcome to Jenkins!" prompt is 
+present and you can:
 
 - Add a "New Item"
 - Browse "People"
