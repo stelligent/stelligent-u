@@ -194,23 +194,12 @@ Resources:
           FromPort: 80
           IpProtocol: tcp
           ToPort: 80
+      SecurityGroupEgress:
+        - CidrIp: 0.0.0.0/0
+          Description: Allow all outbound traffic by default
+          IpProtocol: "-1"          
       VpcId:
         Ref: MyVpc
-  MyAppLBSecurityGroupEgress:
-    Type: AWS::EC2::SecurityGroupEgress
-    Properties:
-      GroupId:
-        Fn::GetAtt:
-          - MyAppLBSecurityGroup
-          - GroupId
-      IpProtocol: tcp
-      Description: Load balancer to target
-      DestinationSecurityGroupId:
-        Fn::GetAtt:
-          - MyAppServiceSecurityGroup
-          - GroupId
-      FromPort: 80
-      ToPort: 80
   MyAppLBPublicListener:
     Type: AWS::ElasticLoadBalancingV2::Listener
     Properties:
