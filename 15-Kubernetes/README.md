@@ -138,7 +138,6 @@ us-east-1d, us-east-1f (Service: AmazonEKS; Status Code: 400; Error Code:
 UnsupportedAvailabilityZoneException; Request
 ID:a4b1201d-6bb1-4c4f-98f8-8fb278f48bf9)
 
-
 #### Lab 15.1.2: Running Commands on Newly Created Cluster
 
 Now that you've successfully stood up the EKS cluster you're going to test
@@ -318,7 +317,7 @@ using the same methods.
 > The command should return `deployment.apps/nginx-deployment created`
 
 - Try using the kubectl command to get all deployments (It's similar to the command used to list all pods).
-  to get the list of deployments present in the cluster. 
+  to get the list of deployments present in the cluster.
   - Your deployment should show up in the list of deployments
 - Run the command: `kubectl describe deployment nginx-deployment`
   - The results should show basic information about the deployment. Some
@@ -553,7 +552,7 @@ on your local machine for this section.
 
 #### Lab 15.5.1: Create ECR Repository
 
-- Deploy the `ecr.yaml` file located in the `ecr` directory of this
+- Deploy the CloudFormation template `ecr.yaml` file located in the `ecr` directory of this
   module.
   - You will need to specify a value for the `Prefix` parameter of this
     template.
@@ -570,11 +569,19 @@ Once you have navigated to your ECR repository:
 
 - Change to the `sample_app` directory of this module in your terminal.
 - In the AWS console click the `View push commands` and follow the steps
-  for [authenticating](https://docs.aws.amazon.com/AmazonECR/latest/userguide/Registries.html#registry_auth)
+  for building, [authenticating](https://docs.aws.amazon.com/AmazonECR/latest/userguide/Registries.html#registry_auth)
   and [pushing](https://docs.aws.amazon.com/AmazonECR/latest/userguide/docker-push-ecr-image.html)
   to your ECR repository.
 
 Look in your ECR repository and verify that the new images is in the list.
+
+**Note for Apple Silicon Users:** You've created a Kubernetes cluster using the `linux/amd64` instruction set, whereas if you were to build a container on your Apple Silicon computer, it would build a container using `linux/arm64`, which are not cross-compatible. Thankfully, Docker offers an easy way to cross-compile containers.
+
+- Make sure that you're on a fairly recent version of Docker Desktop (version 4.0.1 was used when writing this)
+- Create a new builder using `docker buildx create --use`
+- To build the container targeting `linux/amd64`, run `docker buildx build --platform linux/amd64 .`
+
+for further information, refer to the [Docker Buildx documentation](https://docs.docker.com/buildx/working-with-buildx/)
 
 ### Retrospective 15.5
 
@@ -611,8 +618,7 @@ definition file.
 - Expose the [container port](https://kubernetes.io/docs/concepts/services-networking/connect-applications-service/#exposing-pods-to-the-cluster)
   `3000` in the pod definition.
 - Add an [env variable](https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/#define-an-environment-variable-for-a-container)
-  to the pod spec named `REACT_APP_BG_COLOR` and set the value to a
-  [Bgcolor value](https://cssgradient.io/)
+  to the pod spec named `REACT_APP_BG_COLOR` and set the value to either a color hexcode or a CSS colorname
 - Set replicas count to `1`
 
 Launch the deployment when the definition file has been completed. Be
@@ -633,7 +639,7 @@ so we can access it externally.
 
 - Run the command:
   `kubectl expose deployment custom-deployment --type=LoadBalancer \
-  --name=custom-service --dry-run -o=yaml >> custom-service.yaml` to
+  --name=custom-service --port=3000 --dry-run -o=yaml >> custom-service.yaml` to
   generate the service definition file.
 - Open the file and inspect the fields.
 - The `type:` field under the `spec:` field specifies what type of service
