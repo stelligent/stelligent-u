@@ -74,7 +74,7 @@
 ## Guidance
 
 - Prerequisites: This module requires a basic understanding of Docker and
-  how to write a Dockerfile. Additionally, existing knowledge of Kubernetes is benefitial.
+  how to write a Dockerfile. Additionally, existing knowledge of Kubernetes is beneficial.
 - Explore the official docs! See the the Kubernetes [Documentation](https://kubernetes.io/docs/home/),
   [API Reference](https://kubernetes.io/docs/concepts/overview/kubernetes-api/),
   and [kubectl](https://kubernetes.io/docs/reference/kubectl/overview/)
