@@ -5,7 +5,7 @@
 1. Run `docker build .`
 1. Run
 
-    ```bash
+    ```sh
     docker run -p 8080:3000 \
     --env REACT_APP_BG_COLOR=<color of choice> <image hash from build command>
     ```

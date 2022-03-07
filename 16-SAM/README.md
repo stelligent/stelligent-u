@@ -92,7 +92,7 @@ application.
 
 - Use the SAM CLI to initialize a new application.
 
-```bash
+```sh
 sam init --runtime python3.7
 ```
 
@@ -136,7 +136,7 @@ that makes working with events very easy.
 - Looks at the different options available for an event by using the
   `--help` flag.
 
-  ```bash
+  ```sh
   sam local generate-event apigateway aws-proxy --help
   ```
 
@@ -154,18 +154,18 @@ directly or we can spin up an API reachable at `localhost`.
 
 - Invoke the lambda function directly.
 
-  ```bash
+  ```sh
   sam local invoke "HelloWorldFunction" -e events/event.json
   ```
 
 - Start the api and curl the `/hello` endpoint integrated with the
   lambda function.
 
-  ```bash
+  ```sh
   sam local start-api
   ```
 
-  ```bash
+  ```sh
   curl http://127.0.0.1:3000/hello
   ```
 
@@ -215,7 +215,7 @@ to store packaged artifacts.
 
 - Create an S3 bucket using the AWS CLI.
 
-  ```bash
+  ```sh
   aws s3 mb s3://<bucket> --region <region>
   ```
 
@@ -223,7 +223,7 @@ Once the bucket is created, the application can be built and packaged.
 
 - Run the SAM CLI build and package commands.
 
-  ```bash
+  ```sh
   sam build && sam package --output-template packaged.yaml --s3-bucket <bucket>
   ```
 
@@ -237,7 +237,7 @@ easily referenced in AWS and will not conflict with any other stacks.
 
 - Run the SAM CLI deploy command.
 
-  ```bash
+  ```sh
   sam deploy --template-file packaged.yaml --capabilities CAPABILITY_IAM \
   --stack-name <stack>
   ```
@@ -252,7 +252,7 @@ flag need to be supplied?_
 
 - Inspect the stack outputs using the AWS CLI.
 
-  ```bash
+  ```sh
   aws cloudformation describe-stacks --stack-name <stack> \
   --query "Stacks[].Outputs"
   ```
@@ -266,7 +266,7 @@ the stack back down, otherwise investigate what went wrong.
 _What resources were created for this stack that were not explicitly
 defined in the template?_
 
-```bash
+```sh
 aws cloudformation delete-stack --stack-name <stack>
 ```
 
@@ -345,7 +345,7 @@ messages.
   definition.
 - Generate a new SQS event.
 
-  ```bash
+  ```sh
   sam local generate-event sqs receive-message
   ```
 
@@ -407,13 +407,13 @@ a container, providing Docker is installed.
 
 - Start DynamoDB using Docker with the following command:
 
-  ```bash
+  ```sh
   docker run -p 8000:8000 amazon/dynamodb-local
   ```
 
 - Ensure DynamoDB is reachable.
 
-  ```bash
+  ```sh
   aws dynamodb list-tables --endpoint-url http://localhost:8000
   ```
 
@@ -452,7 +452,7 @@ Can you determine a way to invoke the function directly?_
  JSON with a table definition. Replace the TableLogicalID value with the
  name used in the SAM template definition and run the following:
 
-```bash
+```sh
 aws dynamodb create-table --cli-input-json file://create-table.json \
 --endpoint-url http://localhost:8000
 ```
@@ -491,7 +491,7 @@ Run the API locally and curl the `/write` endpoint. If everything worked
 as it should, the following command should indicate new records were
 indeed added to the local table:
 
-```bash
+```sh
 aws dynamodb scan --table-name <table_name> --endpoint-url http://localhost:8000
 ```
 
@@ -577,7 +577,7 @@ accomplishes a few things.
 
 - To get more familiar with these concepts, create a new SAM application.
 
-  ```bash
+  ```sh
   sam init --runtime nodejs8.10
   ```
 
@@ -590,7 +590,7 @@ alias that was created.
 
 - Copy the function ARN from the following command:
 
-  ```bash
+  ```sh
   aws cloudformation describe-stacks --stack-name <stack> --query "Stacks[].Outputs"
   ```
 

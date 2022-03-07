@@ -67,16 +67,16 @@ _Never_ commit credentials to a git repo.
 
 ##### Option 1: Getting Credentials via STS command
 
-```shell
+```sh
 aws sts get-session-token \
     --serial-number arn:aws:iam::324320755747:mfa/USERNAME \
     --token-code 123456` \
 /
 ```
 
-This will return json containing the temporarily credentials.
+This will return JSON containing the temporarily credentials.
 
-```shell
+```json
 "Credentials": {
     "SecretAccessKey": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
     "SessionToken": "AQoDYXdzEJr...<remainder of security token>",
@@ -89,7 +89,7 @@ This will return json containing the temporarily credentials.
 Using these temporary credentials you will need to edit your `.aws/credentials`
 file and change the security configuration for the profile to be used.
 
-```shell
+```ini
 [temp]
 output = json
 region = us-east-1
@@ -100,7 +100,7 @@ aws_session_token = AQoDYXdzEJr...<remainder of security token>
 
 Now set AWS_PROFILE to temp in your env:
 
-```shell
+```sh
 export AWS_ACCESS_KEY_ID=<temp aws_access_key_id >
 export AWS_SECRET_ACCESS_KEY=<temp aws_secret_access_key>
 export AWS_DEFAULT_REGION=<region>
@@ -109,7 +109,7 @@ export AWS_DEFAULT_REGION=<region>
 or set the --profile flag to temp when
 running awscli:
 
-```shell
+```sh
 aws s3 ls --profile temp
 ```
 
@@ -148,7 +148,7 @@ and start over.
 To use aws-vault for temporary credential management is simple. You need to add
 the arn of your mfa token to your profiles config in `~/.aws/config` like so:
 
-```shell
+```ini
 [profile MY_PROFILE]
 output = json
 region = us-east-1

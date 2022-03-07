@@ -197,9 +197,13 @@ Run the command `kubectl get pods`.  The results should show that there
 are not any pods deployed in the default namespace.
 
 - Run the command:
-  `kubectl run --generator=run-pod/v1 busybox --image=busybox:latest -- sleep 3000`
+  ```sh
+  kubectl run --generator=run-pod/v1 busybox \
+  --image=busybox:latest -- sleep 3000
+  ```
 
-> The result of the command should be `pod/busybox created`
+  The result of the command should be:
+  > `pod/busybox created`
 
 - In the `kubectl` command above the option `--generator=run-pod/v1` is
   used to launch a single pod
@@ -251,8 +255,10 @@ Definition files are useful because they can be put into version control
 and used in to lock in pod configuration.
 
 - Run the command:
-  `kubectl run --generator=run-pod/v1 busybox --image=busybox:latest \
-  --dry-run -o=yaml -- sleep 3000 > busybox-pod-definition-lab23.yaml`
+  ```sh
+  kubectl run --generator=run-pod/v1 busybox --image=busybox:latest \
+  --dry-run -o=yaml -- sleep 3000 > busybox-pod-definition-lab23.yaml
+  ```
 
 - Open `busybox-pod-definition-lab22.yaml`
   - Compare this definition file to the file
@@ -286,7 +292,8 @@ Now that we've got a pod definition file create we can launch a pod with it.
 
 - Run the command: `kubectl create -f busybox-pod-definition-lab23.yaml`
 
-> The result of the command should be `pod/busybox created`
+  The result of the command should be:
+  > `pod/busybox created`
 
 - Run command `kubectl get pods`. The newly created pod should appear in
   the list.
@@ -316,9 +323,11 @@ using the same methods.
 #### Lab 15.3.1: Standing Up Deployment Imperatively
 
 - Run the command:
-  `kubectl create deployment nginx-deployment --image=nginx:latest`
-
-> The result of the command should be `deployment.apps/nginx-deployment created`
+  ```sh
+  kubectl create deployment nginx-deployment --image=nginx:latest
+  ```
+  The result of the command should be:
+  > `deployment.apps/nginx-deployment created`
 
 - Try running the [kubectl](https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#-strong-getting-started-strong-)
   to get the list of deployments present in the cluster.
@@ -377,8 +386,10 @@ This section will go over creating deployment definition files using
 `kubectl`.
 
 - Run the command:
-  `kubectl create deployment nginx-deployment --image=nginx:latest \
-  --dry-run -o=yaml > nginx-deployment-lab33.yaml`
+  ```sh
+  kubectl create deployment nginx-deployment --image=nginx:latest \
+  --dry-run -o=yaml > nginx-deployment-lab33.yaml
+  ```
   to generate a deployment definition file.
 - Compare this newly created definition file to the one created in the
   previous lesson.
@@ -634,9 +645,11 @@ In this section we'll be setting the deployment up with a
 so we can access it externally.
 
 - Run the command:
-  `kubectl expose deployment custom-deployment --type=LoadBalancer \
-  --name=custom-service --dry-run -o=yaml >> custom-service.yaml` to
-  generate the service definition file.
+  ```sh
+  kubectl expose deployment custom-deployment --type=LoadBalancer \
+  --name=custom-service --dry-run -o=yaml >> custom-service.yaml
+  ```
+  to generate the service definition file.
 - Open the file and inspect the fields.
 - The `type:` field under the `spec:` field specifies what type of service
   this will be.  Kubernetes supports [other service types](https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types)
