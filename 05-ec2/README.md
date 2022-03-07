@@ -350,7 +350,7 @@ done this already, try it and repeat Lab 5.2.3.
 > Hint: when you want to put a bunch of commands into UserData in a
 > YAML template, use this format to keep it readable:
 
-```
+```yaml
 UserData:
   Fn::Base64: !Sub |
     # bash code goes here just like a normal script.
