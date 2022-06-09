@@ -65,16 +65,16 @@ _Never_ commit credentials to a git repo.
   credentials using your MFA device and STS. You can do this in a few
   ways. The first way would be to request the token from STS via the CLI.
 
-##### Option 1: Getting Credentials via STS command
+##### Option 1: Getting Credentials via STS command (in the AWS console > [user] > Summary page under "Security credentials" tab, use the value for the "Assigned MFA device"). The token-code is your MFA validation code.
 
 ```shell
 aws sts get-session-token \
     --serial-number arn:aws:iam::324320755747:mfa/USERNAME \
-    --token-code 123456` \
+    --token-code 123456 \
 /
 ```
 
-This will return json containing the temporarily credentials.
+This will return json containing the temporarily credentials.(**WARNING: special characters in the 'SecretAccessKey' may not work for Windoze machines)  
 
 ```shell
 "Credentials": {
@@ -98,7 +98,7 @@ aws_secret_access_key = wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
 aws_session_token = AQoDYXdzEJr...<remainder of security token>
 ```
 
-Now set AWS_PROFILE to temp in your env:
+Now set AWS_PROFILE to temp in your environment variables:
 
 ```shell
 export AWS_ACCESS_KEY_ID=<temp aws_access_key_id >
