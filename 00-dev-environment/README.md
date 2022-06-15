@@ -122,16 +122,19 @@ authorized to in the labs account. These tokens will last approximately
 1. Create a script to automate the gathering and assigning of the temporary
   AWS MFA credentials from Option 1.
 1. Try to reduce the amount of manual input as much as possible.
+Completed getcreds.sh
 
 ##### Question 0.1.1: 1
 
 What method did you use to store the aws credentials?  What are some other
 options?
+Temp File to output
 
 ###### Question 0.1.1: 2
 
 Which AWS environment variable cannot be set in order to run the
 `aws sts get-session-token` command?
+SessionToken because you're fetching it
 
 ##### Option 2: Using AWS Vault to automatically handle your temporary tokens
 
