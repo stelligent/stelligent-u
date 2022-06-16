@@ -12,11 +12,8 @@ Resources:
   S3Bucket:
     Type: 'AWS::S3::Bucket'
     Properties:
-      # Tags: 
-      #   - Key: 'Name'
-      #     Value: !Join ["-", [ !Ref "AWS::AccountId", !Ref BucketName]]
-      BucketName: !Join ["-", [ !Ref "AWS::AccountId", !Ref BucketName]]
+      BucketName: !If ["BucketInPreferredRegion",  !Join ["-", [ !Ref "AWS::AccountId", !Ref BucketName]],  !Join ["-", [ !Ref "AWS::Region", !Ref BucketName]]]
 
-# Outputs:
-#   AWSAccountId:
-#    Value: !Ref 'AWS::AccountId'
+Conditions:
+  BucketInPreferredRegion: 
+    !Equals [!Ref "AWS::Region", "us-west-1"]

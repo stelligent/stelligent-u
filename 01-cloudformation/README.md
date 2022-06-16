@@ -162,6 +162,8 @@ name.
 
 _Why do we prefer the YAML format for CFN templates?_
 
+It's more human readable than JSON, I think.
+
 #### Question: Protecting Resources
 
 _What else can you do to prevent resources in a stack from being deleted?_
