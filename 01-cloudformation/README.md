@@ -170,13 +170,22 @@ _What else can you do to prevent resources in a stack from being deleted?_
 
 See [DeletionPolicy](https://aws.amazon.com/premiumsupport/knowledge-center/cloudformation-accidental-updates/).
 
+you can update it via `update-termination-protection` in the AWS CLI
+
 _How is that different from applying Termination Protection?_
+
+It's done programmatically and can be scripted as part of a deployment
 
 #### Task: String Substitution
 
 Demonstrate 2 ways to code string combination/substitution using
 built-in CFN functions.
 
+Combination:
+ `!Join ["-", [ !Ref "AWS::AccountId", !Ref BucketName]],  !Join ["-", [ !Ref "AWS::Region", !Ref BucketName]]]`
+
+Substitution using a conditional and ad IF :
+` !If ["BucketInPreferredRegion",  !Join ["-", [ !Ref "AWS::AccountId", !Ref BucketName]],  !Join ["-", [ !Ref "AWS::Region", !Ref BucketName]]]`
 ## Lesson 1.2: Integration with Other AWS Resources
 
 ### Principle 1.2
