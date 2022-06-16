@@ -1,0 +1,15 @@
+---
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: 'mattg s3 bucket'
+
+Parameters:
+  BucketName:
+    Type: String
+    Description: 'The bucket'
+    Default: "mattg-stelligent-bucket"
+Resources:
+  S3Bucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      BucketName: !Ref BucketName
