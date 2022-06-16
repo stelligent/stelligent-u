@@ -1,5 +1,5 @@
 ---
-AWSTemplateFormatVersion: "2010-09-09" 
+AWSTemplateFormatVersion: "2010-09-09"
 Description: CloudFormation Template for s3 bucket
 Resources:
   S3Bucket:
@@ -9,9 +9,21 @@ Resources:
     Properties:
       BucketName: blueberrybucket1
 Parameters:
-    BucketName:
-        Type: String
+  BucketName:
+    Type: String
+  EnvType:
+    Description: Environment type.
+    Default: test
+    Type: String
+    AllowedValues:
+      - prod
+      - test
+    ConstraintDescription: must specify prod or test.
 Outputs:
   S3Bucket:
     Description: Bucket Template Creation.
     Value: !Ref S3Bucket
+Conditions:
+  CreateProdResources: !Equals
+    - !Ref EnvType
+    - prod
