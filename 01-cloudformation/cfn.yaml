@@ -7,16 +7,17 @@ Resources:
     Type: 'AWS::S3::Bucket'
     Description: Creating Amazon S3 bucket from CloudFormation
     Properties:
-    Condition: CreateBucketName
+    # Condition: CreateBucketName
+    # BucketName: if CreateBucketName !Sub '${AWS::AccountId}-${BucketName}'
+    BucketName: !If ["CreateBucketName", '${AWS::AccountId}-${BucketName}', '${AWS::Region}-${BucketName}']
 Conditions:
   CreateBucketName: !Equals
     - !Ref "AWS::Region"
     - us-east-1
-      BucketName: !Sub '${AWS::AccountId}-${BucketName}'
+    # BucketName: !Sub '${AWS::AccountId}-${BucketName}'
   CreateProdResources: !Not
-    - !Ref "AWS::Region"
-    - us-east-1
-      BucketName: !Sub '${AWS::Region}-${BucketName}'
+    - !Ref EnvType
+    - prod
 Parameters:
   BucketName:
     Type: String
@@ -36,7 +37,3 @@ Outputs:
     Value: !Ref "AWS::Region"
   AccountId:
     Value: !Ref "AWS::AccountId"
-Conditions:
-  CreateProdResources: !Equals
-    - !Ref EnvType
-    - prod
