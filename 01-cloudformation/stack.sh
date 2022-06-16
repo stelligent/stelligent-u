@@ -1,3 +1,3 @@
 #/bin/bash
 
-aws cloudformation create-stack --stack-name mattgstack --template-body file://cfn-bucket.yaml 
+aws cloudformation update-stack --stack-name mattgstack --template-body file://cfn-bucket.yaml --parameters file://cfn-bucket-params.json

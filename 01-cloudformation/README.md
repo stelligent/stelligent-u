@@ -97,6 +97,8 @@ create an AWS Simple Storage Service (S3) Bucket.
 - Commit the template to your Github repository under the 01-cloudformation
   folder.
 
+  committed as cfn-bucket.yaml
+
 #### Lab 1.1.2: Stack Parameters
 
 Update the same template by adding a CloudFormation

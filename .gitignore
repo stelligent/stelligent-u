@@ -11,3 +11,6 @@ __pycache__
 
 .ruby-version
 *.pem
+
+**/**/local/*
+01-cloudformation/local/*
