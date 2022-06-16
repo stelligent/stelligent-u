@@ -23,6 +23,10 @@ Outputs:
   S3Bucket:
     Description: Bucket Template Creation.
     Value: !Ref S3Bucket
+  MyStacksRegion:
+    Value: !Ref "AWS::Region"
+  AccountId:
+    Value: !Ref "AWS::AccountId"
 Conditions:
   CreateProdResources: !Equals
     - !Ref EnvType
