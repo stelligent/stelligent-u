@@ -7,9 +7,16 @@ Parameters:
   BucketName:
     Type: String
     Description: 'The bucket'
-    Default: "mattg-stelligent-bucket"
+    Default: "mattgDefaultBucketName"
 Resources:
   S3Bucket:
     Type: 'AWS::S3::Bucket'
     Properties:
-      BucketName: !Ref BucketName
+      # Tags: 
+      #   - Key: 'Name'
+      #     Value: !Join ["-", [ !Ref "AWS::AccountId", !Ref BucketName]]
+      BucketName: !Join ["-", [ !Ref "AWS::AccountId", !Ref BucketName]]
+
+# Outputs:
+#   AWSAccountId:
+#    Value: !Ref 'AWS::AccountId'
