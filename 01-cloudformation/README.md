@@ -83,7 +83,17 @@ create an AWS Simple Storage Service (S3) Bucket.
 - Launch a Stack by [using the AWS CLI tool](https://docs.aws.amazon.com/cli/latest/reference/cloudformation/create-stack.html)
   to run the template. Use your preferred region.
 
+```
+aws cloudformation --profile temp create-stack --stack-name JoelsStack --template-body file://cfn.yaml
+```
+
 - Note the output provided by creating the Stack.
+
+```
+{
+    "StackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/JoelsStack/60ea9340-ed82-11ec-acd1-121a3e1e60c1"
+}
+```
 
 - Though *functionally* unnecessary, the Description (i.e. its *purpose*)
   element documents your code's *intent*, so provide one. The Description
@@ -148,6 +158,7 @@ name.
   to one of them.
 
 - Try to delete the Stack using the AWS CLI. What happens?
+
 
 - Remove termination protection and try again.
 
