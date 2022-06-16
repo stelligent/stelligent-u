@@ -123,10 +123,11 @@ authorized to in the labs account. These tokens will last approximately
   AWS MFA credentials from Option 1.
 1. Try to reduce the amount of manual input as much as possible.
 
+see autoscript.sh in this directory
 ##### Question 0.1.1: 1
 
 What method did you use to store the aws credentials?  What are some other
-options?
+options? I stored the AWS credentails using heredoc, but using the config API would be better
 
 ###### Question 0.1.1: 2
 
@@ -208,7 +209,7 @@ _Running the two commands in [lab 0.1.1](#lab-011-aws-access-keys) and
 results. What does this tell you about the access the keys give you on
 your laptop and the access you have in the Cloud9 environment? What
 other methods are there to provide this level of access without using
-keys?_
+keys?_ You can put keys in Vault, or you can use federation technologies like Okta
 
 #### Task
 
