@@ -1,6 +1,6 @@
 [
     {
         "ParameterKey": "BucketName",
-        "ParameterValue": "AWS::AccountId"."JoelsS3BucketOGold"
+        "ParameterValue": "joels-s3-bucket-o-gold"
     }
 ]
