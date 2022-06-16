@@ -175,14 +175,18 @@ name.
 #### Question: Why YAML
 
 _Why do we prefer the YAML format for CFN templates?_
+It's easy to understand
 
 #### Question: Protecting Resources
 
 _What else can you do to prevent resources in a stack from being deleted?_
+set the DeletionPolicy:
 
 See [DeletionPolicy](https://aws.amazon.com/premiumsupport/knowledge-center/cloudformation-accidental-updates/).
 
 _How is that different from applying Termination Protection?_
+while the stack is deleted the resources are preserved
+
 
 #### Task: String Substitution
 
