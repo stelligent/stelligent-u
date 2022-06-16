@@ -8,6 +8,9 @@ Resources:
     Description: Creating Amazon S3 bucket from CloudFormation
     Properties:
       BucketName: blueberrybucket1
+Parameters:
+    BucketName:
+        Type: String
 Outputs:
   S3Bucket:
     Description: Bucket Template Creation.
