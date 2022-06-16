@@ -118,7 +118,12 @@ to the stack and use the parameter's value as the name of the S3 bucket.
 - Update your stack.
 
 - Add the template changes and new parameter file to your Github repo.
-
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/01-cloudformation$ aws cloudformation --profile temp create-stack --stack-name JoelsStack --template-body file://cfn.yaml --parameters file://cfn.json
+{
+    "StackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/JoelsStack/2094e2d0-ed8e-11ec-960e-0ae6c94b1995"
+}
+```
 #### Lab 1.1.3: Pseudo-Parameters
 
 Update the same template by prefixing the name of the bucket with the
