@@ -8,11 +8,14 @@ Parameters:
     Type: String
     Description: 'The name of the user'
     Default: 'mattgDefaultName'
+  UserNameParameter:
+    Type : 'AWS::SSM::Parameter::Value<String>'
+    Default: mattgusername
 Resources:
   IAMUser:
     Type: 'AWS::IAM::User'
     Properties:
-      UserName: !Ref UserName
+      UserName: !Ref UserNameParameter
       ManagedPolicyArns: 
         - "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"
 

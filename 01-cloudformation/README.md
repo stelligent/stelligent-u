@@ -254,6 +254,8 @@ Cloudformation is smart enough to disallow deletions when there are interstack d
 Show how to use the IAM policy tester to demonstrate that the user
 cannot perform 'Put' actions on any S3 buckets.
 
+After creating the stack, you can use the policy tester to simulate a user and choose which actions to test. Testing a "Put" against S3, access was denied, verifying this user can't do that write option. 
+
 #### Task: SSM Parameter Store
 
 Using the AWS Console, create a Systems Manager Parameter Store
