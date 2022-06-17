@@ -15,3 +15,7 @@ Resources:
       UserName: !Ref UserName
       ManagedPolicyArns: 
         - "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"
+
+Outputs:
+  IAMManagedS3AccessArn:
+    Value: "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"
