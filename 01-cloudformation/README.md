@@ -235,6 +235,12 @@ IAM Managed Policy that controls that user.
 
 - Create the Stack.
 
+```
+aws cloudformation --profile temp delete-stack --stack-name JoelsStack
+```
+```
+aws cloudformation --profile temp create-stack --stack-name JoelsStack --template-body file://cfn.yaml --parameters file://cfn.json --capabilities CAPABILITY_NAMED_IAM --debug
+```
 
 #### Lab 1.2.2: Exposing Resource Details via Exports
 
@@ -255,6 +261,49 @@ the Managed Policy ARN created by and exported from the previous Stack.
 
 - [List all the Stack Imports](https://docs.aws.amazon.com/cli/latest/reference/cloudformation/list-imports.html)
   in that stack's region.
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/01-cloudformation$ aws cloudformation --profile temp list-exports
+{
+    "Exports": [
+        {
+            "ExportingStackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/Pipeline-Factory-automated-portfolio/20073530-ca15-11ec-b9bb-12d17da272b5",
+            "Name": "ECS-Application-ServiceCatalogCloudFormationProductName",
+            "Value": "ECSWebApplication"
+        },
+        {
+            "ExportingStackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/Pipeline-Factory-automated-portfolio/20073530-ca15-11ec-b9bb-12d17da272b5",
+            "Name": "ECS-Application-ServiceCatalogCloudFormationProvisioningArtifactIds",
+            "Value": "pa-y3zypza6cctn2"
+        },
+        {
+            "ExportingStackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/Pipeline-Factory-automated-portfolio/20073530-ca15-11ec-b9bb-12d17da272b5",
+            "Name": "ECS-Application-ServiceCatalogCloudFormationProvisioningArtifactNames",
+            "Value": "NGINXProductExample"
+        },
+        {
+            "ExportingStackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/Pipeline-Factory-automated-portfolio/20073530-ca15-11ec-b9bb-12d17da272b5",
+            "Name": "Pipeline-Factory-automated-portfolio-ServiceCatalogPortfolio",
+            "Value": "port-ri7dzcazjawbk"
+        },
+        {
+            "ExportingStackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/Pipeline-Factory-automated-portfolio/20073530-ca15-11ec-b9bb-12d17da272b5",
+            "Name": "Pipeline-Factory-automated-portfolio-ServiceCatalogPortfolioName",
+            "Value": "Validated Products"
+        },
+        {
+            "ExportingStackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/Pipeline-Factory-automated-portfolio/20073530-ca15-11ec-b9bb-12d17da272b5",
+            "Name": "Pipeline-Factory-automated-portfolio-ServiceCatalogProductTagOptions",
+            "Value": "tag-34ppwuueljmf4"
+        },
+        {
+            "ExportingStackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/mattgstack/b5a82e70-ee5d-11ec-9334-0e6ca049a619",
+            "Name": "mattgstack-s3-arn",
+            "Value": "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"
+        }
+    ]
+}
+```
 
 #### Lab 1.2.4: Import/Export Dependencies
 
