@@ -88,3 +88,11 @@ Outputs:
     Value: !Ref "AWS::Region"
   AccountId:
     Value: !Ref "AWS::AccountId"
+  #MyStacksUser:
+  #  Value: !Ref "arn:aws:iam::*"
+  MyStacksPolicy:
+    Value: !Ref "AWS::IAM::ManagedPolicy"
+  IAMManagedS3AccessArn:
+    Value: "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"
+    Export:
+      Name: !Sub "${AWS::StackName}-s3-arn"
