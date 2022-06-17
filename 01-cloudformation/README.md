@@ -240,6 +240,13 @@ Delete your CFN stacks in the same order you created them in. Did you
 succeed? If not, describe how you would _identify_ the problem, and
 resolve it yourself.
 
+DId not succeded:
+
+```
+Export mattgstack-s3-arn cannot be deleted as it is in use by mattgimportstack
+```
+Cloudformation is smart enough to disallow deletions when there are interstack dependencies like the one used in the above import stack. Deletions in the reverse order they were created in would be one simple way to avoid this issue
+
 ### Retrospective 1.2
 
 #### Task: Policy Tester
