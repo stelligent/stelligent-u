@@ -1,0 +1,54 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Read Only Template
+Resources:
+  JoelsMyIamUser:
+    Type: AWS::IAM::User
+    Properties:
+      UserName: JoelsReadOnlyUser
+      Policies:
+        - PolicyName: JoelsReadOnlyPolicy
+          PolicyDocument:
+            {
+                "Version": "2012-10-17",
+                "Statement": [
+                    {
+                        "Sid": "MyReadOnlyBucketPolicyV1",
+                        "Effect": "Allow",
+                        "Action": [
+                "s3:ListBucket",
+                            "s3:GetObject*"
+                        ],
+                        "Resource": [
+                            "arn:aws:s3:::s3-bucket-ro",
+                            "arn:aws:s3:::s3-bucket-ro/*"
+                        ]
+                    }
+                ]
+            }
+
+  UserPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      Description: Policy That Manages The User
+      ManagedPolicyName: JoelsReadOnlyPolicyInsideMangedPolicy
+      PolicyDocument:
+        {
+            "Version": "2012-10-17",
+            "Statement": [
+                {
+                    "Sid": "MyReadOnlyBucketPolicyV1",
+                    "Effect": "Allow",
+                    "Action": [
+            "s3:ListBucket",
+                        "s3:GetObject*"
+                    ],
+                    "Resource": [
+                        "arn:aws:s3:::s3-bucket-ro",
+                        "arn:aws:s3:::s3-bucket-ro/*"
+                    ]
+                }
+            ]
+        }
+      Users:
+        - JoelsReadOnlyUser
