@@ -1,0 +1,17 @@
+---
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: 'mattg user'
+
+Parameters:
+  UserName:
+    Type: String
+    Description: 'The name of the user'
+    Default: 'mattgDefaultName'
+Resources:
+  IAMUser:
+    Type: 'AWS::IAM::User'
+    Properties:
+      UserName: !Ref UserName
+      ManagedPolicyArns: 
+        - "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"
