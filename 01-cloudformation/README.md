@@ -156,6 +156,13 @@ name.
 
 - Commit the changes to your Github repo.
 
+```
+aws cloudformation --profile temp create-stack --stack-name JoelsStack --template-body file://cfn.yaml --parameters file://cfn.json --region us-west-1
+{
+    "StackId": "arn:aws:cloudformation:us-west-1:324320755747:stack/JoelsStack/a4e48290-ee31-11ec-a714-0678a9bc3a37"
+}
+```
+
 #### Lab 1.1.5: Termination Protection; Clean up
 
 - Before deleting this lesson's Stacks, apply
@@ -169,6 +176,9 @@ name.
 
 - List the S3 buckets in both regions once this lesson's Stacks have been
   deleted to ensure their removal.
+
+accountidbucketname
+regionbucketname
 
 ### Retrospective 1.1
 
