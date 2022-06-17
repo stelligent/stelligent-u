@@ -19,3 +19,5 @@ Resources:
 Outputs:
   IAMManagedS3AccessArn:
     Value: "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"
+    Export: 
+      Name: !Sub "${AWS::StackName}-s3-arn"
