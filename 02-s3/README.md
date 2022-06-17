@@ -163,6 +163,8 @@ bucket again **without including the private file**.
 Clean up: remove your bucket. What do you have to do before you can
 remove it?
 
+The contents needed to be deleted.
+
 ### Retrospective 2.1
 
 For additional s3 commands and reference see the
