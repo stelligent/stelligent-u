@@ -356,6 +356,16 @@ deploy _a single S3 bucket_.
   of the [4 American regions](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.RegionsAndAvailabilityZones.html),
   using a looping construct to run the template the proper number of times.
 
+```
+#!/bin/bash
+array=( us-east-1 us-east-2 us-west-1 us-west-2 )
+for region in "${array[@]}"
+do
+    echo "The next region to provision is $region"
+    aws cloudformation --profile temp create-stack --stack-name JoelsStack --template-body file://cfn.yaml --parameters file://cfn.json --region $region
+done
+```
+
 - Use an external JSON or YAML configuration file to maintain the target
   deployment region parameters.  Consider using `jq` or `yq` to parse this file.
 
