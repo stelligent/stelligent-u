@@ -156,6 +156,8 @@ bucket again **without including the private file**.
 - Did you find two different ways to accomplish this task? If not, make sure to
   read the [documentation on sync flags](https://docs.aws.amazon.com/cli/latest/reference/s3/sync.html).
 
+  I ran a syn with the `--exclude` flag. Another way would be to copy the files manually, or have a `private` local directory.
+
 #### Lab 2.1.4: Clean Up
 
 Clean up: remove your bucket. What do you have to do before you can

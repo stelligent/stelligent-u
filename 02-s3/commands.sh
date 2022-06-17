@@ -10,3 +10,6 @@ aws s3api list-objects --bucket stelligent-u-matthew.gable.labs
 
 2.1.2
 aws s3 cp ./data s3://stelligent-u-matthew.gable.labs/data --recursive
+
+2.1.3
+aws s3 sync ./data s3://stelligent-u-matthew.gable.labs/data --exclude privatefile.txt
