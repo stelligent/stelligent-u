@@ -187,6 +187,8 @@ regionbucketname
 _Why do we prefer the YAML format for CFN templates?_
 It's easy to understand
 
+Very lintable
+
 #### Question: Protecting Resources
 
 _What else can you do to prevent resources in a stack from being deleted?_
@@ -202,6 +204,8 @@ while the stack is deleted the resources are preserved
 
 Demonstrate 2 ways to code string combination/substitution using
 built-in CFN functions.
+
+Concatinating the strings like we did in step 1.1.2
 
 ## Lesson 1.2: Integration with Other AWS Resources
 
@@ -230,6 +234,7 @@ IAM Managed Policy that controls that user.
 - Use a CFN Parameter to set the user's name
 
 - Create the Stack.
+
 
 #### Lab 1.2.2: Exposing Resource Details via Exports
 
