@@ -15,6 +15,25 @@ Resources:
       #
       # Dynamic Substitution within Regional Logic NOT working
       # BucketName: !If [CreateBucketName, !Sub ${AWS::AccountId}-${BucketName}, !Sub ${AWS::Region}-${BucketName}]
+  JoelsMyIamUser:
+    Type: AWS::IAM::User
+    Properties:
+      UserName: JoelsReadOnlyUser
+      Policies:
+        - PolicyName: JoelsReadOnlyPolicy
+          PolicyDocument:
+            Statement:
+              -
+                Effect: Allow
+                Action:
+                  - s3:Get*
+                Resource: Read-only
+  UserPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      Description: Policy That Manages The User
+      Users:
+        - JoelsMyIamUser
 Conditions:
   CreateBucketName: !Equals
     - !Ref "AWS::Region"
