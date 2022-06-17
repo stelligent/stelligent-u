@@ -121,20 +121,30 @@ Add an object to your bucket:
 
 _How would you copy the contents of the directory to the top level of your bucket?_
 
+you would only list the bucket name in the aws copy command
+
 ##### Question: Directory Copying
 
 _How would you copy the contents and include the directory name in the s3 object
 paths?_
 
+you would add an object path after the bucket name in the command and it will put it in that "directory"
+
+
 ##### Question: Object Access
 
 _[Can anyone else see your file yet](https://docs.aws.amazon.com/AmazonS3/latest/dev/s3-access-control.html)?_
+
+Yes. In the future, access policies attached at creation time would be necessary for most data
 
 For further reading, see the S3 [Access Policy Language Overview](https://docs.aws.amazon.com/AmazonS3/latest/dev/access-policy-language-overview.html).
 
 ##### Question: Sync vs Copy
 
 _What makes "sync" a better choice than "cp" for some S3 uploads?_
+
+Sync won't reupload unchanged files, so there could be some bandwith savings, especially if s3 buckets
+are used as a source of data for applications (Apache Camel ingesting data, etc)
 
 #### Lab 2.1.3: Exclude Private Objects When Uploading to a Bucket
 
