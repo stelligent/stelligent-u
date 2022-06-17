@@ -30,6 +30,8 @@
 
 - DO use the [AWS documentation and user guides](https://aws.amazon.com/documentation/).
 
+- DO use --debug and --event switches on aws cli commands to view the behind-the-curtain actions.
+
 ## Lesson 0.1: Setting up your development environment
 
 ### Principle 0.1
