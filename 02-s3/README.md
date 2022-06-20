@@ -330,9 +330,13 @@ Delete one of the objects that you changed.
 
 _Can you still retrieve old versions of the object you removed?_
 
+Yes, in the UI you can show versions and see the deleted versions
+
 ##### Question: Deleting All Versions
 
 _How would you delete all versions?_
+
+I think you would need to dleete all versioned objects with deletion inputs, so this might require a scripted approach to make it a push button operation. 
 
 #### Lab 2.3.3: Tagging S3 Resources
 
