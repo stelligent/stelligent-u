@@ -1,0 +1,27 @@
+{
+    "Statement": [
+        {
+        "Sid": "",
+        "Effect": "Allow",
+        "Principal": {"AWS": "arn:aws:iam::324320755747:user/matthew.gable.labs"},
+        "Action": "s3:*",
+        "Resource": "arn:aws:s3:::stelligent-u-matthew.gable.labs/data/privatefile.txt"
+        },
+        {
+        "Sid": "",
+        "Effect": "Deny",
+        "NotPrincipal": {"AWS": [
+            "arn:aws:iam::324320755747:user/matthew.gable.labs"]},
+        "Action": "s3:*",
+        "Resource": "arn:aws:s3:::stelligent-u-matthew.gable.labs/data/privatefile.txt",
+        "Condition": { "Null": { "aws:MultiFactorAuthAge": true }}
+        },
+        {
+        "Sid": "",
+        "Effect": "Allow",
+        "Principal": "*",
+        "Action": "s3:Get*",
+        "Resource": "arn:aws:s3:::stelligent-u-matthew.gable.labs/*"
+        }
+    ]
+    }

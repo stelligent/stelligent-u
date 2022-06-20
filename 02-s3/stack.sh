@@ -1,7 +1,7 @@
 #/bin/bash
 
-#aws cloudformation validate-template --template-body file://import-stack.yaml
+#aws cloudformation validate-template --template-body file://unifying.yaml
 
-#aws cloudformation create-stack --stack-name mattgimportstack --capabilities CAPABILITY_NAMED_IAM --template-body file://import-stack.yaml
+#aws cloudformation create-stack --stack-name mattgbucketstack --template-body file://unifying.yaml
 
-#aws cloudformation delete-stack --stack-name mattgimportstack
+aws cloudformation delete-stack --stack-name mattgbucketstack

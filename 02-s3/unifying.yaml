@@ -1,0 +1,58 @@
+---
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: 'mattg s3 bucket'
+
+Parameters:
+  BucketName:
+    Type: String
+    Description: 'The bucket'
+    Default: "mattgdefaultbucketname"
+Resources:
+  S3Bucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      BucketName: !Ref BucketName
+  S3BucketPolicy:
+    DependsOn: S3Bucket
+    Type: 'AWS::S3::BucketPolicy'
+    Properties:
+      Bucket: !Ref S3Bucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Action:
+            - 's3:GetObject'
+            Effect: Allow
+            Resource: !Join
+              - ''
+              - - 'arn:aws:s3:::'
+                - !Ref S3Bucket
+                - '/data/sample*'
+            Principal: '*'
+          - Action:
+            - 's3:*'
+            Effect: Deny
+            Resource: !Join
+              - ''
+              - - 'arn:aws:s3:::'
+                - !Ref S3Bucket
+                - '/data/privatefile.txt'
+            NotPrincipal: 
+              AWS: 
+                'arn:aws:iam::324320755747:user/matthew.gable.labs'
+            Condition: 
+              'Null':
+                aws:MultiFactorAuthAge: true
+          - Action:
+            - 's3:*'
+            Effect: Allow
+            Resource: !Join
+              - ''
+              - - 'arn:aws:s3:::'
+                - !Ref S3Bucket
+                - '/*'
+            Principal: 
+              AWS: 
+                'arn:aws:iam::324320755747:user/matthew.gable.labs'
+                
