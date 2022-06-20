@@ -212,11 +212,15 @@ permissions of the other files.
 _How could you use "aws s3 cp" or "aws s3 sync" command to modify the
 permissions on the file?_
 
+`aws s3 cp privatefile.txt s3://stelligent-u-matthew.gable.labs/data/privatefile.txt --acl bucket-owner-full-control`
+
 (Hint: see the list of [Canned ACLs](https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#canned-acl).)
 
 ##### Question: Changing Permissions
 
 _Is there a way you can change the permissions on the file without re-uploading it?_
+
+One way to do it without a reupload would be to edit the permissions in the UI
 
 #### Lab 2.2.3: Using the API from the CLI
 
