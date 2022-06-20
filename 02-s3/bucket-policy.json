@@ -1,0 +1,11 @@
+{
+"Statement": [
+    {
+    "Sid": "",
+    "Effect": "Allow",
+    "Principal": "*",
+    "Action": "s3:Get*",
+    "Resource": "arn:aws:s3:::stelligent-u-matthew.gable.labs/data/sample*"
+    }
+]
+}

@@ -235,10 +235,16 @@ authenticated user:
 - Create and assign an IAM policy to explicitly grant yourself
   maintenance access.
 
+  Assigned via UI and JSON policy builder
+
 - Set a bucket policy to grant public read access.
+
+`aws s3api put-bucket-policy --policy file://bucket-policy.json --bucket stelligent-u-matthew.gable.labs`
 
 - Set an S3 ACL on "private.txt" to block read access unless you're
   authenticated.
+
+`aws s3api put-object-acl --acl authenticated-read --bucket stelligent-u-matthew.gable.labs --key data/privatefile.txt`
 
 When you're done, verify that anybody (e.g. you, unauthenticated) can
 read most files but can't read "private.txt", and only you can modify
@@ -249,9 +255,13 @@ file and read "private.txt".
 _What do you see when you try to read the existing bucket policy before you
 replace it?_
 
+I can see the private file and others before editing the policy
+
 #### Question: Default Permissions
 
 _How do the default permissions differ from the policy you're setting?_
+
+Default permissions are very permissive and allow even public access by default
 
 #### Lab 2.2.4: Using CloudFormation
 
