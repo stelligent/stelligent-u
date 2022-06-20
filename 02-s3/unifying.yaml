@@ -12,6 +12,9 @@ Resources:
   S3Bucket:
     Type: 'AWS::S3::Bucket'
     Properties:
+      Tags:
+        - Key: "NewKey"
+          Value: "NewValue"
       VersioningConfiguration:
         Status: Enabled
       BucketName: !Ref BucketName

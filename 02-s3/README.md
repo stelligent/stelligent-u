@@ -349,6 +349,8 @@ through the CLI or the console.
 _Can you change a single tag on a bucket or object, or do you have to change
 all its tags at once?_
 
+  Cloudformation allows adding a tag without disturbing the other tags, but it seems `aws s3spi put-bucket-tagging` might have an issue with trying to remove system tags when attempting to add another tag 
+
 (See `aws:cloudformation:stack-id` and other AWS-managed tags.)
 
 #### Lab 2.3.4: Object Lifecycles
