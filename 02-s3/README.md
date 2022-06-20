@@ -186,8 +186,13 @@ directory with the "aws s3 sync" command.
 
 - Include the "private.txt" file this time.
 
+`aws s3api create-bucket --region us-west-2 --bucket stelligent-u-matthew.gable.labs --create-bucket-configuration LocationConstraint=us-west-2`
+
+
 - Use a "sync" command parameter to make all the files in the bucket
   publicly readable.
+
+`aws s3 sync ./data s3://stelligent-u-matthew.gable.labs/data --acl public-read`
 
 ##### Question: Downloading Protection
 
