@@ -92,6 +92,8 @@ Create a CFN template that specifies an IAM Role.
   - List all the Roles
   - Describe the specific Role your Stack created.
 
+  The role created allows for all principals to assume the role. The role itself has one policy attached: an AWS managed policy that allows IAM read only access.
+
 #### Lab 3.1.2: Customer Managed Policy
 
 Update the template and the corresponding Stack to make the IAM Role's
