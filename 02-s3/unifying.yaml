@@ -18,6 +18,32 @@ Resources:
       VersioningConfiguration:
         Status: Enabled
       BucketName: !Ref BucketName
+      LifecycleConfiguration:
+        Rules:
+          - Id: expiry-rule
+            Status: Enabled
+            NoncurrentVersionExpiration:
+              NoncurrentDays: 7
+          - Id: expiry-rule-stretch
+            Status: Enabled
+            Prefix: 'trash/'
+            NoncurrentVersionExpiration:
+              NoncurrentDays: 1
+          - Id: ia-rule
+            Status: Enabled
+            Transitions:
+              - TransitionInDays: 30
+                StorageClass: 'STANDARD_IA'
+          - Id: glacier-rule
+            Status: Enabled
+            Transitions:
+              - TransitionInDays: 90
+                StorageClass: "GLACIER"
+          - Id: delete-mpu-7d
+            Prefix: ''
+            Status: Enabled
+            AbortIncompleteMultipartUpload:
+              DaysAfterInitiation: 1
   S3BucketPolicy:
     DependsOn: S3Bucket
     Type: 'AWS::S3::BucketPolicy'

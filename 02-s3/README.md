@@ -372,6 +372,8 @@ _Management Lifecycle_ tab to double-check your settings.
 
 _Can you make any of these transitions more quickly?_
 
+We could edit the thresholds to be whatever integer value we wanted
+
 *See the [S3 lifecycle transitions doc](https://docs.aws.amazon.com/AmazonS3/latest/dev/lifecycle-transition-general-considerations.html).*
 
 ### Stretch Challenge
@@ -382,8 +384,14 @@ expire them after 1 day.
 ### Retrospective 2.3
 
 *How could the lifecycle and versioning features of S3 be used to manage
-the lifecycle of a web application? Would you use those features to manage
+the lifecycle of a web application?
+
+If the webapplication polled, say, an s3 bucket for XML configuations, those could be versioned and expired and the webapplication could be powered in part by s3 versioning
+
+ Would you use those features to manage
 the webapp code itself, or just the app's data?*
+
+I wouldn't use this to version the webapp code. It's possible, but I would imagine code versions should usually be managed by CI/CD and perhaps even human-managed promotions to prod environments. 
 
 ## Lesson 2.4: S3 Object Encryption
 
