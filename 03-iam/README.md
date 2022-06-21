@@ -123,6 +123,13 @@ policy:
   indicate the re-use of the policy.
 
 - Update the Stack. *Did the stack update work?*
+I converted the inline policy to a customer managed policy in this step. 
+
+I'm not sure I reproduced the above issue to say "no" but I believe the answert would be no. I added RoleName properties and tried to update the stack with different RoleNames and it errored due to dependency issues. So there are things that can't be updated.
+
+I also had to attach the customer managed policy by specifying roles in the policy.
+
+Tearing down and rebuilding fixed the issue.
 
   - Query the stack to determine its state.
   - If the stack update was not successful,

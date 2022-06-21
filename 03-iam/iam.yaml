@@ -4,6 +4,23 @@ AWSTemplateFormatVersion: 2010-09-09
 Description: 'mattg iam role'
 
 Resources:
+  MattIAMPolicy:
+    Type: 'AWS::IAM::Policy'
+    Description: 'A reusable customer managed policy'
+    Properties:
+      PolicyName: inlinereadonlyeiam
+      Roles:
+       - !Ref MattGIAMRole
+       - !Ref MattGIAMRole2
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - "iam:Get*"
+              - "iam:List*"
+              - "iam:Generate*"
+            Resource: "arn:aws:iam::*"
   MattIAMRole:
     Type: 'AWS::IAM::Role'
     Properties:
@@ -16,16 +33,17 @@ Resources:
                 - "*"
             Action:
               - "sts:AssumeRole"
-      # ManagedPolicyArns:
-      #   - "arn:aws:iam::aws:policy/IAMReadOnlyAccess"
-      Policies:
-        - PolicyName: inlinereadonlyeiam
-          PolicyDocument:
-            Version: "2012-10-17"
-            Statement:
-              - Effect: Allow
-                Action:
-                  - "iam:Get*"
-                  - "iam:List*"
-                  - "iam:Generate*"
-                Resource: "arn:aws:iam::*"
+      RoleName: MattGIAMRole
+  MattIAMRole2:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument: 
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal: 
+              AWS:
+                - "*"
+            Action:
+              - "sts:AssumeRole"
+      RoleName: MattGIAMRole2
