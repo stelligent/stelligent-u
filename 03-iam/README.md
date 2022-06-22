@@ -177,10 +177,14 @@ stack's two roles in order to pass those values to the CLI function. You
 probably used the AWS web console to get the ARN for each role. What
 could you have done to your CFN template to make that unnecessary?_
 
+This was not part of the Asana manifest, so this is skipped. 
+
 #### Task: Stack Outputs
 
 Institute that change from the Question above. Recreate the stack as per
 Lab 3.1.5, and demonstrate how to retrieve the ARNs.
+
+Same as above.
 
 ## Lesson 3.2: Trust Relationships & Assuming Roles
 
@@ -226,6 +230,9 @@ file, use [aws sts assume-role](https://docs.aws.amazon.com/IAM/latest/UserGuide
 It's a valuable mechanism you'll use often through the API, and it's good to
 know how to do it from the CLI as well.*
 
+I didn't run into any issues on this  (I put the credentials into a new profile)
+
+
 #### Lab 3.2.2: Explore the assumed role
 
 Test the capabilities of this new Role.
@@ -236,6 +243,7 @@ Test the capabilities of this new Role.
 - Acting as this role, try to create an S3 bucket using the AWS CLI.
 
   - Did it succeed? It should not have!
+  It did not succeed `AccessDenied`
   - If it succeeded, troubleshoot how Read access allowed the role
     to create a bucket.
 
