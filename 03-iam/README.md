@@ -277,13 +277,23 @@ Bucket and stack deleted.
 #### Question: Inline vs Customer Managed Policies
 
 _In the context of an AWS User or Role, what is the difference between
-an inline policy and a customer managed policy? What are the differences
+an inline policy and a customer managed policy? 
+
+A customer managed policy is a customer-created standalone reusable policy. An inline policy is created as part of an IAM resource/identity. 
+
+
+What are the differences
 between a customer managed policy and an AWS managed policy?_
+
+An IAM managed policy is created and housed in AWS and is a standard available for users. A customer managed policy is stored via a similar mechanism, but customers like us can create and edit these policies. 
 
 #### Question: Role Assumption
 
 _When assuming a role, are the permissions of the initial principal
 mixed with those of the role being assumed?
+
+No. When using the "new" role, that principal's permissions are limited to that role. 
+
 Describe how that could easily be demonstrated with both a
 [positive and negative testing](https://www.guru99.com/positive-vs-negative-testing.html)
 approach._
