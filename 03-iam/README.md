@@ -362,12 +362,26 @@ read-only access to the other.
 
 *Were there any errors? If so, take note of them.*
 
+My own errors, which were assuming I could list the bucket with a "/* resource string, but I think that excludes the bucket object itself. "*" directly after the bucket name allowed listing. 
+
 *What were the results you expected, based on the role's policy?*
+I expected to be able to list and read from boath but only be able to upload to bucket 1. 
+
+``
+matthew.gable@MACUSSTG2524595 03-iam % aws s3 cp text.txt s3://mattgiamstack-s3bucket-11hc49xqmd4p3/mod3.3.32.txt --profile temp
+upload: ./text.txt to s3://mattgiamstack-s3bucket-11hc49xqmd4p3/mod3.3.32.txt
+matthew.gable@MACUSSTG2524595 03-iam % aws s3 cp text.txt s3://mattgiamstack-s3bucket2-zwq3dhs4c61h/mod3.3.32.txt --profile temp
+upload failed: ./text.txt to s3://mattgiamstack-s3bucket2-zwq3dhs4c61h/mod3.3.32.txt An error occurred (AccessDenied) when calling the PutObject operation: Access Denied
+matthew.gable@MACUSSTG2524595 03-iam % 
+```
+
 
 #### Lab 3.3.3: Conditional restrictions
 
 Add a conditional restriction to the role's policy. Provide a condition
 that grants list access only to objects that start with "lebowski/".
+
+`I'll abide`
 
 - Update the stack.
 

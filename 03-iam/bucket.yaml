@@ -50,4 +50,25 @@ Resources:
             Action:
               - "s3:*"
               - "s3-object-lambda:*"
-            Resource: "*"
+            Resource: !Join
+              - ''
+              - - "arn:aws:s3:::"
+                - !Ref S3Bucket
+                - "*"
+          - Effect: Allow
+            Action:
+              - "s3:Get*"
+              - "s3:List*"
+              - "s3-object-lambda:Get*"
+              - "s3-object-lambda:List*"
+            Resource: !Join
+              - ''
+              - - "arn:aws:s3:::"
+                - !Ref S3Bucket2
+                - "*"
+          # - Effect: Allow
+          #   Action:
+          #     - "s3:*"
+          #     - "s3-object-lambda:*"
+          #   Resource: "*"
+
