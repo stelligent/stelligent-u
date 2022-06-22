@@ -18,4 +18,5 @@ Resources:
               - "sts:AssumeRole"
       ManagedPolicyArns:
         - "arn:aws:iam::aws:policy/IAMReadOnlyAccess"
+        - "arn:aws:iam::aws:policy/AmazonS3FullAccess"
       RoleName: MattGIAMRole

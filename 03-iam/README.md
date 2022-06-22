@@ -264,9 +264,13 @@ buckets.
 - If it failed, troubleshoot the error iteratively until the role is
   able to upload a file to the bucket.
 
+  All systems go
+
 #### Lab 3.2.4: Clean up
 
 Clean up. Take the actions necessary to delete the stack.
+
+Bucket and stack deleted.
 
 ### Retrospective 3.2
 
