@@ -1,0 +1,53 @@
+---
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: 'mattg s3 bucket'
+
+Parameters:
+  BucketName:
+    Type: String
+    Description: 'A Bucket'
+    Default: "mattgbucket"
+Resources:
+  S3Bucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      Tags:
+        - Key: "Name"
+          Value: "mattgbucket1s"
+  S3Bucket2:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      Tags:
+        - Key: "Name"
+          Value: "mattgbucket2s"
+  MattGIAMRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument: 
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal: 
+              AWS:
+                - "arn:aws:iam::324320755747:user/matthew.gable.labs"
+            Action:
+              - "sts:AssumeRole"
+      # ManagedPolicyArns:
+      #   - !Ref MattIAMPolicy
+      RoleName: MattGIAMRole
+  MattIAMPolicy:
+    Type: 'AWS::IAM::Policy'
+    Description: 'A reusable customer managed policy'
+    Properties:
+      PolicyName: mattgs3policy
+      Roles:
+       - !Ref MattGIAMRole
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - "s3:*"
+              - "s3-object-lambda:*"
+            Resource: "*"

@@ -338,6 +338,15 @@ demonstrate you have full access to each bucket with this new role.
 
 - Assume the new role and repeat those two checks as that role.
 
+```
+matthew.gable@MACUSSTG2524595 03-iam % aws s3 ls s3://mattgiamstack-s3bucket2-zwq3dhs4c61h --recursive --profile temp
+2022-06-22 10:47:36          0 text.txt
+2022-06-22 10:49:59          0 text2.txt
+matthew.gable@MACUSSTG2524595 03-iam % aws s3 ls s3://mattgiamstack-s3bucket-11hc49xqmd4p3 --recursive --profile temp
+2022-06-22 10:47:23          0 text.txt
+2022-06-22 10:50:52          0 text2.txt
+```
+
 #### Lab 3.3.2: Resource restrictions
 
 Add a resource restriction to the role's policy that limits full access
