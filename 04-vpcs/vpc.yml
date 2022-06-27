@@ -8,6 +8,8 @@ Resources:
       CidrBlock: 10.0.0.0/16
       InstanceTenancy: default
       Tags:
+        - Key: Name
+          Value: will.deberry-vpc
         - Key: user
           Value: will.deberry.labs
         - Key: stelligent-u-lesson
@@ -19,6 +21,8 @@ Resources:
     Properties:
       CidrBlock: 10.0.0.0/24
       Tags:
+        - Key: Name
+          Value: will.deberry-subnet
         - Key: user
           Value: will.deberry.labs
         - Key: stelligent-u-lesson
@@ -27,6 +31,45 @@ Resources:
           Value: 4.1.1
       VpcId: !Ref VPC
 
+  Gateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: will.deberry-gateway
+        - Key: user
+          Value: will.deberry.labs
+        - Key: stelligent-u-lesson
+          Value: 04-vpcs
+        - Key: stelligent-u-lab
+          Value: 4.1.2
+
+  GatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      InternetGatewayId: !Ref Gateway
+      VpcId: !Ref VPC
+
+  RouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      Tags:
+        - Key: Name
+          Value: will.deberry-route-table
+        - Key: user
+          Value: will.deberry.labs
+        - Key: stelligent-u-lesson
+          Value: 04-vpcs
+        - Key: stelligent-u-lab
+          Value: 4.1.2
+      VpcId: !Ref VPC
+
+  SubnetRouteTable:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref RouteTable
+      SubnetId: !Ref Subnet
+
 Outputs:
   VPCOutput:
     Description: vpc-id
@@ -34,3 +77,9 @@ Outputs:
   SubnetOutput:
     Description: subnet-id
     Value: !Ref Subnet
+  GatewayOutput:
+    Description: gatewway-id
+    Value: !Ref Gateway
+  RouteTableOutput:
+    Description: route-table-id
+    Value: !Ref RouteTable
