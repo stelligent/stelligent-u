@@ -74,9 +74,13 @@ Outputs:
   VPCOutput:
     Description: vpc-id
     Value: !Ref VPC
+    Export:
+      Name: willdeberry-vpc-id
   SubnetOutput:
     Description: subnet-id
     Value: !Ref Subnet
+    Export:
+      Name: willdeberry-subnet-id
   GatewayOutput:
     Description: gatewway-id
     Value: !Ref Gateway

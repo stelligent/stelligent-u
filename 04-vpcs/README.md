@@ -133,10 +133,14 @@ Launch an EC2 instance into your VPC.
 
 _After you launch your new stack, can you ssh to the instance?_
 
+> No
+
 ##### Question: Verify Connectivity
 
 _Is there a way that you can verify Internet connectivity from the instance
 without ssh'ing to it?_
+
+> Not to my knowledge. Currently the instance and all the components are all within their own private network and I have no access.
 
 #### Lab 4.1.5: Security Group
 

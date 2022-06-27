@@ -1,0 +1,39 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Module 4 EC2
+
+Parameters:
+  ImageIdParam:
+    Type: String
+    Description: The AMI to use to launch the instance from
+  KeyNameParam:
+    Type: String
+    Description: The name of the keypair to use
+  InstanceTypeParam:
+    Type: String
+    Description: What size instance to use
+
+Resources:
+  EC2:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !Ref ImageIdParam
+      KeyName: !Ref KeyNameParam
+      InstanceType: !Ref InstanceTypeParam
+      SubnetId: !ImportValue willdeberry-subnet-id
+      Tags:
+        - Key: Name
+          Value: will.deberry-ec2
+        - Key: user
+          Value: will.deberry.labs
+        - Key: stelligent-u-lesson
+          Value: 04-vpcs
+        - Key: stelligent-u-lab
+          Value: 4.1.4
+
+Outputs:
+  InstanceId:
+    Description: ID of the instance
+    Value: !Ref EC2
+  InstanceIP:
+    Description: Private IP of the instance
+    Value: !GetAtt EC2.PrivateIp

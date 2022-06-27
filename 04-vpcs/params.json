@@ -1,0 +1,17 @@
+[
+    {
+        "ParameterKey": "ImageIdParam",
+        "ParameterValue": "ami-0cff7528ff583bf9a",
+        "UsePreviousValue": false
+    },
+    {
+        "ParameterKey": "KeyNameParam",
+        "ParameterValue": "will.deberry.labs",
+        "UsePreviousValue": false
+    },
+    {
+        "ParameterKey": "InstanceTypeParam",
+        "ParameterValue": "t2.micro",
+        "UsePreviousValue": false
+    }
+]
