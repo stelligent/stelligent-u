@@ -1,0 +1,36 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Module 4 VPCs
+
+Resources:
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      InstanceTenancy: default
+      Tags:
+        - Key: user
+          Value: will.deberry.labs
+        - Key: stelligent-u-lesson
+          Value: 04-vpcs
+        - Key: stelligent-u-lab
+          Value: 4.1.1
+  Subnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: 10.0.0.0/24
+      Tags:
+        - Key: user
+          Value: will.deberry.labs
+        - Key: stelligent-u-lesson
+          Value: 04-vpcs
+        - Key: stelligent-u-lab
+          Value: 4.1.1
+      VpcId: !Ref VPC
+
+Outputs:
+  VPCOutput:
+    Description: vpc-id
+    Value: !Ref VPC
+  SubnetOutput:
+    Description: subnet-id
+    Value: !Ref Subnet
