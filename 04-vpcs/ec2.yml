@@ -57,6 +57,20 @@ Resources:
         - Key: stelligent-u-lab
           Value: 4.1.5
       VpcId: !ImportValue willdeberry-vpc-id
+  ElasticIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+      InstanceId: !Ref EC2
+      Tags:
+        - Key: Name
+          Value: will.deberry-eip
+        - Key: user
+          Value: will.deberry.labs
+        - Key: stelligent-u-lesson
+          Value: 04-vpcs
+        - Key: stelligent-u-lab
+          Value: 4.1.6
 
 Outputs:
   InstanceId:
@@ -65,3 +79,6 @@ Outputs:
   InstanceIP:
     Description: Private IP of the instance
     Value: !GetAtt EC2.PrivateIp
+  PublicIP:
+    Description: Public IP of the instance
+    Value: !GetAtt EC2.PublicIp
