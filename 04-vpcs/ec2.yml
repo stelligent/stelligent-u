@@ -19,6 +19,8 @@ Resources:
       ImageId: !Ref ImageIdParam
       KeyName: !Ref KeyNameParam
       InstanceType: !Ref InstanceTypeParam
+      SecurityGroupIds:
+        - !Ref SecurityGroup
       SubnetId: !ImportValue willdeberry-subnet-id
       Tags:
         - Key: Name
@@ -29,6 +31,32 @@ Resources:
           Value: 04-vpcs
         - Key: stelligent-u-lab
           Value: 4.1.4
+  SecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: SG to allow ping and ssh
+      GroupName: willdeberry-sg
+      SecurityGroupIngress:
+        - CidrIp: 0.0.0.0/0
+          Description: Allow icmp
+          FromPort: 8
+          IpProtocol: icmp
+          ToPort: -1
+        - CidrIp: 0.0.0.0/0
+          Description: Allow ssh
+          FromPort: 22
+          IpProtocol: tcp
+          ToPort: 22
+      Tags:
+        - Key: Name
+          Value: will.deberry-sg
+        - Key: user
+          Value: will.deberry.labs
+        - Key: stelligent-u-lesson
+          Value: 04-vpcs
+        - Key: stelligent-u-lab
+          Value: 4.1.5
+      VpcId: !ImportValue willdeberry-vpc-id
 
 Outputs:
   InstanceId:

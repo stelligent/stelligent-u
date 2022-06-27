@@ -6,6 +6,8 @@ Resources:
     Type: AWS::EC2::VPC
     Properties:
       CidrBlock: 10.0.0.0/16
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
       InstanceTenancy: default
       Tags:
         - Key: Name
@@ -20,6 +22,7 @@ Resources:
     Type: AWS::EC2::Subnet
     Properties:
       CidrBlock: 10.0.0.0/24
+      MapPublicIpOnLaunch: true
       Tags:
         - Key: Name
           Value: will.deberry-subnet
@@ -63,6 +66,13 @@ Resources:
         - Key: stelligent-u-lab
           Value: 4.1.2
       VpcId: !Ref VPC
+
+  Route:
+    Type: AWS::EC2::Route
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref Gateway
+      RouteTableId: !Ref RouteTable
 
   SubnetRouteTable:
     Type: AWS::EC2::SubnetRouteTableAssociation
