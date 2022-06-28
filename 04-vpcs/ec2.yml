@@ -31,6 +31,24 @@ Resources:
           Value: 04-vpcs
         - Key: stelligent-u-lab
           Value: 4.1.4
+  PrivateEC2:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !Ref ImageIdParam
+      KeyName: !Ref KeyNameParam
+      InstanceType: !Ref InstanceTypeParam
+      SecurityGroupIds:
+        - !Ref SecurityGroup
+      SubnetId: !ImportValue willdeberry-private-subnet-id
+      Tags:
+        - Key: Name
+          Value: will.deberry-private-ec2
+        - Key: user
+          Value: will.deberry.labs
+        - Key: stelligent-u-lesson
+          Value: 04-vpcs
+        - Key: stelligent-u-lab
+          Value: 4.1.7
   SecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:

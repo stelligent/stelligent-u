@@ -212,19 +212,27 @@ existing instance stack.
 
 _Can you find a way to ssh to this instance?_
 
+> Yes, you can SSH by tunneling through the previously created EC2 instance (eg: use the bastion)
+
 ##### Question: Egress
 
 _If you can ssh to it, can you send traffic out?_
+
+> No, all outbound fails more than likely since there is no internet gateway in the routing
 
 ##### Question: Deleting the Gateway
 
 _If you delete the NAT gateway, what happens to the ssh session on your private
 instance?_
 
+> The tunnel hangs and eventually disconnects
+
 ##### Question: Recreating the Gateway
 
 _If you recreate the NAT gateway and detach the Elastic IP from the public EC2
 instance, can you still reach the instance from the outside?_
+
+> Yes, you can use the auto assigned IP address to get into the bastion instance.
 
 Test it out with the AWS console.
 

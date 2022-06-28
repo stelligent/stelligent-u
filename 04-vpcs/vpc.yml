@@ -33,7 +33,6 @@ Resources:
         - Key: stelligent-u-lab
           Value: 4.1.1
       VpcId: !Ref VPC
-
   Gateway:
     Type: AWS::EC2::InternetGateway
     Properties:
@@ -46,13 +45,11 @@ Resources:
           Value: 04-vpcs
         - Key: stelligent-u-lab
           Value: 4.1.2
-
   GatewayAttachment:
     Type: AWS::EC2::VPCGatewayAttachment
     Properties:
       InternetGatewayId: !Ref Gateway
       VpcId: !Ref VPC
-
   RouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
@@ -66,19 +63,98 @@ Resources:
         - Key: stelligent-u-lab
           Value: 4.1.2
       VpcId: !Ref VPC
-
   Route:
     Type: AWS::EC2::Route
     Properties:
       DestinationCidrBlock: 0.0.0.0/0
       GatewayId: !Ref Gateway
       RouteTableId: !Ref RouteTable
-
   SubnetRouteTable:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
       RouteTableId: !Ref RouteTable
       SubnetId: !Ref Subnet
+  NatGateway:
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId: !GetAtt ElasticIP.AllocationId
+      ConnectivityType: public
+      SubnetId: !Ref Subnet
+      Tags:
+        - Key: Name
+          Value: will.deberry-natgateway
+        - Key: user
+          Value: will.deberry.labs
+        - Key: stelligent-u-lesson
+          Value: 04-vpcs
+        - Key: stelligent-u-lab
+          Value: 4.1.7
+  ElasticIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+      Tags:
+        - Key: Name
+          Value: will.deberry-eip-natgateway
+        - Key: user
+          Value: will.deberry.labs
+        - Key: stelligent-u-lesson
+          Value: 04-vpcs
+        - Key: stelligent-u-lab
+          Value: 4.1.7
+  PrivateSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: 10.0.1.0/24
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: will.deberry-subnet
+        - Key: user
+          Value: will.deberry.labs
+        - Key: stelligent-u-lesson
+          Value: 04-vpcs
+        - Key: stelligent-u-lab
+          Value: 4.1.1
+      VpcId: !Ref VPC
+  PrivateNatGateway:
+    Type: AWS::EC2::NatGateway
+    Properties:
+      ConnectivityType: private
+      SubnetId: !Ref PrivateSubnet
+      Tags:
+        - Key: Name
+          Value: will.deberry-private-natgateway
+        - Key: user
+          Value: will.deberry.labs
+        - Key: stelligent-u-lesson
+          Value: 04-vpcs
+        - Key: stelligent-u-lab
+          Value: 4.1.7
+  PrivateRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      Tags:
+        - Key: Name
+          Value: will.deberry-private-route-table
+        - Key: user
+          Value: will.deberry.labs
+        - Key: stelligent-u-lesson
+          Value: 04-vpcs
+        - Key: stelligent-u-lab
+          Value: 4.1.8
+      VpcId: !Ref VPC
+  PrivateRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref PrivateNatGateway
+      RouteTableId: !Ref PrivateRouteTable
+  PrivateSubnetRouteTable:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable
+      SubnetId: !Ref PrivateSubnet
 
 Outputs:
   VPCOutput:
@@ -91,6 +167,11 @@ Outputs:
     Value: !Ref Subnet
     Export:
       Name: willdeberry-subnet-id
+  PrivateSubnetOutput:
+    Description: private-subnet-id
+    Value: !Ref PrivateSubnet
+    Export:
+      Name: willdeberry-private-subnet-id
   GatewayOutput:
     Description: gatewway-id
     Value: !Ref Gateway
