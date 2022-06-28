@@ -102,6 +102,49 @@ Resources:
           Value: 04-vpcs
         - Key: stelligent-u-lab
           Value: 4.1.7
+  NetworkAcl:
+    Type: AWS::EC2::NetworkAcl
+    Properties:
+      Tags:
+        - Key: Name
+          Value: will.deberry-networkacl
+      VpcId: !Ref VPC
+  NetworkAclInboundSSH:
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+      CidrBlock: 76.106.4.220/32
+      Egress: false
+      NetworkAclId: !Ref NetworkAcl
+      PortRange:
+        From: 22
+        To: 22
+      Protocol: 6
+      RuleAction: allow
+      RuleNumber: 100
+  NetworkAclInboundAll:
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+      CidrBlock: 10.0.1.0/24
+      Egress: false
+      NetworkAclId: !Ref NetworkAcl
+      Protocol: -1
+      RuleAction: allow
+      RuleNumber: 101
+  NetworkAclOutbound:
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+      CidrBlock: 0.0.0.0/0
+      Egress: true
+      NetworkAclId: !Ref NetworkAcl
+      Protocol: -1
+      RuleAction: allow
+      RuleNumber: 100
+  SubnetNetworkAclAssociation:
+    Type: AWS::EC2::SubnetNetworkAclAssociation
+    Properties:
+      NetworkAclId: !Ref NetworkAcl
+      SubnetId: !Ref Subnet
+
   PrivateSubnet:
     Type: AWS::EC2::Subnet
     Properties:
@@ -155,6 +198,46 @@ Resources:
     Properties:
       RouteTableId: !Ref PrivateRouteTable
       SubnetId: !Ref PrivateSubnet
+  PrivateNetworkAcl:
+    Type: AWS::EC2::NetworkAcl
+    Properties:
+      Tags:
+        - Key: Name
+          Value: will.deberry-networkacl
+      VpcId: !Ref VPC
+  PrivateNetworkAclInboundSSH:
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+      CidrBlock: 10.0.0.0/24
+      Egress: false
+      NetworkAclId: !Ref PrivateNetworkAcl
+      PortRange:
+        From: 22
+        To: 22
+      Protocol: 6
+      RuleAction: allow
+      RuleNumber: 100
+  PrivateNetworkAclOutboundReplies:
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+      CidrBlock: 10.0.0.0/24
+      Egress: true
+      NetworkAclId: !Ref PrivateNetworkAcl
+      PortRange:
+        From: 1024
+        To: 65535
+      Protocol: 6
+      RuleAction: allow
+      RuleNumber: 100
+  PrivateNetworkAclOutbound:
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+      CidrBlock: 0.0.0.0/0
+      Egress: true
+      NetworkAclId: !Ref PrivateNetworkAcl
+      Protocol: -1
+      RuleAction: allow
+      RuleNumber: 101
 
 Outputs:
   VPCOutput:

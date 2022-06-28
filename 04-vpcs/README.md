@@ -252,6 +252,8 @@ First, add one on the public subnet:
 
 _Can you still reach your EC2 instances?_
 
+> Yes. Even changed it to an IP address that wasn't mine and it properly blocked the SSH connection. Can confirm that the ACL is in place and working properly when setup with my public IP.
+
 Add another ACL to your private subnet:
 
 - Only allow traffic from the public subnet.
@@ -262,6 +264,8 @@ Add another ACL to your private subnet:
   public subnet.
 
 _Verify again that you can reach your instance._
+
+> Still good to go
 
 ### Retrospective 4.1
 
