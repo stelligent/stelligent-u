@@ -35,7 +35,7 @@ CREDJSON="$(aws sts get-session-token --serial-number $SERIAL --profile $ENV --t
 ACCESSKEY="$(echo $CREDJSON | jq '.Credentials.AccessKeyId' | sed 's/"//g')"
 SECRETKEY="$(echo $CREDJSON | jq '.Credentials.SecretAccessKey' | sed 's/"//g')"
 SESSIONTOKEN="$(echo $CREDJSON | jq '.Credentials.SessionToken' | sed 's/"//g')"
-PROFILENAME="$ENV"
+PROFILENAME="$ENV"mfa
 
 # echo "Profile $PROFILENAME AccessKey $ACCESSKEY SecretKey $SECRETKEY"
 # echo "SessionToken $SESSIONTOKEN"
