@@ -1,0 +1,39 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Create IAM user with Read access to all buckets.
+
+Parameters:
+  S3UserName:
+    Type: String
+    Description: The name of the S3 Bucket to create
+    Default: 01-fidelis-user
+
+Resources:
+
+  myCustomerManagedPolicyForIAM:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      ManagedPolicyName: FidelisIAMReadOnlyPolicy # give a name to this policy
+      Description: Customer managed policy for read only access to s3
+      Path: '/'
+      PolicyDocument: # (required) JSON policy document 
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - 's3:ListBucket'
+              - 's3:GetObject'
+            Resource: '*'
+
+  S3User:
+    Type: AWS::IAM::User
+    Properties:
+      UserName: !Ref S3UserName
+      ManagedPolicyArns:
+        - !Ref myCustomerManagedPolicyForIAM
+
+Outputs:
+  outputName:
+    Description: Customer managed policy name
+    Value: !Ref myCustomerManagedPolicyForIAM
+    Export:
+      Name: !Sub "${AWS::StackName}-MyManagedPolicy" 

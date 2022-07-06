@@ -23,3 +23,12 @@ This holds all the informations about scripts and templates i created in this mo
 ### Scripts
 
 - exec.sh: This script does the cli kick of the deployment.
+
+## Lab 1.2.1: Cross-Referencing Resources within a Template
+
+- s3-iam.yaml creates the stack
+
+## Lab 1.2.2: Exposing Resource Details via Exports
+
+- updated s3-iam.yaml to update the stack
+- exec.sh has the commands used to list all stack exports

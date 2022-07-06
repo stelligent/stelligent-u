@@ -1,11 +1,15 @@
 #!/bin/bash 
 
-STACK_NAME="s3-bucket-create"
-TEMPLATE="s3-cond.yaml"
+STACK_NAME="fidelis-test-new-lab"
+TEMPLATE="s3-import.yaml"
 PROFILE="labmfa"
-REGION="us-east-2"
+REGION="us-east-1"
 
 aws cloudformation deploy --template-file $TEMPLATE \
      --stack-name $STACK_NAME --profile $PROFILE \
-       --parameter-overrides file://name.json \
+       --capabilities CAPABILITY_NAMED_IAM \
          --region $REGION
+
+# aws cloudformation list-exports \
+#    --profile $PROFILE \
+#      --region $REGION
