@@ -13,6 +13,6 @@ Resources:
     Type: AWS::IAM::User
     Properties:
       UserName: !Ref S3UserName
-      Policies:
-        - Fn::ImportValue: !Sub "${AWS::StackName}-MyManagedPolicy"
+      ManagedPolicyArns:
+        - Fn::ImportValue: "fidelis-test-lab-MyManagedPolicy"
       

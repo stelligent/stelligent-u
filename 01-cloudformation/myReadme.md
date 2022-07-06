@@ -32,3 +32,7 @@ This holds all the informations about scripts and templates i created in this mo
 
 - updated s3-iam.yaml to update the stack
 - exec.sh has the commands used to list all stack exports
+
+## Lab 1.2.3: Importing another Stack's Exports
+
+- s3-import.yaml creates the stack
