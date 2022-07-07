@@ -49,10 +49,7 @@ many instances with an ALB.
 - Working from the [ASG Template](https://github.com/stelligent/stelligent-u/blob/master/07-load-balancing/asg_example.yaml),
   associate a [target group](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-targetgroup.html)
   with the autoscaling group, giving it a health check on `/index.html`.
-  - Be sure to use the Amazon Linux AMI, and not the Amazon Linux 2 AMI. If you
-    use the Amazon Linux 2 AMI (this is untested...), you'll have to use
-    `amazon-linux-extras` instead of `yum` and install `nginx1.12`
-    instead of `nginx`
+- Use  Amazon Linux 2 AMI. 
 
 - Create an internet-facing ALB
 
