@@ -73,12 +73,12 @@ PARAMETERS="file://name.json"
 
 # Lab 2.3.3: Tagging S3 Resources
 
-# Updated the CFN template to add tags to the bucket 
+# Updated the CFN template - "s3.yaml" to add tags to the bucket 
 
 # With Amazon S3 tagging, if you want to add or replace a tag in a tag set (all the tags associated with an object or bucket), 
 # you must download all the tags, modify the tags, and then replace all the tags at once. 
 
 # Lab 2.3.4: Object Lifecycles
 
-# The CFN template has all the details to create the lifecycles 
+# The CFN template - "s3.yaml" has all the details to create the lifecycles 
 
