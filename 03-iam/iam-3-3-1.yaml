@@ -1,0 +1,42 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Cloudformation template to create IAM Role with inline policy 
+
+Parameters:
+  BucketName1:
+    Type: String
+    Description: The name of the S3 Bucket to create
+    Default: stelligent-u-fidelisogunsanmi-1
+
+  BucketName2:
+    Type: String
+    Description: The name of the S3 Bucket to create
+    Default: stelligent-u-fidelisogunsanmi-2
+  
+
+Resources:
+  
+  myRole321:
+    Type: 'AWS::IAM::Role'
+    Properties: 
+      RoleName: fidelisRole
+      AssumeRolePolicyDocument: 
+        Version: '2012-10-17'
+        Statement: 
+          - 
+            Effect: Allow
+            Principal: 
+              AWS: arn:aws:iam::324320755747:user/fidelis.ogunsanmi.labs
+            Action: 
+              - 'sts:AssumeRole'
+      ManagedPolicyArns:
+              - arn:aws:iam::aws:policy/AmazonS3FullAccess
+
+  myS3Bucket1:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      BucketName: !Join [ '-', [ !Ref AWS::StackName, !Ref BucketName1 ] ]
+
+  myS3Bucket2:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      BucketName: !Join [ '-', [ !Ref AWS::StackName, !Ref BucketName2 ] ]
