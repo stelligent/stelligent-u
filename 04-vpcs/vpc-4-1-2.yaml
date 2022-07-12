@@ -1,0 +1,103 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: CFN template to create VPC 
+
+# Metadata:
+
+Parameters:
+  VpcCIDR:
+    Type: String
+    Description: The VPC CIDR block 
+
+  PublicSubnetCIDR:
+    Type: String
+    Description: The Ec2 subnet CIDR block 
+
+Resources:
+# Create VPC
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties: 
+      CidrBlock: !Ref VpcCIDR  
+      EnableDnsSupport: true
+      EnableDnsHostnames: true   
+      Tags: 
+        - Key: Name 
+          Value: !Join ['', [!Ref "AWS::StackName", "-VPC" ]]
+        - Key: User 
+          Value: fidelis.ogunsanmi.labs
+        - Key: stelligent-u-lesson
+          Value: '4'
+        - Key: stelligent-u-lab
+          Value: 4-1-1 
+
+# Create Internet Gateway
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: Test IGW
+
+# Attach Internet Gateway to VPC
+  InternetGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      InternetGatewayId: !Ref InternetGateway
+      VpcId: !Ref VPC
+
+# Create Public Subnet
+  PublicSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !Select [ 0, !GetAZs ]
+      CidrBlock: !Ref PublicSubnetCIDR
+      MapPublicIpOnLaunch: true
+      VpcId: !Ref VPC
+      Tags: 
+         - Key: Name 
+           Value: !Join ['', [!Ref "AWS::StackName", "-PublicSubnet" ]]
+         - Key: User 
+           Value: fidelis.ogunsanmi.labs
+         - Key: stelligent-u-lesson
+           Value: '4'
+         - Key: stelligent-u-lab
+           Value: 4-1-1 
+
+# Create Route Table
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      Tags:
+        - Key: Name
+          Value: !Join ['', [!Ref "AWS::StackName", "-PublicRouteTable" ]]
+      VpcId: !Ref VPC
+
+# Add a Public Route to the Route Table
+  PublicRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+      RouteTableId: !Ref PublicRouteTable
+
+# Associate Public Subnet1 with Public Route Table
+  PublicSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      SubnetId: !Ref PublicSubnet
+
+Outputs:
+  VpcID:
+    Description: The VPC ID 
+    Value: !Ref VPC 
+    Export:
+      Name: !Join ['', [!Ref "AWS::StackName", "-VPC" ]]
+  
+  PublicSubnetID:
+    Description: The Ec2Subnet ID 
+    Value: !Ref PublicSubnet
+    Export:
+      Name: !Join ['', [!Ref "AWS::StackName", "-PublicSubnet" ]]
+

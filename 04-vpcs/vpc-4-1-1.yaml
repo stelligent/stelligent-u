@@ -1,0 +1,56 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: CFN template to create VPC 
+
+# Metadata:
+
+Parameters:
+  VpcCIDR:
+    Type: String
+    Description: The VPC CIDR block 
+
+  Ec2SubnetCIDR:
+    Type: String
+    Description: The Ec2 subnet CIDR block 
+
+Resources:
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties: 
+      CidrBlock: !Ref VpcCIDR  
+      EnableDnsSupport: true
+      EnableDnsHostnames: true   
+      Tags: 
+        - Key: Name 
+          Value: !Join ['', [!Ref "AWS::StackName", "-VPC" ]]
+        - Key: User 
+          Value: fidelis.ogunsanmi.labs
+        - Key: stelligent-u-lesson
+          Value: '4'
+        - Key: stelligent-u-lab
+          Value: 4-1-1 
+
+  Ec2Subnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: !Ref Ec2SubnetCIDR
+      AvailabilityZone: !Select [ 0, !GetAZs ]
+      Tags: 
+        - Key: Name 
+          Value: !Join ['', [!Ref "AWS::StackName", "-Ec2Subnet" ]]
+        - Key: User 
+          Value: fidelis.ogunsanmi.labs
+        - Key: stelligent-u-lesson
+          Value: '4'
+        - Key: stelligent-u-lab
+          Value: 4-1-1 
+
+Outputs:
+  VpcID:
+    Description: The VPC ID 
+    Value: !Ref VPC 
+  
+  Ec2SubnetID:
+    Description: The Ec2Subnet ID 
+    Value: !Ref Ec2Subnet

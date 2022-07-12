@@ -1,0 +1,243 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: CFN template to create Ec2 Instance 
+
+Parameters:
+  AmiID:
+    Type: String
+    Description: The AMI ID  
+    
+  InstanceType:
+    Type: String
+    Description: The Instance Type   
+
+  KeypairName:
+    Description: Ec2 KeyPair name
+    Type: String 
+
+# Conditions:
+#   EnabledNatGateway: !Equals [ !Ref createNatGateway, 'true' ]
+
+Resources:
+
+# Create Security Group for the Bastion Host aka Jump Box
+  WebAppSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      VpcId: !ImportValue fidelisVPC-VPC
+      GroupDescription: "Allow HTTP/HTTPS and SSH inbound and outbound traffic"
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+
+# create ec2 instance 
+  FidelisInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: !Ref InstanceType 
+      ImageId: !Ref AmiID 
+      SubnetId: !ImportValue fidelisVPC-PublicSubnet
+      KeyName: !Ref KeypairName
+      SecurityGroupIds:
+        - !GetAtt WebAppSecurityGroup.GroupId
+      Tags:
+        - Key: Name 
+          Value: !Join ['', [!Ref "AWS::StackName", "-FidelisInstance" ]]
+        - Key: User 
+          Value: fidelis.ogunsanmi.labs
+        - Key: stelligent-u-lesson
+          Value: '4'
+        - Key: stelligent-u-lab
+          Value: 4-1-1 
+
+  MyEIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+      InstanceId: !Ref FidelisInstance
+
+  MyNATEIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+
+  myNatGW:
+    Type: AWS::EC2::NatGateway
+    Properties: 
+      AllocationId: !GetAtt MyEIP.AllocationId
+      SubnetId: !ImportValue fidelisVPC-PublicSubnet
+      Tags: 
+        - Key: Name 
+          Value: !Join ['', [!Ref "AWS::StackName", "-NatGW" ]]
+        - Key: User 
+          Value: fidelis.ogunsanmi.labs
+        - Key: stelligent-u-lesson
+          Value: '4'
+        - Key: stelligent-u-lab
+          Value: 4-1-7 
+
+  PrivateSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !Select [ 0, !GetAZs  '' ]
+      CidrBlock: !Ref PrivateSubnetCIDR
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name 
+          Value: !Join ['', [!Ref "AWS::StackName", "-PrivateSubnet" ]]
+        - Key: User 
+          Value: fidelis.ogunsanmi.labs
+        - Key: stelligent-u-lesson
+          Value: '4'
+        - Key: stelligent-u-lab
+          Value: 4-1-7 
+      VpcId: !ImportValue fidelisVPC-VPC  
+
+  PrivateRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !ImportValue fidelisVPC-VPC
+      Tags: 
+        - Key: Name 
+          Value: !Join ['', [!Ref "AWS::StackName", "-PrivateRouteTable" ]]
+        - Key: User 
+          Value: fidelis.ogunsanmi.labs
+        - Key: stelligent-u-lesson
+          Value: '4'
+        - Key: stelligent-u-lab
+          Value: 4-1-7  
+
+  PrivateSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable
+      SubnetId: !Ref PrivateSubnet
+
+  PrivateRoute: 
+    Type: "AWS::EC2::Route"
+    Properties:
+      DestinationCidrBlock: "0.0.0.0/0"
+      RouteTableId: !Ref PrivateRouteTable
+      NatGatewayId: !Ref myNatGW
+
+  MyPrivateEc2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: !Ref InstanceType
+      ImageId: !Ref AmiID
+      KeyName: !Ref KeypairName
+      SubnetId: !Ref PrivateSubnet
+      SecurityGroupIds:
+        - !GetAtt PrivateSecurityGroup.GroupId
+      Tags:
+        - Key: Name 
+          Value: !Join ['', [!Ref "AWS::StackName", "-PrivateInstance" ]]
+        - Key: User 
+          Value: fidelis.ogunsanmi.labs
+        - Key: stelligent-u-lesson
+          Value: '4'
+        - Key: stelligent-u-lab
+          Value: 4-1-7  
+
+  PrivateSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: SSH Security Group
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: !Ref VpcCIDR
+      Tags:
+        - Key: Name
+          Value: SSH Security Group
+      VpcId: !Ref VPC
+
+  PublicNacl:
+    Type: AWS::EC2::NetworkAcl
+    Properties:
+      VpcId: !ImportValue fidelisVPC-VPC
+      Tags:
+        - Key: Name 
+          Value: !Join ['', [!Ref "AWS::StackName", "-PublicNacl" ]]
+        - Key: User 
+          Value: fidelis.ogunsanmi.labs
+        - Key: stelligent-u-lesson
+          Value: '4'
+        - Key: stelligent-u-lab
+          Value: 4-1-8  
+      VpcId: !ImportValue fidelisVPC-VPC
+      Tags:
+        - Key: Name 
+          Value: !Join ['', [!Ref "AWS::StackName", "-PublicNacl" ]]
+        - Key: User 
+          Value: fidelis.ogunsanmi.labs
+        - Key: stelligent-u-lesson
+          Value: '4'
+        - Key: stelligent-u-lab
+          Value: 4-1-8  
+
+  PublicNaclRule:
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+      CidrBlock: 71.179.233.61/32
+      Egress: false
+      NetworkAclId: !GetAtt PublicNacl.Id
+      PortRange:
+        From: 22
+        To: 22
+      Protocol: 6
+      RuleAction: Allow
+      RuleNumber: 200
+
+  PrivateNacl:
+    Type: AWS::EC2::NetworkAcl
+    Properties:
+      VpcId: !ImportValue fidelisVPC-VPC
+      Tags:
+        - Key: Name 
+          Value: !Join ['', [!Ref "AWS::StackName", "-PrivateNacl" ]]
+        - Key: User 
+          Value: fidelis.ogunsanmi.labs
+        - Key: stelligent-u-lesson
+          Value: '4'
+        - Key: stelligent-u-lab
+          Value: 4-1-8  
+           
+  PrivateNaclRule:
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+      CidrBlock: 10.0.0.0/24
+      Egress: false
+      NetworkAclId: !GetAtt PrivateNacl.Id
+      PortRange:
+        From: 22
+        To: 22
+      Protocol: 6
+      RuleAction: Allow
+      RuleNumber: 200
+
+Outputs:
+  InstanceID:
+    Description: The Instance ID 
+    Value: !Ref FidelisInstance 
+    Export:
+      Name: !Join ['', [!Ref "AWS::StackName", "-InstanceID" ]]
+  
+  PrivateIp:
+    Description: The Private Ip 
+    Value: !GetAtt FidelisInstance.PrivateIp
+         
+  PublicIp:
+    Description: The Private Ip 
+    Value: !GetAtt FidelisInstance.PublicIp
