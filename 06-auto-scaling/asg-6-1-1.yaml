@@ -1,0 +1,26 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Create basic ec2 instance 
+
+Parameters:
+  LinuxAMI:
+    Type: String 
+    Description: AMI ID for ec2 instance 
+
+  Ec2InstanceType: 
+    Type: String 
+    Description: Instance Type for ec2 
+
+Resources:
+  myEc2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !Ref LinuxAMI 
+      InstanceType: t2.micro
+      KeyName: fidelis 
+      SubnetId: !ImportValue fidelisPubSubnet
+      SecurityGroupIds:
+        - !ImportValue InstancegroupID
+Outputs:
+  InstanceID:
+    Description: Instance ID of ec2 instance 
+    Value: !Ref myEc2Instance
