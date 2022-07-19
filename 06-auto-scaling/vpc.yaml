@@ -46,6 +46,17 @@ Resources:
           Value: Public Subnet 1
       VpcId: !Ref VPC
 
+  PublicSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !Select [ 1, !GetAZs '' ]
+      CidrBlock: 192.168.0.0/24
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: Public Subnet 2
+      VpcId: !Ref VPC
+
   PublicRouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
@@ -67,6 +78,12 @@ Resources:
     Properties:
       RouteTableId: !Ref PublicRouteTable
       SubnetId: !Ref PublicSubnet
+
+  PublicSubnet2RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      SubnetId: !Ref PublicSubnet2
 
   InstanceSecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -90,10 +107,15 @@ Outputs:
     Export:
       Name: fidelisVpc
 
-  SubnetId:
+  PublicSubnetId:
     Value: !Ref PublicSubnet
     Export:
       Name: fidelisPubSubnet
+
+  PublicSubnet2Id:
+    Value: !Ref PublicSubnet2
+    Export:
+      Name: fidelisPubSubnet2
 
   SecuritygroupID:
     Value: !Ref InstanceSecurityGroup
