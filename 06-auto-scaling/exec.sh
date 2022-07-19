@@ -1,8 +1,8 @@
 #!/bin/bash 
 
 PROFILE="labmfa"
-STACK_NAME="fidelisasg"
-TEMPLATE="asg-6-1-4.yaml"
+STACK_NAME="fidelisvPC"
+TEMPLATE="vpc.yaml"
 PARAMETER="file://params.json"
 KEY_NAME="fidelis"
 REGION="us-east-1"
