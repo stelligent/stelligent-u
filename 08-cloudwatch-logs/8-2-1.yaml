@@ -1,0 +1,96 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Parameters:
+  LogGroupName:
+    Type: String
+    Default: FidelisOgunsanmiLogGroup
+  CTrailBucketName:
+    Type: String
+    Default: fidelis-mod08-trail-bucket
+  CTrailName:
+    Type: String
+    Default: FidelisMod8Ctrail
+
+Resources:
+  LogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties: 
+      LogGroupName: !Ref LogGroupName
+      RetentionInDays: 60
+      Tags:
+        - Key: user
+          Value: fidelis.ogunsanmi
+        - Key: "stelligent-u-lesson"
+          Value: "8"
+
+  TrailS3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Ref CTrailBucketName
+      Tags:
+        - Key: user
+          Value: fidelis.ogunsanmi
+        - Key: "stelligent-u-lesson"
+          Value: "8"
+
+  TrailS3BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties: 
+      Bucket: !Ref TrailS3Bucket
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - cloudtrail.amazonaws.com
+            Action: s3:GetBucketAcl
+            Resource: !GetAtt TrailS3Bucket.Arn
+          - Effect: Allow
+            Principal:
+              Service:
+                - cloudtrail.amazonaws.com
+            Action: s3:PutObject
+            Resource: !Sub ${TrailS3Bucket.Arn}/*
+            Condition: 
+              StringEquals:
+                s3:x-amz-acl: bucket-owner-full-control
+
+  CWatchRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: ""
+            Effect: "Allow"
+            Principal:
+              Service: "cloudtrail.amazonaws.com"
+            Action: "sts:AssumeRole"
+      Policies:
+        - PolicyName: "fidelis-cloud-watch-logs"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "logs:CreateLogStream"
+                  - "logs:PutLogEvents"
+                Resource: "*"
+
+  CTrail:
+    Type: AWS::CloudTrail::Trail
+    Properties:
+      CloudWatchLogsLogGroupArn: !GetAtt LogGroup.Arn
+      CloudWatchLogsRoleArn: !GetAtt CWatchRole.Arn
+      IsLogging: true
+      S3BucketName: !Ref CTrailBucketName
+      TrailName: !Ref CTrailName
+      Tags:
+        - Key: user
+          Value: fidelis.ogunsanmi
+        - Key: "stelligent-u-lesson"
+          Value: "8"
+    DependsOn: CWatchRole
+
+  
