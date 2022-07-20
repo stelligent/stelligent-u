@@ -1,0 +1,6 @@
+{
+    "Parameters": {
+       "LinuxAMI": "ami-052efd3df9dad4825",
+       "Ec2InstanceType": "t2.small"
+    }
+}

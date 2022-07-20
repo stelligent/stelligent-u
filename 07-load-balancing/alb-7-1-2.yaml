@@ -1,0 +1,144 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Create basic ec2 instance 
+
+Parameters:
+  LinuxAMI:
+    Type: String 
+    Description: AMI ID for ec2 instance 
+
+  Ec2InstanceType: 
+    Type: String 
+    Description: Instance Type for ec2 
+
+  LaunchTemplateVersionNumber:
+    Default: 1
+    Type: String
+
+Resources:
+
+  ALBSG:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties:
+      GroupDescription: "security group for ALB"
+      GroupName: "test-ALB-SG"
+      VpcId: !ImportValue fidelisVpc
+      SecurityGroupIngress: 
+        - 
+          CidrIp: "0.0.0.0/0"
+          FromPort: 80
+          IpProtocol: "tcp"
+          ToPort: 80
+        - 
+          CidrIp: "0.0.0.0/0"
+          FromPort: 443
+          IpProtocol: "tcp"
+          ToPort: 443
+
+  ALB:
+    Type: "AWS::ElasticLoadBalancingV2::LoadBalancer"
+    Properties:
+      Name: "test-Application-Load-Balancer"
+      Scheme: "internet-facing"
+      Type: "application"
+      Subnets: 
+        - !ImportValue fidelisPubSubnet
+        - !ImportValue fidelisPubSubnet2
+      SecurityGroups: 
+        - !Ref ALBSG
+      IpAddressType: "ipv4"
+
+  TargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties: 
+      HealthCheckEnabled: true
+      HealthCheckPath: "/BADindex.html"
+      HealthCheckPort: "traffic-port"
+      HealthCheckProtocol: HTTP
+      HealthyThresholdCount: 2
+      UnhealthyThresholdCount: 2
+      HealthCheckIntervalSeconds: 30
+      HealthCheckTimeoutSeconds: 5
+      VpcId: !ImportValue fidelisVpc
+      Protocol: HTTP
+      Port: 80
+      Matcher: 
+          HttpCode: "200"
+      TargetGroupAttributes:
+        - Key: deregistration_delay.timeout_seconds
+          Value: "20"
+      
+  MyAlbListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      LoadBalancerArn: !Ref ALB
+      Port: 80
+      Protocol: "HTTP"
+      DefaultActions: 
+        - Order: 1
+          TargetGroupArn: !Ref TargetGroup
+          Type: "forward"
+
+  WebServerAsg:
+    Type: 'AWS::AutoScaling::AutoScalingGroup'
+    Properties:
+      AutoScalingGroupName: 'AutomationBoxes'
+      VPCZoneIdentifier:
+        - !ImportValue fidelisPubSubnet
+        - !ImportValue fidelisPubSubnet2
+      DesiredCapacity: '3'
+      HealthCheckType: 'ELB'
+      HealthCheckGracePeriod: 30 
+      LaunchConfigurationName: !Ref WebServersLC
+      MaxSize: '3'
+      MinSize: '3'
+      TargetGroupARNs:
+        - !Ref TargetGroup
+
+  WebServersLC:
+    Type: 'AWS::AutoScaling::LaunchConfiguration'
+    Properties:
+      ImageId: 'ami-0cff7528ff583bf9a'
+      InstanceType: 't2.micro'
+      LaunchConfigurationName: 'SimpleWebServerLC'
+      SecurityGroups:
+        - !ImportValue InstancegroupID
+      UserData: 
+        Fn::Base64:
+          Fn::Sub: |
+            #!/bin/bash -xe
+
+            yum install -y aws-cfn-bootstrap
+
+            # Install the files and packages from the metadata
+            /opt/aws/bin/cfn-init -v \
+              --stack ${AWS::StackName} \
+              --resource WebServersLC \
+              --configsets All \
+              --region ${AWS::Region}
+
+            # Signal the status from cfn-init
+            /opt/aws/bin/cfn-signal -e $? \
+              --stack ${AWS::StackName} \
+              --resource WebServersLC \
+              --region ${AWS::Region}
+
+    Metadata:
+      'AWS::CloudFormation::Init':
+        configSets:
+          All:
+            - ConfigureStelligentProject
+        ConfigureStelligentProject:
+          packages:
+            yum:
+              nginx: []
+          files:
+            /usr/share/nginx/html/index.html:
+              content: '<p>Automation for the People</p>'
+              mode: '000644'
+              owner: root
+              group: root
+          services:
+            sysvinit:
+              nginx:
+                enabled: 'true'
+                ensureRunning: 'true'
