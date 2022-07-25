@@ -1,0 +1,135 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Parameters:
+  LambdaRoleName:
+    Type: String
+    Default: HelloLambdaRole
+  LambdaFunctionName:
+    Type: String
+    Default: SimpleHelloFunction
+  apiGatewayName:
+    Type: String
+    Default: my-api
+  apiGatewayStageName:
+    Type: String
+    AllowedPattern: "[a-z0-9]+"
+    Default: call
+  apiGatewayHTTPMethod:
+    Type: String
+    Default: POST
+
+Resources:
+  LambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Handler: lambda.lambda_handler
+      Code: function/ 
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Runtime: python3.9
+  
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: FidelisLambdaExecutionRole
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: LambdaPolicy
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Action:
+                  - dynamodb:GetItem
+                  - dynamodb:PutItem
+                  - dynamodb:UpdateItem
+                Resource: !GetAtt DynamoTable.Arn
+                Effect: Allow
+
+  DynamoTable:
+    Type: AWS::DynamoDB::Table
+    Properties: 
+      TableName: FidelisMod9
+      AttributeDefinitions: 
+        - AttributeName: Key1
+          AttributeType: S
+      KeySchema: 
+        - AttributeName: Key1
+          KeyType: HASH
+      ProvisionedThroughput: 
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+
+  ApiGatewayRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: ''
+            Effect: 'Allow'
+            Principal:
+              Service:
+                - 'apigateway.amazonaws.com'
+            Action:
+              - 'sts:AssumeRole'
+      Path: '/'
+      Policies:
+        - PolicyName: apigw-lambda-access
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: lambda:InvokeFunction
+                Resource: !GetAtt LambdaFunction.Arn
+
+  ApiGatewayRestApi:
+    Type: AWS::ApiGateway::RestApi
+    Properties: 
+      Name: !Ref apiGatewayName 
+
+  ApiGatewayMethod:
+    Type: AWS::ApiGateway::Method
+    Properties: 
+      HttpMethod: ANY
+      Integration: 
+        Type: AWS
+        Credentials: !GetAtt ApiGatewayRole.Arn
+        IntegrationHttpMethod: POST
+        IntegrationResponses:
+          - StatusCode: "200"
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MyLambda.Arn}/invocations"
+
+      OperationName: hello
+      ResourceId: !GetAtt ApiGatewayRestApi.RootResourceId
+      RestApiId: !Ref ApiGatewayRestApi
+      MethodResponses:
+        - StatusCode: "200"
+      AuthorizationType: AWS_IAM 
+
+  ApiGatewayDeployment:
+    Type: AWS::ApiGateway::Deployment
+    DependsOn: ApiGatewayMethod
+    Properties:
+      Description: Lambda API Deployment
+      RestApiId: !Ref ApiGatewayRestApi
+
+  Type: AWS::Lambda::Permission
+  Properties: 
+      Action: lambda:invokeFunction
+      FunctionName: !Ref LambdaFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ApiGatewayRestApi}"
+
+Outputs:
+  RestApiId:
+    Value: !Ref ApiGatewayRestApi
+    Export:
+      Name: FidelisMod9RestApiId
+  ResourceId:
+    Value: !GetAtt ApiGatewayRestApi.RootResourceId
+    Export:
+      Name: FidelisModule9ApiResourceId
