@@ -1,0 +1,54 @@
+"AWSTemplateFormatVersion": "2010-09-09"
+
+Resources:
+  KMSKey:
+    Type: AWS::KMS::Key
+    Properties: 
+      KeyPolicy:
+        Statement:
+        - Sid: "Enable IAM User Permissions"
+          Effect: Allow
+          Principal:
+            AWS: !Sub arn:aws:iam::${AWS::AccountId}:root
+          Action: kms:*
+          Resource: '*'
+        - Sid: "Enable Key Administration"
+          Effect: Allow
+          Principal:
+            AWS: !Sub 'arn:aws:iam::${AWS::AccountId}:user/fidelis.ogunsanmi.labs'
+          Action:
+            - 'kms:Create*'
+            - 'kms:Describe*'
+            - 'kms:Enable*'
+            - 'kms:List*'
+            - 'kms:Put*'
+            - 'kms:Update*'
+            - 'kms:Revoke*'
+            - 'kms:Disable*'
+            - 'kms:Get*'
+            - 'kms:Delete*'
+            - 'kms:ScheduleKeyDeletion'
+            - 'kms:CancelKeyDeletion'
+          Resource: '*'
+        - Sid: "Usage KMS key"
+          Effect: Allow
+          Principal:
+            AWS: !Sub 'arn:aws:iam::${AWS::AccountId}:user/fidelis.ogunsanmi.labs'
+          Action:
+            - 'kms:DescribeKey'
+            - 'kms:Encrypt'
+            - 'kms:Decrypt'
+            - 'kms:ReEncrypt*'
+            - 'kms:GenerateDataKey'
+            - 'kms:GenerateDataKeyWithoutPlaintext'
+          Resource: '*'
+  
+  KMSKeyAlias:
+    Type: AWS::KMS::Alias
+    Properties: 
+      AliasName: alias/KeyToFidelisHeart
+      TargetKeyId: !Ref KMSKey
+
+Outputs:
+  KMSKeyID:
+    Value: !Ref KMSKey
