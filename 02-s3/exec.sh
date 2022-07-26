@@ -17,7 +17,6 @@ PARAMETERS="file://name.json"
 #       --profile $PROFILE 
    
 # Lab 2.1.2: Upload Objects to a Bucket
-
 # aws s3 cp data/index.html s3://$BUCKET_NAME/index.html \
 #       --profile $PROFILE
 
