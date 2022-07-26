@@ -76,7 +76,18 @@ aws sts get-session-token \
 /
 ```
 
-This will return json containing the temporarily credentials.(**WARNING: special characters in the 'SecretAccessKey' may not work for Windoze machines)  
+This will return json containing the temporary credentials.(**WARNING: special characters in the 'SecretAccessKey' may not work for Windoze machines)
+
+**Notice: these are not the SecretAccessKey and SessionToken you provided before. These are brand spanking new to be used specifically for a new programmatic connection**
+
+```mermaid
+sequenceDiagram
+You ->> AWS: I need temporary credentials
+Note right of AWS: Thinking... Thinking
+AWS ->> You: Here are the new credentials...
+You ->> AWS: Here's the credentials to get me access
+AWS ->> You: Soup for you. You have access!!
+```
 
 ```shell
 "Credentials": {
@@ -223,5 +234,5 @@ to complete the training work. In your Cloud9 Editor, perform the following:
   application in that language
 - Add the files to your new branch, commit them, and push the branch up to
   your forked repository
-- Create a pull request from your branch to the master branch within your forked
+- Create a pull request from your branch to the master branch within YOUR forked
   repository and merge after reviewing
