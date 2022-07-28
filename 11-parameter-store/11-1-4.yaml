@@ -1,0 +1,161 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Parameters:
+  TopLevelParameter:
+    Type: AWS::SSM::Parameter::Name
+    Default: /fidelis.ogunsanmi.labs/UserName
+    Description: "User Name for the engineer"
+
+  UserName:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /fidelis.ogunsanmi.labs/UserName
+
+  Name:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /fidelis.ogunsanmi.labs/Name
+
+  StreetAddress:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /fidelis.ogunsanmi.labs/Address
+
+  City:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /fidelis.ogunsanmi.labs/City
+
+  Team:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /fidelis.ogunsanmi.labs/Team
+    
+  StartDate:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /fidelis.ogunsanmi.labs/StartDate
+
+  Timezone:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /fidelis.ogunsanmi.labs/TimeZone
+
+  Title:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /fidelis.ogunsanmi.labs/Title
+
+  State:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /fidelis.ogunsanmi.labs/State
+
+Resources:
+  ALBSG:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties:
+      GroupDescription: "security group for ALB"
+      GroupName: "test-ALB-SG"
+      VpcId: !ImportValue fidelisVpc
+      SecurityGroupIngress: 
+        - 
+          CidrIp: "0.0.0.0/0"
+          FromPort: 80
+          IpProtocol: "tcp"
+          ToPort: 80
+        - 
+          CidrIp: "0.0.0.0/0"
+          FromPort: 443
+          IpProtocol: "tcp"
+          ToPort: 443
+
+  ALB:
+    Type: "AWS::ElasticLoadBalancingV2::LoadBalancer"
+    Properties:
+      Name: "test-Application-Load-Balancer"
+      Scheme: "internet-facing"
+      Type: "application"
+      Subnets: 
+        - !ImportValue fidelisPubSubnet
+        - !ImportValue fidelisPubSubnet2
+      SecurityGroups: 
+        - !Ref ALBSG
+      IpAddressType: "ipv4"
+
+  TargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties: 
+      HealthCheckEnabled: true
+      HealthCheckPath: "/BADindex.html"
+      HealthCheckPort: "traffic-port"
+      HealthCheckProtocol: HTTP
+      HealthyThresholdCount: 2
+      UnhealthyThresholdCount: 2
+      HealthCheckIntervalSeconds: 30
+      HealthCheckTimeoutSeconds: 5
+      VpcId: !ImportValue fidelisVpc
+      Protocol: HTTP
+      Port: 80
+      Matcher: 
+          HttpCode: "200"
+      TargetGroupAttributes:
+        - Key: deregistration_delay.timeout_seconds
+          Value: "20"
+
+  MyAlbListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      LoadBalancerArn: !Ref ALB
+      Port: 80
+      Protocol: "HTTP"
+      DefaultActions: 
+        - Order: 1
+          TargetGroupArn: !Ref TargetGroup
+          Type: "forward"
+
+  WebServerAsg:
+    Type: 'AWS::AutoScaling::AutoScalingGroup'
+    Properties:
+      AutoScalingGroupName: 'AutomationBoxes'
+      VPCZoneIdentifier:
+        - !ImportValue fidelisPubSubnet
+        - !ImportValue fidelisPubSubnet2
+      DesiredCapacity: '3'
+      HealthCheckType: 'ELB'
+      HealthCheckGracePeriod: 30 
+      LaunchConfigurationName: !Ref WebServersLC
+      MaxSize: '3'
+      MinSize: '3'
+      TargetGroupARNs:
+        - !Ref TargetGroup
+
+  WebServersLC:
+    Type: 'AWS::AutoScaling::LaunchConfiguration'
+    Properties:
+      ImageId: 'ami-0cff7528ff583bf9a'
+      InstanceType: 't2.micro'
+      LaunchConfigurationName: 'SimpleWebServerLC'
+      SecurityGroups:
+        - !ImportValue InstancegroupID
+      UserData: 
+        Fn::Base64:
+          Fn::Base64:
+          Fn::Sub: |
+            #!/bin/bash -xe
+            amazon-linux-extras install -y aws-cfn-bootstrap
+            amazon-linux-extras install -y nginx1
+            service nginx start
+            middlename = $(aws ssm get-parameter --name /fidelis.ogunsanmi.labs/middlename --with-decryption --query Parameter.Value --output text --region us-west-1)</p>
+            echo <<< EOL
+            <H1>Automation for ${ParameterName}</H1> 
+            <p>UserName: ${UserName}</p>
+            <p>Full Name: ${Name}</p>
+            <p>MiddleName: $(aws ssm get-parameter --name /fidelis.ogunsanmi.labs/middlename --with-decryption --query Parameter.Value --output text --region us-west-1)</p>
+            <p>UserName: ${UserName}</p>
+            <p>Title: ${Title}</p>
+            <p>Address: ${StreetAddress}, ${City}, ${State}</p>
+            <p>Time Zone: ${TimeZone}</p>
+            <p>Team Name: ${TeamName}</p>
+            <p>Start Date ${StartDate}</p>
+            EOL >> /usr/share/nginx/html/index.html;
+
+            # Signal the status from cfn-init
+            /opt/aws/bin/cfn-signal -e $? \
+              --stack ${AWS::StackName} \
+              --resource WebServersLC \
+              --region ${AWS::Region}
+      
+
+
+

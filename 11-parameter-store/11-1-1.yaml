@@ -1,0 +1,102 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Lab 11.1.1'
+
+Parameters:
+  Name:
+    Type: String
+
+  UserName:
+    Type: String
+
+  Title:
+    Type: String
+
+  StreetAddress:
+    Type: String
+  
+  City:
+    Type: String
+  
+  State:
+    Type: String
+    Default: MD 
+    MaxLength: "2"
+    MinLength: "2"
+    AllowedPattern: "^[A-Z]{2}$"
+
+  TimeZone:
+    Type: String
+    Default: EST
+    MaxLength: "3"
+    MinLength: "3"
+  
+  StartDate:
+    Type: String
+    Default: "2022-06-20"
+
+  Team:
+    Type: String
+
+Resources:
+  ineerUserName:
+    Type: AWS::SSM::Parameter
+    Properties: 
+      Name: !Sub /${UserName}/UserName
+      Type: String
+      Value: !Ref UserName
+  
+  ineerName:
+    Type: AWS::SSM::Parameter
+    Properties: 
+      Name: !Sub /${UserName}/Name
+      Type: String
+      Value: !Ref Name
+
+  ineerAddress:
+    Type: AWS::SSM::Parameter
+    Properties: 
+      Name: !Sub /${UserName}/Address
+      Type: String
+      Value: !Ref StreetAddress
+
+  ineerTitle:
+      Type: AWS::SSM::Parameter
+      Properties: 
+        Name: !Sub /${UserName}/Title
+        Type: String
+        Value: !Ref Title
+  
+  ineerState:
+      Type: AWS::SSM::Parameter
+      Properties: 
+        Name: !Sub /${UserName}/State
+        Type: String
+        Value: !Ref State
+  
+  ineerCity:
+      Type: AWS::SSM::Parameter
+      Properties: 
+        Name: !Sub /${UserName}/City
+        Type: String
+        Value: !Ref City
+  
+  ineerTimeZone:
+      Type: AWS::SSM::Parameter
+      Properties: 
+        Name: !Sub /${UserName}/TimeZone
+        Type: String
+        Value: !Ref TimeZone
+    
+  ineerTeam:
+      Type: AWS::SSM::Parameter
+      Properties: 
+        Name: !Sub /${UserName}/Team
+        Type: String
+        Value: !Ref Team
+  
+  ineerStartDate:
+      Type: AWS::SSM::Parameter
+      Properties: 
+        Name: !Sub /${UserName}/StartDate
+        Type: String
+        Value: !Ref StartDate
