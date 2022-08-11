@@ -1,0 +1,69 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+
+Parameters:
+  Name:
+    Description: Name of the engineer
+    Type: String
+    AllowedPattern: ^[a-zA-Z0-9_.-]*$
+    MaxLength: 2048
+
+  Team:
+    Description: Team that the engineer belongs to
+    Type: String
+    AllowedPattern: ^[a-zA-Z0-9_.-]*$
+    MaxLength: 2048
+
+  Timezone:
+    Description: Timezone that the engineer lives in
+    Type: String
+    AllowedPattern: ^[a-zA-Z0-9_.-]*$
+    MaxLength: 2048
+
+  State:
+    Description: State that the engineer lives in
+    Type: String
+    AllowedPattern: ^[a-zA-Z0-9_.-]*$
+    MaxLength: 2
+
+  StartDate:
+    Description: Start date that the engineer joined the team
+    Type: String
+    AllowedPattern: ^[a-zA-Z0-9_.-]*$
+    MaxLength: 2048
+
+Resources:
+  NameParam:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub '/will.deberry.labs/stelligent-u/lab11/name'
+      Type: String
+      Value: !Ref Name
+
+  TeamParam:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub '${NameParam}/team'
+      Type: String
+      Value: !Ref Team
+
+  TimezoneParam:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub '${NameParam}/timezone'
+      Type: String
+      Value: !Ref Timezone
+
+  StateParam:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub '${NameParam}/state'
+      Type: String
+      Value: !Ref State
+
+  StartDateParam:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub '${NameParam}/startDate'
+      Type: String
+      Value: !Ref StartDate
