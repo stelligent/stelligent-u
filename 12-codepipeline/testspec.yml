@@ -1,0 +1,12 @@
+---
+version: 0.2
+env:
+  variables:
+    key: S3_BUCKET
+phases:
+  build:
+    commands:
+      - echo "Checking Application health"
+      - aws s3api head-bucket --bucket $S3_BUCKET
+    finally:
+      - echo "Application Health Check completed!"
