@@ -11,3 +11,17 @@ __pycache__
 
 .ruby-version
 *.pem
+
+[random file I don't want to see]
+01-cloudformation/Poilcy.json
+01-cloudformation/lab1notes
+01-cloudformation/test.yaml
+01-cloudformation/updatestack.param
+02-s3/S3 notes
+02-s3/answers_and_commands_ran.txt
+02-s3/data/
+02-s3/rules.txt
+02-s3/s3bucket.rb
+03-iam/data1
+03-iam/scatch
+03-iam/scratch.yaml
