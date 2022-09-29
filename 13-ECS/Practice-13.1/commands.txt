@@ -1,0 +1,14 @@
+#LOGIN USING get-login-password
+aws ecr get-login-password --region us-east-1 --profile labs | docker login --username AWS --password-stdin 324320755747.dkr.ecr.us-east-1.amazonaws.com
+
+docker tag nginx:latest 324320755747.dkr.ecr.us-east-1.amazonaws.com/ecr:latest
+
+docker push 324320755747.dkr.ecr.us-east-1.amazonaws.com/ecr:latest
+
+# LOGIN USING get-authorization-token
+TOKEN=$(aws ecr get-authorization-token --profile labs --output text --query 'authorizationData[].authorizationToken')
+
+curl -i -H "Authorization: Basic $TOKEN" https://324320755747.dkr.ecr.us-east-1.amazonaws.com/v2/ecr/tags/list
+
+# Run the image
+docker run --rm -it 324320755747.dkr.ecr.us-east-1.amazonaws.com/ecr:latest
