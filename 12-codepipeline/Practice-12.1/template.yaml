@@ -1,0 +1,6 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: github-codepipeline-app
+
+Resources:
+  ApplicationBucket:
+    Type: AWS::S3::Bucket
