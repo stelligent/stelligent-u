@@ -1,16 +1,36 @@
-Description: An ECS Fargate Cluster
+Description: An ECS EC2 Cluster
 
 Parameters:
   Name:
     Description: Name of the Repository
     Type: String
-  ECRRepositoryName:
-    Description: The name of the repository on Github
+  LatestAmiId:
+    Description: Region specific image from the Parameter Store
+    Type: 'AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>'
+    Default: '/aws/service/ecs/optimized-ami/amazon-linux-2/recommended/image_id'
+  InstanceType:
+    Description: Amazon EC2 instance type for the instances
+    Type: String
+    AllowedValues: [t2.micro, t2.small, t2.medium, t2.large, t2.xlarge, t3.micro, t3.small,
+      t3.medium, t3.large, t3.xlarge, m4.large, m4.xlarge, m5.large, m5.xlarge, c4.large,
+      c4.xlarge, c5.large, c5.xlarge, r4.large, r4.xlarge, r5.large, r5.xlarge, i3.large,
+      i3.xlarge]
+    Default: t2.micro
+  DesiredCapacity:
+    Type: Number
+    Default: '1'
+    Description: Number of instances to launch in your ECS cluster.
+  MaxSize:
+    Type: Number
+    Default: '2'
+    Description: Maximum number of instances that can be launched in your ECS cluster.
+  ImageName:
+    Description: The name of the image in AWS ECR
     Type: String
     Default: ecr
   ImageTag:
-    Description: The Image tag in the repoitory (e.g 2.xx, latest)
     Type: String
+    Description: The image tag (e.g, 2.xx, latest)
     Default: latest
 
 Mappings:
@@ -82,10 +102,7 @@ Resources:
   ECSCluster:
     Type: AWS::ECS::Cluster
     Properties:
-      ClusterName: !Sub "${Name}-desmond"
-      Tags:
-        - Key: "Name"
-          Value: "desmond.ndambi.labs"
+      ClusterName: !Sub "${Name}-arnoldrx"
   LBSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -99,18 +116,13 @@ Resources:
   LBSecurityGroupEgress:
     Type: AWS::EC2::SecurityGroupEgress
     Properties:
+      CidrIp: 0.0.0.0/0
+      Description: Allow all outbound traffic by default
+      IpProtocol: "-1"
       GroupId:
         Fn::GetAtt:
           - LBSecurityGroup
           - GroupId
-      IpProtocol: tcp
-      Description: Load balancer to target
-      DestinationSecurityGroupId:
-        Fn::GetAtt:
-          - ServiceSecurityGroup
-          - GroupId
-      FromPort: 80
-      ToPort: 80
   ServiceSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -163,7 +175,7 @@ Resources:
     Properties:
       Port: 80
       Protocol: HTTP
-      TargetType: ip
+      TargetType: instance
       VpcId: !Ref VPC
   TaskDefTaskRole:
     Type: AWS::IAM::Role
@@ -187,24 +199,121 @@ Resources:
               Service: ecs-tasks.amazonaws.com
         Version: "2012-10-17"
       ManagedPolicyArns: 
-        - "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy" 
-  TaskDefinition: 
+        - "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+  EC2Role:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service: [ec2.amazonaws.com]
+          Action: ['sts:AssumeRole']
+      Path: /
+      Policies:
+      - PolicyName: ecs-service
+        PolicyDocument:
+          Statement:
+          - Effect: Allow
+            Action: ['ecs:CreateCluster', 'ecs:DeregisterContainerInstance', 'ecs:DiscoverPollEndpoint',
+              'ecs:Poll', 'ecs:RegisterContainerInstance', 'ecs:StartTelemetrySession',
+              'ecs:Submit*', 'logs:CreateLogStream', 'logs:PutLogEvents', 'ecr:*']
+            Resource: '*'
+  EC2InstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Path: /
+      Roles: [!Ref 'EC2Role']
+  EcsServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Effect: Allow
+          Principal: 
+            Service: [ecs.amazonaws.com]
+          Action: ['sts:AssumeRole']
+      Path: /
+      Policies:
+      - PolicyName: "ecs-service-policy"
+        PolicyDocument:
+          Statement:
+          - Effect: Allow
+            Action: [
+              'elasticloadbalancing:Describe*', 
+              'elasticloadbalancing:DeregisterInstancesFromLoadBalancer',
+              'elasticloadbalancing:RegisterInstancesWithLoadBalancer', 
+              'elasticloadbalancing:RegisterTargets',
+              'ec2:Describe*', 
+              'ec2:AuthorizeSecurityGroupIngress'
+            ]
+            Resource: '*'
+  ContainerInstances: 
+    Type: AWS::EC2::LaunchTemplate
+    Properties:
+      LaunchTemplateData: 
+        ImageId: !Ref LatestAmiId
+        SecurityGroupIds: 
+          - !GetAtt LBSecurityGroup.GroupId
+        InstanceType: !Ref InstanceType
+        IamInstanceProfile: 
+          Arn: !GetAtt EC2InstanceProfile.Arn
+        UserData:
+          Fn::Base64: !Sub |
+            #!/bin/bash
+            echo ECS_CLUSTER=${Name}-desmond >> /etc/ecs/ecs.config;
+  ECSAutoScalingGroup:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      AutoScalingGroupName: "ASG"
+      VPCZoneIdentifier:
+        - Ref: PublicSubnetOne
+        - Ref: PublicSubnetTwo
+      LaunchTemplate: 
+        LaunchTemplateId: !Ref ContainerInstances
+        Version: !GetAtt ContainerInstances.LatestVersionNumber
+      MinSize: '0'
+      MaxSize: !Ref MaxSize
+      DesiredCapacity: !Ref DesiredCapacity
+  ECSCluster:
+    Type: AWS::ECS::Cluster
+    DependsOn:
+      - CapacityProvider
+    Properties:
+      ClusterName: !Sub "${Name}-desmond"
+      CapacityProviders:
+        - !Ref CapacityProvider
+      Tags:
+        - Key: "Name"
+          Value: "desmond.ndambi.labs"
+  CapacityProvider:
+    Type: AWS::ECS::CapacityProvider
+    Properties:
+      Name: "CapacityProvider"
+      AutoScalingGroupProvider:
+        AutoScalingGroupArn: !Ref ECSAutoScalingGroup
+        ManagedScaling:
+          MaximumScalingStepSize: 5
+          MinimumScalingStepSize: 1
+          Status: ENABLED
+          TargetCapacity: 100
+  TaskDefinition:
     Type: AWS::ECS::TaskDefinition
     Properties:
       RequiresCompatibilities:
-        - "FARGATE"
-      ContainerDefinitions: 
+        - "EC2"
+      ContainerDefinitions:
         - Name: "nginx"
-          Image: !Sub "${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${ECRRepositoryName}:${ImageTag}"
+          Image: !Sub "${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${ImageName}:${ImageTag}"
           Cpu: "128"
           PortMappings:
             - ContainerPort: "80"
               Protocol: "tcp"
               HostPort: "80"
           Memory: "256"
-          Essential: "true"         
+          Essential: "true"
       ExecutionRoleArn: !Ref TaskDefExecutionRole
-      NetworkMode: "awsvpc"
+      NetworkMode: "bridge"
       Cpu: "256"
       Memory: "512"
       RuntimePlatform:
@@ -212,13 +321,16 @@ Resources:
           "OperatingSystemFamily": "LINUX",
           "CpuArchitecture": "X86_64"
         }
-  ECSService: 
+  ECSService:
     Type: AWS::ECS::Service
     DependsOn:
       - ECSALB
+      - LBListener
+      - ECSCluster
     Properties:
       ServiceName: "ECSService"
       Cluster: !Ref ECSCluster
+      HealthCheckGracePeriodSeconds: 200
       DeploymentConfiguration:
         DeploymentCircuitBreaker:
           {
@@ -228,21 +340,12 @@ Resources:
         MaximumPercent: "200"
         MinimumHealthyPercent: "100"
       DesiredCount: "1"
-      HealthCheckGracePeriodSeconds: "200"
-      LaunchType: "FARGATE"
       LoadBalancers:
         - ContainerName: "nginx"
           ContainerPort: "80"
           TargetGroupArn: !Ref LBTargetGroup
-      NetworkConfiguration:
-        AwsvpcConfiguration:
-            AssignPublicIp: "ENABLED"
-            SecurityGroups: 
-              - !Ref ServiceSecurityGroup
-            Subnets: 
-              - Ref: PublicSubnetOne
-              - Ref: PublicSubnetTwo
       TaskDefinition: !Ref TaskDefinition
+      Role: !Ref EcsServiceRole
 
 Outputs:
   WebAppLB:
@@ -250,3 +353,4 @@ Outputs:
     Value: !Join [ "", [ 'http://', !GetAtt ECSALB.DNSName ] ]
     Export:
       Name: !Sub ${Name}-LB
+
