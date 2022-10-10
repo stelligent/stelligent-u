@@ -1,0 +1,63 @@
+"AWSTemplateFormatVersion": "2010-09-09"
+
+Parameters:
+  WindowsAmi:
+    Type: String
+  LinuxAmi:
+    Type: String
+  instancetype:
+    Type: String 
+
+Resources:
+
+  MySecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: "Allen F Lab 5 SG"
+      GroupName: sglab521
+      SecurityGroupIngress:
+        - IpProtocol: icmp
+          FromPort: 8
+          ToPort: 0
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+
+  MyLaunchTemplate:
+    Type: AWS::EC2::LaunchTemplate
+    Properties:
+      LaunchTemplateData:
+        InstanceType: !Ref instancetype
+        SecurityGroupIds: 
+          - !GetAtt MySecurityGroup.GroupId 
+        TagSpecifications:
+          - ResourceType: instance
+            Tags:
+              - Key: user
+                Value: fidelis.ogunsanmi.labs
+              - Key: "stelligent-u-lesson"
+                Value: "5"
+
+  MyLinuxInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !Ref LinuxAmi
+      AvailabilityZone: us-west-1a
+      LaunchTemplate:
+        LaunchTemplateId: !Ref MyLaunchTemplate
+        Version: "1"
+
+  MyEIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+      InstanceId: !Ref MyLinuxInstance52
+
+Outputs:
+  EIP:
+    Description: "Public IP for Instance"
+    Value: !Ref MyEIP
+    Export:
+      Name: !Join ['', [!Ref "AWS::StackName", "-EIP" ]]

@@ -1,0 +1,77 @@
+"AWSTemplateFormatVersion": "2010-09-09"
+
+Parameters:
+  WindowsAmi:
+    Type: String
+  LinuxAmi:
+    Type: String
+  instancetype:
+    Type: String 
+
+Resources:
+
+  MySecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: "Allen F Lab 5 SG"
+      GroupName: sglab521
+      SecurityGroupIngress:
+        - IpProtocol: icmp
+          FromPort: 8
+          ToPort: 0
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+
+  MyLaunchTemplate:
+    Type: AWS::EC2::LaunchTemplate
+    Properties:
+      LaunchTemplateData:
+        InstanceType: !Ref instancetype
+        SecurityGroupIds: 
+          - !GetAtt MySecurityGroup.GroupId 
+        TagSpecifications:
+          - ResourceType: instance
+            Tags:
+              - Key: user
+                Value: fidelis.ogunsanmi.labs
+              - Key: "stelligent-u-lesson"
+                Value: "5"
+        UserData:
+          Fn::Base64:
+            !Sub |
+              #!/bin/bash
+              apt-get update -y
+              apt-get  install -y python-pip
+              apt-get install -y wget
+              wget https://s3.amazonaws.com/amazoncloudwatch-agent/ubuntu/amd64/latest/amazon-cloudwatch-agent.deb -O /tmp/amazon-cloudwatch-agent.deb
+              dpkg -i /tmp/amazon-cloudwatch-agent.deb
+              easy_install --script-dir /opt/aws/bin  https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz
+              /opt/aws/bin/cfn-init -v --stack ${AWS::StackId} --resource EC2Instance --region ${AWS::Region} --configsets default
+              /opt/aws/bin/cfn-signal -e $? --stack ${AWS::StackId} --resource EC2Instance --region ${AWS::Region}
+
+
+
+  MyLinuxInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !Ref LinuxAmi
+      AvailabilityZone: us-west-1a
+      LaunchTemplate:
+        LaunchTemplateId: !Ref MyLaunchTemplate
+        Version: "1"
+
+  MyEIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+      InstanceId: !Ref MyLinuxInstance52
+
+Outputs:
+  EIP:
+    Description: "Public IP for Instance"
+    Value: !Ref MyEIP
+    Export:
+      Name: !Join ['', [!Ref "AWS::StackName", "-EIP" ]]

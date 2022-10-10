@@ -1,0 +1,43 @@
+"AWSTemplateFormatVersion": "2010-09-09"
+
+Parameters:
+  WindowsAmi:
+    Type: String
+  LinuxAmi:
+    Type: String
+  instancetype:
+    Type: String 
+
+Resources:
+  MyLaunchTemplate:
+    Type: AWS::EC2::LaunchTemplate
+    Properties:
+      LaunchTemplateData:
+        KeyName: fidelis
+        InstanceType: !Ref instancetype
+        TagSpecifications:
+          - ResourceType: instance
+            Tags:
+              - Key: user
+                Value: fidelis.ogunsanmi.labs
+              - Key: "stelligent-u-lesson"
+                Value: "5"
+
+
+  MyWindowsInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !Ref WindowsAmi
+      AvailabilityZone: us-west-1a
+      LaunchTemplate:
+        LaunchTemplateId: !Ref MyLaunchTemplate
+        Version: "1"
+
+  MyLinuxInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !Ref LinuxAmi
+      AvailabilityZone: us-west-1a
+      LaunchTemplate:
+        LaunchTemplateId: !Ref MyLaunchTemplate
+        Version: "1"

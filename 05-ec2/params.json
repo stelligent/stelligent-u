@@ -1,0 +1,7 @@
+{
+    "Parameters": {
+        "LinuxAmi": "ami-052efd3df9dad4825",
+        "WindowsAmi": "ami-03e42a81d67097502",
+        "instancetype": "t3.micro"
+    }
+}
