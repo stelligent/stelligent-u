@@ -81,10 +81,10 @@ to do this you will need the following:
 You may work off of the provided `base.yaml` template.
 
 Once you have created the CloudFormation template, launch it and navigate
-to the Jenkins instance when complete. Install Jenkins on the EC2 instance, 
-and starting the service. Finally, following the admin install wizard by 
-navigating to the instance IP at the correct port. Verify that Jenkins is 
-set up and ready for use by ensuring the "Welcome to Jenkins!" prompt is 
+to the Jenkins instance when complete. Install Jenkins on the EC2 instance,
+and starting the service. Finally, following the admin install wizard by
+navigating to the instance IP at the correct port. Verify that Jenkins is
+set up and ready for use by ensuring the "Welcome to Jenkins!" prompt is
 present and you can:
 
 - Add a "New Item"

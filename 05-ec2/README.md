@@ -53,7 +53,7 @@
 - DO utilize every link in this document; note how the AWS
   documentation is laid out
 
-- DO use the [AWS CLI for CloudFormation](https://docs.aws.amazon.com/cli/latest/reference/cloudformation/index.html#)
+- DO use the [AWS CLI for CloudFormation](https://awscli.amazonaws.com/v2/documentation/api/latest/reference/cloudformation/index.html)
   (NOT the Console) unless otherwise specified.
 
 - Only specify the minimum configuration required for your resources.
@@ -116,15 +116,15 @@ is created:
 - Create two EC2 instance resources using that same Launch Template
 
   - One instance should use a Windows AMI for Microsoft Windows Server
-    2016 Base
-  - The other instance should be the AMI for Ubuntu 16.04 LTS
+    2022 Base
+  - The other instance should be the AMI for Ubuntu 20.04 LTS
 
 - Launch the instances into the default VPC
 
 Create the stack:
 
 - Write a script that uses the AWS CLI to launch the Stack and immediate
-  employs a [waiter](https://docs.aws.amazon.com/cli/latest/reference/cloudformation/wait/index.html)
+  employs a [waiter](https://awscli.amazonaws.com/v2/documentation/api/latest/reference/cloudformation/wait/index.html)
   so that the script exits only when the CFN service has finished creating the
   stack.
 
@@ -264,9 +264,7 @@ Read and re-read
 of the AWS documentation. In AWS, our goal is generally to replace
 servers that are malfunctioning due to the ease with which virtual
 servers can be automated, but that makes monitoring the health of those
-servers no less important. You can also watch
-[these videos on Linux Academy](https://linuxacademy.com/cp/modules/view/id/163)
-on EC2 monitoring.
+servers no less important.
 
 A small number of metrics are collected for every EC2 instance, but installing
 the [CloudWatch Agent on instances provides an extended set of metrics](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/metrics-collected-by-CloudWatch-agent.html).
@@ -293,7 +291,7 @@ you get stuck SSH into the machine and use the logs referenced in the
 Userdata docs to debug.
 
 - Modify your CFN template so that your Launch Template installs and
-  starts the CloudWatch Agent on boot-up of your Ubuntu 16.04 LTS
+  starts the CloudWatch Agent on boot-up of your Ubuntu 20.04 LTS
   Instance.
 
   - Is it necessary to [apply monitoring scripts](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/mon-scripts.html)
@@ -334,6 +332,11 @@ the Metadata attribute and the [cfn-init capability](https://docs.aws.amazon.com
   the CloudWatch Agent into the Init (AWS::CloudFormation::Init)
   section.
 
+While using a Ubuntu AMI you will need to create the CFN hup service.
+An example of this can be found here:
+<https://aws.amazon.com/premiumsupport/knowledge-center/install-cloudformation-scripts>
+AWS::CloudFormation::Init will not run unless the config files and service are created.
+
 - Recreate your stack
 
 Verify that the metrics you expect to see (based on Lab 5.2.2) are still being collected.
@@ -345,7 +348,7 @@ Verify that the metrics you expect to see (based on Lab 5.2.2) are still being c
 With YAML's multi-line string syntax, you can embed userdata scripts
 that don't require line "\\n", escapes and other syntactical mess that
 makes the script difficult to read, debug, and reuse. If you haven't
-done this already, try it and repeat Lab 5.2.3.
+done this already, try it and repeat Lab 5.3.2.
 
 > Hint: when you want to put a bunch of commands into UserData in a
 > YAML template, use this format to keep it readable:
