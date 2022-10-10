@@ -30,7 +30,8 @@
 
 - DO use the [AWS documentation and user guides](https://aws.amazon.com/documentation/).
 
-- DO use --debug and --event switches on aws cli commands to view the behind-the-curtain actions.
+- DO use --debug and --event switches on aws cli commands to view the
+  behind-the-curtain actions.
 
 ## Lesson 0.1: Setting up your development environment
 
@@ -48,9 +49,10 @@ GitHub code repositories, and, optionally, AWS Cloud9 for your development envir
 
 #### Lab 0.1.1: AWS Access Keys
 
-Save your AWS access key and secret key to a private credentials file on your laptop before enabling 
-MFA.  You won't be able to retrieve your token if the access key and secret key are not added to your 
-credentials file. You will need to [install the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-welcome.html)
+Save your AWS access key and secret key to a private credentials file on your laptop
+before enabling MFA.  You won't be able to retrieve your token if the access
+key and secret key are not added to your credentials file. You will need to
+[install the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-welcome.html)
 and then run some simple commands to confirm access using your keys:
 
 - [list-buckets](https://docs.aws.amazon.com/cli/latest/reference/s3api/list-buckets.html)
@@ -67,7 +69,15 @@ _Never_ commit credentials to a git repo.
   credentials using your MFA device and STS. You can do this in a few
   ways. The first way would be to request the token from STS via the CLI.
 
-##### Option 1: Getting Credentials via STS command (in the AWS console > [user] > Summary page under "Security credentials" tab, use the value for the "Assigned MFA device"). The token-code is your MFA validation code.
+##### Option 1: Getting Credentials via STS command
+
+##### (in the AWS console > [user] >
+
+##### Summary page under "Security credentials" tab
+
+##### use the value for the "Assigned MFA device")
+
+##### The token-code is your MFA validation code
 
 ```shell
 aws sts get-session-token \
@@ -76,7 +86,9 @@ aws sts get-session-token \
 /
 ```
 
-This will return json containing the temporarily credentials.(**WARNING: special characters in the 'SecretAccessKey' may not work for Windoze machines)  
+This will return json containing the temporarily credentials.
+(**WARNING: special characters
+in the 'SecretAccessKey' may not work for Windoze machines)
 
 ```shell
 "Credentials": {

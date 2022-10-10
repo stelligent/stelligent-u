@@ -264,7 +264,7 @@ Read and re-read
 of the AWS documentation. In AWS, our goal is generally to replace
 servers that are malfunctioning due to the ease with which virtual
 servers can be automated, but that makes monitoring the health of those
-servers no less important. 
+servers no less important.
 
 A small number of metrics are collected for every EC2 instance, but installing
 the [CloudWatch Agent on instances provides an extended set of metrics](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/metrics-collected-by-CloudWatch-agent.html).
@@ -330,9 +330,12 @@ the Metadata attribute and the [cfn-init capability](https://docs.aws.amazon.com
   [Metadata](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/metadata-section-structure.html)
   on your Instance, and migrate the logic that installs and starts
   the CloudWatch Agent into the Init (AWS::CloudFormation::Init)
-  section. 
+  section.
 
-- While using a Ubuntu AMI you will need to create the CFN hup service. An example of this can be found here.[https://aws.amazon.com/premiumsupport/knowledge-center/install-cloudformation-scripts/] AWS::CloudFormation::Init will not run unless the config files and service are created.
+While using a Ubuntu AMI you will need to create the CFN hup service.
+An example of this can be found here:
+<https://aws.amazon.com/premiumsupport/knowledge-center/install-cloudformation-scripts>
+AWS::CloudFormation::Init will not run unless the config files and service are created.
 
 - Recreate your stack
 
