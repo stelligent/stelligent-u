@@ -1,0 +1,205 @@
+Description: Step Function and S3 events
+
+Parameters:
+  TrailName:
+    Type: String
+    Default: LSME-Trail
+  BucketName:
+    Type: String
+    Default: lsme-bucket
+
+Resources:
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement: 
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: "sts:AssumeRole"
+  MyLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Handler: "index.handler"
+      Role: !GetAtt [ LambdaExecutionRole,  Arn ]
+      Code:
+        ZipFile: |
+          exports.handler = (event, context, callback) => {
+            callback(null, "Hello AWS");
+          };
+      Runtime: "nodejs12.x"
+      Timeout: "25"
+  StatesExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                - !Sub states.${AWS::Region}.amazonaws.com
+            Action: "sts:AssumeRole"
+      Path: "/"
+      Policies:
+        - PolicyName: StatesExecutionPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "lambda:InvokeFunction"
+                Resource: "*"
+  StateMachine:
+    Type: AWS::StepFunctions::StateMachine
+    Properties:
+      DefinitionString:
+        !Sub 
+          - |-
+            {
+              "Comment": "A Hello AWS using an AWS Lambda Function",
+              "StartAt": "HelloAWS",
+              "States": {
+                "HelloAWS": {
+                  "Type": "Task",
+                  "Resource": "${lambdaArn}",
+                  "End": true
+                }
+              }
+            }
+          - {lambdaArn: !GetAtt [ MyLambdaFunction, Arn ]}
+      RoleArn: !GetAtt [ StatesExecutionRole, Arn ]
+      
+  S3Bucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      BucketName: !Ref BucketName
+      NotificationConfiguration:
+        EventBridgeConfiguration:
+          EventBridgeEnabled: true
+  S3BucketPolicy:
+    Type: 'AWS::S3::BucketPolicy'
+    Properties:
+      Bucket: !Ref S3Bucket
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - 
+          Sid: 'AWSCloudTrailAclCheck20150319'
+          Effect: Allow
+          Principal:
+            Service: [cloudtrail.amazonaws.com]
+          Action: s3:GetBucketAcl
+          Resource: !Sub arn:aws:s3:::${S3Bucket}
+          Condition:
+            StringEquals:
+              aws:SourceArn: !Sub "arn:aws:cloudtrail:${AWS::Region}:${AWS::AccountId}:trail/${Trail}"
+        - 
+          Sid: 'AWSCloudTrailAclWrite20150319'
+          Effect: Allow
+          Principal:
+            Service: [cloudtrail.amazonaws.com]
+          Action: s3:PutObject
+          Resource: !Sub arn:aws:s3:::${S3Bucket}/AWSLogs/${AWS::AccountId}/*
+          Condition:
+            StringEquals:
+              s3:x-amz-acl: bucket-owner-full-control
+              aws:SourceArn: !Sub "arn:aws:cloudTrail:${AWS::Region}:${AWS::AccountId}:trail/${Trail}"
+  CloudWatchLogGroup: 
+    Type: AWS::Logs::LogGroup
+    Properties: 
+      RetentionInDays: 7
+  CloudWatchLogStream: 
+    Type: AWS::Logs::LogStream
+    Properties: 
+      LogGroupName: !Ref CloudWatchLogGroup
+      LogStreamName: "CloudWatchLogStream"
+  CloudWatchLogRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service: [cloudtrail.amazonaws.com]
+            Action: "sts:AssumeRole"
+      Path: "/"
+      Policies:
+      - PolicyName: CloudTrailRoleForCLoudWatch_desmond
+        PolicyDocument:
+          Statement:
+          - Effect: Allow
+            Action: [
+              'logs:CreateLogStream',
+              'logs:PutLogEvents'
+            ]
+            Resource:
+              - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:${CloudWatchLogGroup}:log-stream:${AWS::AccountId}_CloudTrail_${AWS::Region}*"
+  Trail:
+    Type: AWS::CloudTrail::Trail
+    DependsOn:
+      - CloudWatchLogGroup
+      - CloudWatchLogRole
+    Properties:
+      S3BucketName: !Ref S3Bucket
+      IsLogging: true
+      TrailName: !Ref TrailName
+      IsMultiRegionTrail: true
+      EnableLogFileValidation: true
+      CloudWatchLogsLogGroupArn: !GetAtt CloudWatchLogGroup.Arn
+      CloudWatchLogsRoleArn: !GetAtt CloudWatchLogRole.Arn
+      IncludeGlobalServiceEvents: true
+      EventSelectors:
+        - DataResources:
+            - Type: AWS::S3::Object
+              Values:
+                - !Sub "arn:${AWS::Partition}:s3"
+          IncludeManagementEvents: true
+          ReadWriteType: All
+  EventBridge:
+    Type: AWS::Events::Rule
+    DependsOn:
+      - EventBridgeIAMExecutionRole
+    Properties: 
+      Description: "An event rule to trigger state machine from s3 file upload"
+      Name: "s3EventRule"
+      EventPattern:
+        source:
+          - "aws.s3"
+        detail-type:
+          - 'Object Created'
+        detail:
+          bucket:
+            name:
+              - !Ref S3Bucket
+      Targets:
+        - 
+          Arn:
+            !Join [ '', [ 'arn:aws:states:', !Ref 'AWS::Region', ':', !Ref 'AWS::AccountId', ':', stateMachine, ':', !GetAtt StateMachine.Name ] ]
+          Id: "StateMachine"
+          RoleArn: !GetAtt EventBridgeIAMExecutionRole.Arn
+  EventBridgeIAMExecutionRole:  
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: !Sub events.amazonaws.com
+            Action: 'sts:AssumeRole'
+      Path: /
+      Policies:
+        - PolicyName: PutEventsDestinationBus
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 'states:StartExecution'
+                Resource:
+                  - !Join [ '', [ 'arn:aws:states:', !Ref 'AWS::Region', ':', !Ref 'AWS::AccountId', ':', stateMachine, ':', !GetAtt StateMachine.Name ] ]
+
