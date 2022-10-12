@@ -1,0 +1,63 @@
+Description: An ECR Repository
+
+Parameters:
+  repositoryName:
+    Description: Name for the ECR Repository
+    Type: String
+
+Resources:
+  MyRepository: 
+    Type: AWS::ECR::Repository
+    Properties: 
+      RepositoryName: !Sub ${repositoryName}
+      ImageScanningConfiguration: 
+        ScanOnPush: true
+      RepositoryPolicyText: 
+        Version: "2012-10-17"
+        Statement: 
+          - 
+            Sid: AllowPushPull
+            Effect: Allow
+            Principal: 
+              AWS:
+                - !Sub "arn:aws:iam::${AWS::AccountId}:user/desmond.ndambi.labs"
+            Action: 
+              - "ecr:GetDownloadUrlForLayer"
+              - "ecr:BatchGetImage"
+              - "ecr:BatchCheckLayerAvailability"
+              - "ecr:PutImage"
+              - "ecr:InitiateLayerUpload"
+              - "ecr:UploadLayerPart"
+              - "ecr:CompleteLayerUpload"
+      LifecyclePolicy:
+        LifecyclePolicyText: |
+          {
+            "rules": [
+              {
+                "rulePriority": 2,
+                "description": "Expire images after a month",
+                "selection": {
+                  "tagStatus": "any",
+                  "countType": "sinceImagePushed",
+                  "countUnit": "days",
+                  "countNumber": 30
+                },
+                "action": { "type": "expire" }
+              },
+              {
+                "rulePriority": 1,
+                "description": "Keeps only one untagged image",
+                "selection": {
+                  "tagStatus": "untagged",
+                  "countType": "imageCountMoreThan",
+                  "countNumber": 1
+                },
+                "action": { "type": "expire" }
+              }
+            ]
+          }
+  
+Outputs:
+  MyRepository:
+    Description: The URI of the Repository
+    Value: !Sub "${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${repositoryName}"
