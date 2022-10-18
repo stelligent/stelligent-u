@@ -1,0 +1,10 @@
+[
+    {
+        "ParameterKey":"AMI",
+        "ParameterValue":"ami-024527629f55e9322"
+    },
+    {
+        "ParameterKey":"Keyname",
+        "ParameterValue":"greysongundrumkeypair512"
+    }
+]

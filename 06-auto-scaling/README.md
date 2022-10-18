@@ -72,7 +72,7 @@
 
 - Explore your curiosity. Try to understand why things work the way
   they do. Read more of the documentation than just what you need to
-  find the answers.
+  find the answers. 
 
 ## Lesson 6.1: Introduction to EC2 ASGs
 
@@ -108,9 +108,13 @@ Group (ASG): [ask Amazon to create one for us from a running instance](https://d
 
 _What was created in addition to the new Auto Scaling Group?_
 
+A new instance was created, and a default security group, a launch configuration.
+
 ##### Question: Parameters
 
 _What parameters did Amazon record in the resources it created for you?_
+
+For the instance it recorded the Debian AMI, the size of the instance, the key pair, the vpc zone parameter.
 
 #### Lab 6.1.2: Launch Config and ASG in CFN
 
@@ -135,6 +139,8 @@ created for you in Lab 6.1.1.
 _What config info or resources did you have to create explicitly that Amazon
 created for you when launching an ASG from an existing instance?_
 
+The launch configuration had to be created separately from the ASG.
+
 #### Lab 6.1.3: Launch Config Changes
 
 Modify your launch config by increasing your instances from t2.micro to
@@ -144,11 +150,15 @@ t2.small. Update your stack.
 
 _After updating your stack, did your running instance get replaced or resized?_
 
+No it's still the same size, and not activity has happened in the ASG logs.
+
 Terminate the instance in your ASG.
 
 ##### Question: Replacement Instance
 
 _Is the replacement instance the new size or the old?_
+
+It is the new size.
 
 #### Lab 6.1.4: ASG Update Policy
 
@@ -163,9 +173,13 @@ type to t2.medium. Update your stack.
 _After updating, what did you see change? Did your running instance get
 replaced this time?_
 
+The running instance did get replace.
+
 ##### Question: Launch Config
 
 _Did the launch config change or was it replaced?_
+
+It was replaced.
 
 #### Lab 6.1.5: Launch Template
 
@@ -178,11 +192,13 @@ parameters you need to.
 _What config info or resources do you have to provide in addition to what
 Launch Configurations require?_
 
+The template version. 
+
 You'll see both launch configs and launch templates in your client
 engagements. Templates were [introduced in Nov 2017](https://aws.amazon.com/about-aws/whats-new/2017/11/introducing-launch-templates-for-amazon-ec2-instances/)
 and should start to become more common as time goes by. They're more
 flexible: Templates can be applied to more instance classes (EC2, Spot,
-Reserved), they can specify more information than Configurations, and
+Reserved), they cann specify more information than Configurations, and
 they are versioned instead of replaced with each change.
 
 #### Lab 6.1.6: Cleanup
@@ -194,6 +210,8 @@ associated with those. Then tear your stack down.
 
 _After you tear down the stack, do all the associated resources go away?
 What's left?_
+
+IT appears as all of the resources went away. The ASG, the launch config, the launch template, the instance were all deleted. The only thing tat remained was the default security group which I believe was created with the default VPC.
 
 ### Retrospective 6.1
 
@@ -227,8 +245,13 @@ From that output, find the name of your ASG.
 
 _Can you filter your output with "\--query" to print only your ASGs
 resource ID? Given that name, [describe your ASG](https://docs.aws.amazon.com/cli/latest/reference/autoscaling/describe-auto-scaling-groups.html).
+
+aws cloudformation describe-stack-resources --stack-name greysongundrum$CURRENT_LAB  --query 'StackResources[?ResourceType==`AWS::AutoScaling::AutoScalingGroup`].LogicalResourceId'
+
 Find the Instance ID. Can you filter the output to print only the Instance ID
 value?_
+
+aws autoscaling describe-auto-scaling-groups --query 'AutoScalingGroups[*].Instances[*].InstanceId'
 
 (You can use the `--query` option, but you can also use
 [jq](https://stedolan.github.io/jq/). Both are useful in different scenarios.)
@@ -241,6 +264,7 @@ the new instance launch.
 
 _How long did it take for the new instance to spin up? How long before it was
 marked as healthy?_
+20 Second before replacement started  about the same time  to marked healthy. Lifecycle changed to InService at about 60 seconds.
 
 #### Lab 6.2.2: Scale Out
 
@@ -253,9 +277,13 @@ then update the stack.
 
 _Did it work? If it didn't, what else do you have to increase?_
 
+No it did not work. I need to increase the max size.
+
 ##### Question: Update Delay
 
 _How quickly after your stack update did you see the ASG change?_
+
+About 20 s econds.
 
 #### Lab 6.2.3: Manual Interference
 
@@ -263,6 +291,8 @@ Take one of your instances [out of your ASG manually](http://docs.aws.amazon.com
 using the CLI. Observe Auto Scaling as it launches a replacement
 instance. Take note of what it does with the instance you marked
 unhealthy.
+
+Spins up a new instance and then terminates the old instance.
 
 #### Lab 6.2.4: Troubleshooting Features
 
@@ -278,10 +308,15 @@ Standby allows you to take an instance out of action without changing
 anything else: no new instance is created, the standby one isn't
 terminated, even its health check remains as it was before standby.
 Manually put an instance on standby [using the CLI](https://docs.aws.amazon.com/autoscaling/ec2/userguide/as-enter-exit-standby.html#standby-state-aws-cli).
+
+aws autoscaling enter-standby --instance-ids i-061f19ddda9ded1b9 --auto-scaling-group-name greysongundrum622-DebianASG-1KCVUFC6I77UP --should-decrement-desired-capacity
+
 Observe your ASG in the console and see for yourself that the health
 check status doesn't change and the scaled group hasn't changed. Put the
 instance back in action. Note the commands you used and the change to
 the lifecycle state of the instance after each change.
+
+aws autoscaling exit-standby --instance-ids i-061f19ddda9ded1b9 --auto-scaling-group-name greysongundrum622-DebianASG-1KCVUFC6I77UP
 
 Read through the [Scaling Processes](https://docs.aws.amazon.com/autoscaling/ec2/userguide/as-suspend-resume-processes.html#process-types)
 section in the suspending auto-scaling doc. It gives you a lot of
@@ -295,11 +330,28 @@ another. Disable Launch, then put an instance on standby and back in
 action again. Note the process you have to go through, including any
 commands you run.
 
+aws autoscaling suspend-processes --auto-scaling-group-name greysongundrum622-DebianASG-1TB2788G5NG63 --scaling-processes Launch
+
+aws autoscaling enter-standby --instance-ids i-06404777f8d7d292d --auto-scaling-group-name greysongundrum622-DebianASG-1TB2788G5NG63 --should-decrement-desired-capacity
+
+aws autoscaling exit-standby --instance-ids i-06404777f8d7d292d --auto-scaling-group-name greysongundrum622-DebianASG-1TB2788G5NG63
+
+An error occurred (ValidationError) when calling the ExitStandby operation: Cannot move instances out of Standby for AutoScalingGroup greysongundrum622-DebianASG-1TB2788G5NG63 while the Launch process is suspended
+
+
+
+
+
 ### Retrospective 6.2
 
 #### Question: CloudWatch
 
 _How would you use AWS CloudWatch to help monitor your ASG?_
+
+aws autoscaling enable-metrics-collection --auto-scaling-group-name my-asg \
+--metrics GroupDesiredCapacity --granularity "1Minute"
+
+You could use AWS Cloudwatch to monitor the  state of your ASG. You could then use those metrics to make an easy dashboard to make sure the ASG was in a dfesired state.
 
 You can read more [here](https://docs.aws.amazon.com/autoscaling/ec2/userguide/as-instance-monitoring.html)
 about CloudWatch monitoring with ASGs.

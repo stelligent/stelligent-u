@@ -1,0 +1,46 @@
+Description: Creating EC2 resources for lab 6.1.1
+Resources:
+  DefaultLaunchTemplate:
+    Type: AWS::EC2::LaunchTemplate
+    Properties: 
+      LaunchTemplateData: 
+        InstanceType: t2.micro
+        KeyName: !Ref Keyname
+        ImageId: !Ref AMI
+      LaunchTemplateName: !Ref AWS::StackName
+      VersionDescription: 1
+  DebianInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      LaunchTemplate:
+        LaunchTemplateId: !Ref DefaultLaunchTemplate
+        Version: 1
+  DebianLaunchTemplate:
+    Type: AWS::EC2::LaunchTemplate
+    Properties:
+      LaunchTemplateData:
+        ImageId: !Ref AMI
+        InstanceType: t2.medium
+  DebianASG:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      LaunchTemplate:
+        LaunchTemplateId: !Ref DebianLaunchTemplate
+        Version: 1
+      MaxSize: '1'
+      MinSize: '1'
+      DesiredCapacity: '1'
+      AvailabilityZones: 
+        - us-west-1a
+        - us-west-1b
+        - us-west-1c
+    UpdatePolicy:
+      AutoScalingReplacingUpdate:
+        WillReplace: True
+
+
+Parameters:
+  AMI:
+    Type: String
+  Keyname:
+    Type: String 
