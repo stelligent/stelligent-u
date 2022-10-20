@@ -54,6 +54,10 @@
 - DO use the [AWS CLI for CloudFormation](https://docs.aws.amazon.com/cli/latest/reference/cloudformation/index.html#)
   (NOT the Console) unless otherwise specified.
 
+- Helpful tools to check syntax and formating in CFN templates:
+1. cfn-lint: <https://github.com/aws-cloudformation/cfn-lint>
+2. Cloudformation template validation: <https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-validate-template.html>
+
 ## Lesson 1.1: Introduction to CloudFormation
 
 ### Principle 1.1
