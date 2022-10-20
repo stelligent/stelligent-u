@@ -1,0 +1,163 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Resources:
+  GGVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: !Ref VPCCidr
+
+  PublicSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: !Ref PublicSubnetCidr1
+      VpcId: !Ref GGVPC
+      MapPublicIpOnLaunch: True
+      AvailabilityZoneId: usw2-az1
+      Tags:
+        - Key: Name
+          Value: PublicSubnet1
+
+  PublicSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: !Ref PublicSubnetCidr2
+      VpcId: !Ref GGVPC
+      MapPublicIpOnLaunch: True
+      AvailabilityZoneId: usw2-az2
+      Tags:
+        - Key: Name
+          Value: PublicSubnet2
+
+  PublicSubnet3:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: !Ref PublicSubnetCidr3
+      VpcId: !Ref GGVPC
+      MapPublicIpOnLaunch: True
+      AvailabilityZoneId: usw2-az3
+      Tags:
+        - Key: Name
+          Value: PublicSubnet3
+
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+
+  InternetGatewayAttatch:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties: 
+      InternetGatewayId: !Ref InternetGateway
+      VpcId: !Ref GGVPC
+
+  InternetGatewayRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties: 
+      VpcId: !Ref GGVPC
+
+  DefaultRouteToInternetGatway:
+    Type: AWS::EC2::Route
+    Properties: 
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+      RouteTableId: !Ref InternetGatewayRouteTable
+
+  DefaultRouteTableAssociation1:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties: 
+      RouteTableId: !Ref InternetGatewayRouteTable
+      SubnetId: !Ref PublicSubnet1
+
+  DefaultRouteTableAssociation2:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties: 
+      RouteTableId: !Ref InternetGatewayRouteTable
+      SubnetId: !Ref PublicSubnet2
+
+  DefaultRouteTableAssociation3:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties: 
+      RouteTableId: !Ref InternetGatewayRouteTable
+      SubnetId: !Ref PublicSubnet3
+
+  SSHBastion:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !Ref AMI
+      SubnetId: !Ref PublicSubnet1
+      KeyName: !Ref Keyname
+      InstanceType: t2.micro
+      SecurityGroupIds:
+        - !Ref PingSG
+
+  PingSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties: 
+      GroupDescription: Allow ping into instance.
+      SecurityGroupIngress: 
+        - IpProtocol: icmp
+          FromPort: 8
+          ToPort: -1
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: !Ref PublicHomeIP
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+      VpcId: !Ref GGVPC
+
+Parameters:
+  AMI:
+    Type: String
+  Keyname:
+    Type: String 
+  PublicHomeIP:
+    Type: String
+  VPCCidr:
+    Type: String
+  PublicSubnetCidr1:
+    Type: String
+  PublicSubnetCidr2:
+    Type: String
+  PublicSubnetCidr3:
+    Type: String
+
+Outputs:
+  GGVPC:
+    Description: The ID of the VPC
+    Value: !Ref GGVPC
+    Export:
+      Name: !Sub "${AWS::StackName}-VPCID"
+  GGPS1:
+    Description: Public Subnet 1 of GG Network Stack
+    Value: !Ref PublicSubnet1
+    Export:
+      Name: !Sub "${AWS::StackName}-PublicSubnet1"
+  GGPS2:
+    Description: Public Subnet 2 of GG Network Stack
+    Value: !Ref PublicSubnet2
+    Export:
+      Name: !Sub "${AWS::StackName}-PublicSubnet2"
+  GGPS3:
+    Description: Public Subnet 3 of GG Network Stack
+    Value: !Ref PublicSubnet3
+    Export:
+      Name: !Sub "${AWS::StackName}-PublicSubnet3"
+  BastionPublicIP:
+    Description: Public IP of SSH Bastion
+    Value: !GetAtt SSHBastion.PublicIp
+    Export:
+      Name: !Sub "${AWS::StackName}-BastionPublicIP"
+  SecurityGroup:
+    Description: Default security group ID
+    Value: !Ref PingSG
+    Export:
+      Name: !Sub "${AWS::StackName}-PingSG"

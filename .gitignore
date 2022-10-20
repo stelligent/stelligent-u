@@ -35,4 +35,15 @@ credentials
 05-ec2/Schedule4Marley.txt
 05-ec2/scratch.txt
 05-ec2/uswest1greysongundrum.pem.bak
-
+06-auto-scaling/asgcli
+06-auto-scaling/asgcloudformation.json
+06-auto-scaling/query.text
+06-auto-scaling/resource.trace
+06-auto-scaling/stackinfo
+06-auto-scaling/stackresources
+06-auto-scaling/waitscript.sh
+07-load-balancing/example.json
+07-load-balancing/example.yaml
+07-load-balancing/index.html
+07-load-balancing/scratch.txt
+07-load-balancing/waitscript.sh
