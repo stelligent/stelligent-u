@@ -2,7 +2,7 @@ apiVersion: eksctl.io/v1alpha5
 kind: ClusterConfig
 
 metadata:
-  name: stelligent-u-cluster
+  name: desmond-cluster
   region: us-east-1
   # availabilityZones: ["us-east-1a", "us-east-1b"]
 

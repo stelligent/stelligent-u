@@ -4,6 +4,7 @@ Description: "Kubernetes ECR Repository"
 Parameters:
   Prefix:
     Type: String
+    Default: desmond
     Description: ECR Repostory Prefix
 
 Resources:
