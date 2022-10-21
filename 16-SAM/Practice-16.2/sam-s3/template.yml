@@ -1,0 +1,91 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  sam-s3
+
+  Sample SAM Template for s3
+
+Globals:
+  Function:
+    Timeout: 3
+
+Resources:
+  s3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: "desmond-sam-bucket"
+  SNSTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: "SampleTopic"
+  s3Function:
+    Type: AWS::Serverless::Function 
+    DependsOn:
+      - SNSTopic
+    Properties:
+      CodeUri: process-s3/
+      Handler: app.lambda_handler
+      Runtime: python3.7
+      Policies:
+        - Statement:
+          - Sid: VisualEditor0
+            Effect: Allow
+            Action:
+              - s3:GetObject
+            Resource: '*'
+      Events:
+        S3Event:
+          Type: S3 
+          Properties:
+            Bucket: !Ref s3Bucket
+            Events: s3:ObjectCreated:*
+        SNSEvent:
+          Type: SNS
+          Properties:
+            Topic: !Ref SNSTopic
+  Subscription:
+    Type: AWS::SNS::Subscription
+    DependsOn:
+      - SNSTopic
+    Properties:
+      Endpoint: desmond.ndambi@stelligent.com
+      Protocol: email
+      TopicArn: !Ref 'SNSTopic'
+  s3SubscripFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: process-s3-sub/
+      Handler: app.lambda_handler
+      Runtime: python3.7
+      Policies:
+        - Statement:
+          - Sid: VisualEditor0
+            Effect: Allow
+            Action: 
+              - sns:CreateTopic
+              - sns:Publish
+              - sns:Subscribe
+              - sns:CreateTopic
+              - sns:GetTopicAttributes
+              - sns:SetTopicAttributes
+              - sns:TagResource
+              - sns:UntagResource
+              - sns:ListTagsForResource
+              - sns:ListSubscriptionsByTopic
+              - s3:GetObject
+              - s3:ListBucket
+            Resource: "*"
+      Events:
+        SNSEvent:
+          Type: SNS
+          Properties:
+            Topic: !Ref SNSTopic 
+
+
+Outputs:
+  s3Function:
+    Description: "Process S3 Function ARN"
+    Value: !GetAtt s3Function.Arn
+  s3SubscripFunction:
+    Description: "Process S3 Subscription Function ARN"
+    Value: !GetAtt s3SubscripFunction.Arn

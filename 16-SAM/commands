@@ -1,0 +1,14 @@
+sam build && sam package --output-template-file packaged.yaml --s3-bucket sam-bucket-desmond --profile labs
+sam deploy --template-file packaged.yaml --capabilities CAPABILITY_IAM \
+--stack-name SAM-DynamoDB --profile labs
+
+
+aws sqs send-message --queue-url https://sqs.us-east-1.amazonaws.com/324320755747/SampleQueue \
+    --message-body events/event.json \
+    --delay-seconds 10 \
+    --profile labs
+
+aws dynamodb create-table --cli-input-json file://create-table.json \
+--endpoint-url http://localhost:8000
+
+aws dynamodb scan --table-name DynamoDBTable --endpoint-url http://localhost:8000

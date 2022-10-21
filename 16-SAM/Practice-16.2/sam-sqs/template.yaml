@@ -1,0 +1,36 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  sam-sqs
+
+  Sample SAM Template for sam-sqs
+
+Globals:
+  Function:
+    Timeout: 3
+
+Resources:
+  MessageQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: "SampleQueue"
+  ProcessSqsFunction:
+    Type: AWS::Serverless::Function 
+    DependsOn:
+      - MessageQueue
+    Properties:
+      CodeUri: process_sqs/
+      Handler: app.lambda_handler
+      Runtime: python3.7
+      Events:
+        SQSQueue:
+          Type: SQS 
+          Properties:
+            Queue: !GetAtt MessageQueue.Arn
+            BatchSize: 10
+            Enabled: false
+
+Outputs:
+  ProcessSqsFunction:
+    Description: "Process Queue Function ARN"
+    Value: !GetAtt ProcessSqsFunction.Arn
