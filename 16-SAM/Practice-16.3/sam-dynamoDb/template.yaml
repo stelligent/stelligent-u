@@ -1,0 +1,80 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  sam-dynamoDb
+
+  Sample SAM Template for sam-dynamoDb
+
+Globals:
+  Function:
+    Timeout: 3
+
+Resources:
+  DynamoDBTable:
+    Type: AWS::DynamoDB::Table
+    Properties: 
+      TableName: my-table
+      AttributeDefinitions: 
+        - AttributeName: id
+          AttributeType: S
+      KeySchema: 
+        - AttributeName: id
+          KeyType: HASH
+      ProvisionedThroughput: 
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+      StreamSpecification:
+        StreamViewType: NEW_IMAGE
+  WriteFunction:
+    Type: AWS::Serverless::Function
+    DependsOn:
+      - DynamoDBTable
+    Properties:
+      CodeUri: hello_world/
+      Handler: app.lambda_handler
+      Runtime: python3.9
+      Architectures:
+        - x86_64
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref DynamoDBTable
+      Events:
+        HelloWorld:
+          Type: Api 
+          Properties:
+            Path: /write
+            Method: get
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref DynamoDBTable
+  ProcessStreamEventsFunction:
+    Type: AWS::Serverless::Function 
+    DependsOn:
+      - DynamoDBTable
+    Properties:
+      CodeUri: streamdb/
+      Handler: app.lambda_handler
+      Runtime: python3.9
+      Architectures:
+        - x86_64
+      Policies:
+        - DynamoDBStreamReadPolicy:
+            TableName: !Ref DynamoDBTable
+            StreamName: !GetAtt DynamoDBTable.StreamArn
+      Events:
+        DBStreams:
+          Type: DynamoDB
+          Properties:
+            Stream: !GetAtt DynamoDBTable.StreamArn
+            StartingPosition: TRIM_HORIZON
+            BatchSize: 10
+            MaximumBatchingWindowInSeconds: 10
+            Enabled: false
+
+Outputs:
+  DynamoApi:
+    Description: "API Gateway endpoint URL for Prod stage for Hello World function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/write/"
+  WriteFunction:
+    Description: "Hello World Lambda Function ARN"
+    Value: !GetAtt WriteFunction.Arn

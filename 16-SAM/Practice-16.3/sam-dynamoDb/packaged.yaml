@@ -1,0 +1,59 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: 'sam-dynamoDb
+
+  Sample SAM Template for sam-dynamoDb
+
+  '
+Globals:
+  Function:
+    Timeout: 3
+Resources:
+  DynamoDBTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: my-table
+      AttributeDefinitions:
+      - AttributeName: id
+        AttributeType: S
+      KeySchema:
+      - AttributeName: id
+        KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+    Metadata:
+      SamResourceId: DynamoDBTable
+  WriteFunction:
+    Type: AWS::Serverless::Function
+    DependsOn:
+    - DynamoDBTable
+    Properties:
+      CodeUri: s3://sam-bucket-desmond/3716a846e5024c1f2d3b61aae5d6822a
+      Handler: app.lambda_handler
+      Runtime: python3.9
+      Architectures:
+      - x86_64
+      Events:
+        HelloWorld:
+          Type: Api
+          Properties:
+            Path: /write
+            Method: get
+      Environment:
+        Variables:
+          TABLE_NAME:
+            Ref: DynamoDBTable
+    Metadata:
+      SamResourceId: WriteFunction
+Outputs:
+  DynamoApi:
+    Description: API Gateway endpoint URL for Prod stage for Hello World function
+    Value:
+      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/write/
+  WriteFunction:
+    Description: Hello World Lambda Function ARN
+    Value:
+      Fn::GetAtt:
+      - WriteFunction
+      - Arn
