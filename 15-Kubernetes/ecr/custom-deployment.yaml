@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: custom-deployment
+  name: custom-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: custom-deployment
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: custom-deployment
+    spec:
+      containers:
+      - image: 324320755747.dkr.ecr.us-east-1.amazonaws.com/desmond-kubernetes:latest
+        name: custom-deployment
+        ports:
+        - containerPort: 3000
+        env:
+        - name: REACT_APP_BG_COLOR
+          value: "#094679"
+        resources: {}
+status: {}
