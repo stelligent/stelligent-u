@@ -47,3 +47,8 @@ credentials
 07-load-balancing/index.html
 07-load-balancing/scratch.txt
 07-load-balancing/waitscript.sh
+8.1.2.json
+config.json.bak
+getlogs.txt
+scratch.yaml
+waitscript.sh
