@@ -1,0 +1,274 @@
+Description: "Jenkins CodeDeploy"
+
+Parameters:
+  JenkinsInstanceType:
+    Type: String
+    Description: "EC2 instance type for Jenkins Server"
+    Default: t2.medium
+    AllowedValues: 
+      - t2.micro
+      - t2.small
+      - t2.medium
+      - m3.medium
+      - m3.large
+      - m3.xlarge
+      - m3.2xlarge
+      - c3.large
+      - c3.xlarge
+      - c3.2xlarge
+      - c3.4xlarge
+      - c3.8xlarge
+      - c4.large
+      - c4.xlarge
+      - c4.2xlarge
+      - c4.4xlarge
+      - c4.8xlarge
+      - r3.large
+      - r3.xlarge
+      - r3.2xlarge
+      - r3.4xlarge
+      - r3.8xlarge
+      - i2.xlarge
+      - i2.2xlarge
+      - i2.4xlarge
+      - i2.8xlarge
+      - hi1.4xlarge
+      - hs1.8xlarge
+      - cr1.8xlarge
+      - cc2.8xlarge
+  KeyName:
+    Description: "The EC2 Key Pair to allow SSH access to CodeDeploy EC2 instances and Jenkins Server"
+    Type: 'AWS::EC2::KeyPair::KeyName'
+    Default: DesmondKey
+  IPRange:
+    Description: "CIDR block of the network from where you will connect to the Jenkins server using HTTP and SSH"
+    Type: "String"
+    MinLength: "9"
+    MaxLength: "18"
+    AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})"
+    ConstraintDescription: "must be a valid IP CIDR range of the form x.x.x.x/x."
+    Default: 0.0.0.0/0
+
+Mappings:
+  AWSRegionArch2AMI: 
+    ap-northeast-1: 
+      AMI: "ami-08847abae18baa040"
+    ap-northeast-2:
+      AMI: "ami-012566705322e9a8e"
+    ap-south-1:
+      AMI: "ami-00b6a8a2bd28daf19"
+    ap-southeast-1: 
+      AMI: "ami-01da99628f381e50a"
+    ap-southeast-2: 
+      AMI: "ami-00e17d1165b9dd3ec"
+    eu-central-1:
+      AMI: "ami-076431be05aaf8080"
+    eu-west-1:
+      AMI: "ami-0bdb1d6c15a40392c"
+    eu-west-2: 
+      AMI: "ami-e1768386"
+    eu-west-3:
+      AMI: "ami-06340c8c12baa6a09"
+    sa-east-1: 
+      AMI: "ami-0ad7b0031d41ed4b9"
+    us-east-1:
+      AMI: "ami-04681a1dbd79675a5"
+    us-east-2:
+      AMI: "ami-0cf31d971a3ca20d6"
+    us-west-1:
+      AMI: "ami-0782017a917e973e7"
+    us-west-2:
+      AMI: "ami-6cd6f714"
+  UbuntuAMI:
+    us-east-1:
+      AMI: "ami-08c40ec9ead489470"
+
+
+Resources:
+  JenkinsServer:
+    Type: AWS::EC2::Instance
+    Properties:
+      KeyName: !Ref KeyName
+      ImageId: !FindInMap ['AWSRegionArch2AMI', {"Ref": 'AWS::Region'}, 'AMI']
+      InstanceType: !Ref JenkinsInstanceType
+      IamInstanceProfile: !Ref JenkinsInstanceProfile
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          sudo yum update -y
+          sudo yum install wget
+          sudo amazon-linux-extras install java-openjdk11
+          sudo amazon-linux-extras install epel -y
+          sudo wget -O /etc/yum.repos.d/jenkins.repo http://pkg.jenkins-ci.org/redhat/jenkins.repo
+          sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io.key
+          sudo yum install jenkins -y
+          sudo systemctl enable jenkins
+          sudo systemctl start jenkins
+          sudo systemctl status jenkins
+
+          #Installing CloudWatch Agent
+          sudo yum install -y awslogs
+
+          #Installing git
+          sudo yum install git -y
+
+          #Install Maven
+          sudo wget https://dlcdn.apache.org/maven/maven-3/3.8.6/binaries/apache-maven-3.8.6-bin.tar.gz
+          tar -xvf apache-maven-3.8.6-bin.tar.gz
+          sudo mv apache-maven-3.8.6 /opt/
+          export M2_HOME=/opt/apache-maven-3.8.6
+          export PATH="$PATH:$M2_HOME/bin"
+          
+
+      NetworkInterfaces:
+        - AssociatePublicIpAddress: true
+          DeviceIndex: '0'
+          GroupSet:
+            - !Ref JenkinsSecurityGroup
+          SubnetId: 
+            Fn::ImportValue:
+              PublicSubnet1
+      Tags:
+        - Key: 'Name'
+          Value: 'Jenkins Server'
+  JenkinsRole:
+    Type: AWS::IAM::Role
+    Properties:
+      Path: /
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: [ec2.amazonaws.com]
+            Action: ['sts:AssumeRole']
+      Policies:
+      - PolicyName: "JenkinsPolicy"
+        PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Action: [
+                's3:GetObject',
+                's3:GetObjectVersion',
+                's3:PutObject',
+                's3:DeleteObject',
+                's3:ListBucket'
+              ]
+              Resource: "*"  
+      - PolicyName: "CloudWatch-agent-role"
+        PolicyDocument:
+          Statement:
+          - Effect: Allow
+            Action: [
+              'logs:CreateLogGroup',
+              'logs:CreateLogStream',
+              'logs:PutLogEvents',
+              'logs:DescribeLogStreams'
+            ]
+            Resource: "*"
+  JenkinsInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Path: /
+      Roles: [!Ref 'JenkinsRole']
+  JenkinsSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: "Enable SSH and HTTP access from specific CIDR block"
+      VpcId: 
+        Fn::ImportValue: 
+          VPCID
+      SecurityGroupEgress:
+        - IpProtocol: tcp
+          FromPort: 0
+          ToPort: 65535
+          CidrIp: 0.0.0.0/0
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: !Ref IPRange
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: !Ref IPRange
+        - IpProtocol: tcp
+          FromPort: 8080
+          ToPort: 8080
+          CidrIp: !Ref IPRange
+        - IpProtocol: tcp
+          FromPort: 50000
+          ToPort: 50000
+          CidrIp: !Ref IPRange
+  AgentSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: "Enable Agent to Master communication"
+      VpcId:
+        Fn::ImportValue:
+          VPCID
+      SecurityGroupEgress:
+        - IpProtocol: tcp
+          FromPort: 0
+          ToPort: 65535
+          CidrIp: 0.0.0.0/0
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: !Ref IPRange
+  Agent1Server:
+    Type: AWS::EC2::Instance
+    Properties:
+      KeyName: !Ref KeyName
+      ImageId: !FindInMap ['UbuntuAMI', {"Ref": 'AWS::Region'}, 'AMI']
+      InstanceType: "t2.small"
+      IamInstanceProfile: !Ref JenkinsInstanceProfile
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          sudo apt update -y
+          sudo apt install openjdk-11-jre-headless -y
+      NetworkInterfaces:
+        - AssociatePublicIpAddress: true
+          DeviceIndex: '0'
+          GroupSet:
+            - !Ref AgentSecurityGroup
+          SubnetId: 
+            Fn::ImportValue:
+              PublicSubnet1
+      Tags:
+        - Key: 'Name'
+          Value: 'Slave Node(1)'
+  Agent2Server:
+    Type: AWS::EC2::Instance
+    Properties:
+      KeyName: !Ref KeyName
+      ImageId: !FindInMap ['AWSRegionArch2AMI', {"Ref": 'AWS::Region'}, 'AMI']
+      InstanceType: 't2.micro'
+      IamInstanceProfile: !Ref JenkinsInstanceProfile
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          sudo yum update -y
+          sudo amazon-linux-extras install java-openjdk11 -y
+          sudo amazon-linux-extras install epel -y
+          sudo yum install git -y
+          sudo wget https://dlcdn.apache.org/maven/maven-3/3.8.6/binaries/apache-maven-3.8.6-bin.tar.gz
+          tar -xvf apache-maven-3.8.6-bin.tar.gz
+          sudo mv apache-maven-3.8.6 /opt/
+          export M2_HOME=/opt/apache-maven-3.8.6
+          export PATH="$PATH:$M2_HOME/bin"
+      NetworkInterfaces:
+        - AssociatePublicIpAddress: true
+          DeviceIndex: '0'
+          GroupSet:
+            - !Ref AgentSecurityGroup
+          SubnetId: 
+            Fn::ImportValue:
+              PublicSubnet1
+      Tags:
+        - Key: 'Name'
+          Value: 'Slave Node(2)'
+
+  
