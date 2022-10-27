@@ -1,11 +1,11 @@
 [
     {
         "ParameterKey":"AMI",
-        "ParameterValue":"ami-08e2d37b6a0129927"
+        "ParameterValue":"ami-0c09c7eb16d3e8e70"
     },
     {
-        "ParameterKey":"Keyname",
-        "ParameterValue":"greysongundrumkeypair711"
+        "ParameterKey":"KeyName",
+        "ParameterValue":"greysongundrumkeypair812"
     },
     {
         "ParameterKey":"PublicHomeIP",
