@@ -21,10 +21,10 @@
     },
     {
       "ParameterKey": "EC2KeyName",
-      "ParameterValue": "test-user-key"
+      "ParameterValue": "joel-key"
     },
      {
       "ParameterKey": "IAMUserOwnerIp",
-      "ParameterValue": "XX.XXX.XXX.XXX"
+      "ParameterValue": "66.110.242.65"
     }
   ]

@@ -168,14 +168,14 @@ Resources:
       NetworkAclId: !Ref MyNetworkAcl
       RuleNumber: 202
       RuleAction: allow
-      Protocol: 6
+      Protocol: icmp
       CidrBlock: !Join ['/', ["10.0.0.128", '25' ] ]
       Icmp:
         Code: -1
         Type: -1
       PortRange:
-        From:  
-        To:
+        From: 8
+        To: -1
   MyNetworkEntryMySecondSubnetIngressAllHttp:
     Type: AWS::EC2::NetworkAclEntry
     Properties:
@@ -197,8 +197,8 @@ Resources:
       Protocol: -1
       CidrBlock: !Join ['/', ["10.0.0.128", '25' ] ]
       PortRange:
-        From:
-        To:   
+        From: 0
+        To: 65000
   MySecondSubnet:
     Type: AWS::EC2::Subnet
     Properties:
