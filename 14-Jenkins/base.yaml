@@ -168,7 +168,7 @@ Resources:
       NetworkAclId: !Ref MyNetworkAcl
       RuleNumber: 202
       RuleAction: allow
-      Protocol: icmp
+      Protocol: 1
       CidrBlock: !Join ['/', ["10.0.0.128", '25' ] ]
       Icmp:
         Code: -1

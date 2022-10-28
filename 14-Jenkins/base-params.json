@@ -13,7 +13,7 @@
     },
     {
       "ParameterKey": "EC2InstanceAmi",
-      "ParameterValue": "ami-0bce08e823ed38bdd"
+      "ParameterValue": "ami-0ee23bfc74a881de5"
     },
     {
       "ParameterKey": "EC2InstanceType",
@@ -21,7 +21,7 @@
     },
     {
       "ParameterKey": "EC2KeyName",
-      "ParameterValue": "joel-key"
+      "ParameterValue": "joels-key-pair-lab"
     },
      {
       "ParameterKey": "IAMUserOwnerIp",
