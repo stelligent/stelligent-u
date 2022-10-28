@@ -1,0 +1,9 @@
+# How to configure the master slave architecture of jenkins
+1. Log into the master node and generate a key using
+    # ssh-keygen -t rsa
+2. Copy the master's ~/.ssh/id_rsa.pub to the slave nodes' authorized_keys
+    # echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDGP9mQOqjhpxJssQbqz9pHzmWUCMMbWpxyLChsl9MPvMcslqrOXSYrywWErA9Zj01tvu/hwxMv/lIY/iSdkCP68z5VjM3eZQ/iNqWnQ6dhK4EeVoF/wNoRBdQCIQlFHK222uuyPTsMfmjJZz8hsSgTmgQqX5ifeCYQKjQWB2264Z7bLy8ByOFAUYVfUrhd7+bbADV5eU5mAmUvNjEdinccAePSFMi2omAGX6K2ZaSj4bS6dTzgQLcEJJkg9H1bgnlK89b6N2IXmDZEWRvsXnucr1mFnqnuFVbo13xV36e/MUVIqqYp9C4LYLP3jKWGCSfo2u/ucvf/+FzhztGvEco1 ec2-user@ip-10-0-0-47.ec2.internal" >> ~/.ssh/authorized_keys
+
+Follow this link to configure the Slave nodes on jenkins install in Master node
+    # https:/www.bogotobogo.com/DevOps/Jenkins/Jenkins_on_EC2_setting_up_master_slaves.php
+ssh -i "DesmondKey.pem" ec2-user@ec2-3-230-115-158.compute-1.amazonaws.com
