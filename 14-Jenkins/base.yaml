@@ -12,9 +12,9 @@ Parameters:
     Type: String
     Description: IAM user that is owner of this CFN stack
   EC2InstanceAmi:
-    Type: AWS::EC2::Image::Id
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
     Description: EC2 Instance AMI
-    Default: ami-014534a11156c1a0d
+    Default: /aws/service/ecs/optimized-ami/amazon-linux-2/recommended/image_id
   EC2KeyName:
     Type: String
     Description: Name of the EC2 keys used for ssh

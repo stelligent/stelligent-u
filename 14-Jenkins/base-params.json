@@ -13,7 +13,7 @@
     },
     {
       "ParameterKey": "EC2InstanceAmi",
-      "ParameterValue": "ami-0ee23bfc74a881de5"
+      "ParameterValue": "/aws/service/ecs/optimized-ami/amazon-linux-2/recommended/image_id"
     },
     {
       "ParameterKey": "EC2InstanceType",
