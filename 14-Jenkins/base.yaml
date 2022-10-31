@@ -85,6 +85,16 @@ Resources:
           IpProtocol: tcp
           CidrIp: 0.0.0.0/0
         -
+          FromPort: 80
+          ToPort: 80
+          IpProtocol: tcp
+          CidrIp: 0.0.0.0/0
+        -
+          FromPort: 8080
+          ToPort: 8080
+          IpProtocol: tcp
+          CidrIp: 0.0.0.0/0
+        -
           FromPort: -1
           ToPort: -1
           IpProtocol: icmp
@@ -187,6 +197,17 @@ Resources:
       PortRange:
         From: 80
         To: 80
+  MyNetworkEntryMySecondSubnetIngressAllJenkins:
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+      NetworkAclId: !Ref MyNetworkAcl
+      RuleNumber: 203
+      RuleAction: allow
+      Protocol: 6
+      CidrBlock: !Join ['/', ["10.0.0.128", '25' ] ]
+      PortRange:
+        From: 8080
+        To: 8080
   MyNetworkEntryMySecondSubnetEgressAllTraffic:
     Type: AWS::EC2::NetworkAclEntry
     Properties:
