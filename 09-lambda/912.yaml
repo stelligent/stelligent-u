@@ -1,0 +1,130 @@
+Resources:
+  lambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Description: 'This Lambada prints out Hello AWS'
+      FunctionName: FunctionJunction 
+      Role: !GetAtt LambdaFullAccess.Arn
+      Runtime: python3.8
+      Handler: index.lambda_handler
+      Code:
+        ZipFile: |
+          import json
+
+          # import requests
+
+
+          def lambda_handler(event, context):
+              """Sample pure Lambda function
+
+              Parameters
+              ----------
+              event: dict, required
+                  API Gateway Lambda Proxy Input Format
+
+                  Event doc: https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html#api-gateway-simple-proxy-for-lambda-input-format
+
+              context: object, required
+                  Lambda Context runtime methods and attributes
+
+                  Context doc: https://docs.aws.amazon.com/lambda/latest/dg/python-context-object.html
+
+              Returns
+              ------
+              API Gateway Lambda Proxy Output Format: dict
+
+                  Return doc: https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html
+              """
+
+              # try:
+              #     ip = requests.get("http://checkip.amazonaws.com/")
+              # except requests.RequestException as e:
+              #     # Send some context about this error to Lambda Logs
+              #     print(e)
+
+              #     raise e
+
+              return {
+                  "statusCode": 200,
+                  "body": json.dumps({
+                      "message": "Hello AWS!",
+                      # "location": ip.text.replace("\n", "")
+                  }),
+              }
+      Tags:
+        - Key: keyname
+          Value: value
+
+  LambdaFullAccess:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      ManagedPolicyArns: 
+      - arn:aws:iam::aws:policy/AWSLambda_FullAccess
+
+  apiGateway:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Description: API Gateway for Hello World
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+      Name: GreysonGundrumGATEWAAAAYYYY
+
+  apiGatewayresource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      PathPart: 'helloworld'
+      RestApiId: !Ref apiGateway
+      ParentId: !GetAtt apiGateway.RootResourceId
+
+  LambdaFunctionMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref apiGateway
+      ResourceId: !Ref apiGatewayresource
+      HttpMethod: ANY
+      AuthorizationType: AWS_IAM
+      Integration:
+        Type: AWS
+        Credentials: !GetAtt LambdaFullAccess.Arn
+        IntegrationHttpMethod: POST
+        IntegrationResponses:
+          - StatusCode: '200'
+        Uri: arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:324320755747:function:FunctionJunction/invocations
+      MethodResponses:
+        - StatusCode: '200'
+      
+
+
+  apiGatewayDeployment:
+    Type: AWS::ApiGateway::Deployment
+    Properties:
+      RestApiId: !Ref apiGateway
+      StageName: StageNameStageName
+    DependsOn:
+    - LambdaFunctionMethod
+
+
+
+  lambdaLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/lambda/FunctionJunction
+      RetentionInDays: 90
+
+  MyLambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:invokeFunction
+      FunctionName: !Ref lambdaFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${apiGateway}"
