@@ -201,7 +201,7 @@ Resources:
     Type: AWS::EC2::NetworkAclEntry
     Properties:
       NetworkAclId: !Ref MyNetworkAcl
-      RuleNumber: 203
+      RuleNumber: 205
       RuleAction: allow
       Protocol: 6
       CidrBlock: !Join ['/', ["10.0.0.128", '25' ] ]
