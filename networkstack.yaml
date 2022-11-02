@@ -82,7 +82,7 @@ Resources:
     Properties:
       ImageId: !Ref AMI
       SubnetId: !Ref PublicSubnet1
-      KeyName: !Ref Keyname
+      KeyName: !Ref KeyName
       InstanceType: t2.micro
       SecurityGroupIds:
         - !Ref PingSG
@@ -117,7 +117,7 @@ Resources:
 Parameters:
   AMI:
     Type: String
-  Keyname:
+  KeyName:
     Type: String 
   PublicHomeIP:
     Type: String

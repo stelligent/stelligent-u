@@ -1,9 +1,13 @@
 import json
 import boto3
 import botocore
+import logging
+
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 def lambda_handler(event, context):
-    vision = event
+    print (event)
     dynamodb = boto3.client('dynamodb')
 
     first_key = event.get('key1')
@@ -15,7 +19,7 @@ def lambda_handler(event, context):
 
         return {
             'statusCode': 200,
-            'body': json.dumps(f'{first_key} and {second_key} {vision} written successfully to {table_name}')
+            'body': json.dumps(f'{first_key} and {second_key} written successfully to {table_name}')
             }
     except botocore.exceptions.ClientError as error:
         return {
