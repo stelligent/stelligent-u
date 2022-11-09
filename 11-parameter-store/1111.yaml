@@ -1,0 +1,62 @@
+Resources:
+  TheBESTPARAMETERS:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Description: EXAMPLE
+      Name: /greyson.gundrum.labs/stelligent-u/lab11/example
+      Type: String
+      Value: '123'
+  EngineerNameParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Description: EXAMPLE
+      Name: !Sub /greyson.gundrum.labs/stelligent-u/lab11/${FullName}
+      Type: String
+      Value: !Ref FullName
+  EngineerTeam:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Description: EXAMPLE
+      Name: !Sub /greyson.gundrum.labs/stelligent-u/lab11/${FullName}/Team
+      Type: String
+      Value: !Ref Team
+  EngineerTimeZone:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Description: EXAMPLE
+      Name: !Sub /greyson.gundrum.labs/stelligent-u/lab11/${FullName}/Timezone
+      Type: String
+      Value: !Ref TimeZone
+  EngineerState:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Description: EXAMPLE
+      Name: !Sub /greyson.gundrum.labs/stelligent-u/lab11/${FullName}/State
+      Type: String
+      Value: !Ref State
+  EngineerStartDate:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Description: EXAMPLE
+      Name: !Sub /greyson.gundrum.labs/stelligent-u/lab11/${FullName}/StartDate
+      Type: String
+      Value: !Ref StartDate
+Parameters:
+  FullName:
+    Type: String
+    AllowedPattern: ^\S+$
+    ConstraintDescription: "No Spaces allowed in name use _.- instead of white space"
+  Team:
+    Type: String
+  TimeZone:
+    Type: String
+  State:
+    Type: String
+    MaxLength: "2"
+    ConstraintDescription: "Two Character State Code"
+  StartDate:
+    Type: String
+Outputs:
+  TestingOutNameParamter:
+    Value: !Sub /greyson.gundrum.labs/stelligent-u/lab11/${FullName}
+

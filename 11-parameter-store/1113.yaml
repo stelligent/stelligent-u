@@ -1,0 +1,143 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Resources:
+  WebServersLC:
+    Type: 'AWS::AutoScaling::LaunchConfiguration'
+    Properties:
+      ImageId: !Ref AMI
+      InstanceType: 't2.micro'
+      KeyName: !Ref Keyname
+      IamInstanceProfile: !GetAtt SecretProfileInstance.Arn
+      SecurityGroups:
+        - !ImportValue greysongundrumnetworkstack-PingSG
+      UserData: 
+        Fn::Base64:
+          Fn::Sub: |
+            #!/bin/bash -xe
+            sudo yum -y install jq
+            sudo amazon-linux-extras install -y nginx1
+            sudo service nginx start
+            sudo echo "My first and last name are <p>${FullName}</p>" >> /usr/share/nginx/html/index.html
+            sudo echo "My team name is <p>${Team}</p>" >> /usr/share/nginx/html/index.html
+            sudo echo "My timezone is <p>${TimeZone}</p>" >> /usr/share/nginx/html/index.html
+            sudo echo "I current live in the following state: <p>${State}</p>" >> /usr/share/nginx/html/index.html
+            sudo echo "I started here on <p>${StartDate}</p>" >> /usr/share/nginx/html/index.html
+            aws secretsmanager get-secret-value --region us-west-2 --secret-id greysongundrummiddlename --query SecretString > /tmp/awk.txt
+            sudo cat /tmp/awk.txt | awk -F \\ '{print $4}' | awk -F \" '{print $2'} > /tmp/awk2.txt
+            secret=`cat /tmp/awk2.txt`
+            middle=$(aws ssm get-parameter --name /greyson.gundrum.labs/stelligent-u/lab11/steven-stevenson/middlename --with-decryption --query Parameter.Value --output text --region us-west-2)
+            echo $middle >> /usr/share/nginx/html/index.html
+            sudo echo "$(aws secretsmanager get-secret-value --region us-west-2 --secret-id greysongundrummiddlename | jq --raw-output '.SecretString' | jq -r .greysongundrummiddlename)"  >> /usr/share/nginx/html/index.html
+
+
+
+
+  MyTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      TargetType: instance
+      Port: 80
+      Protocol: HTTP
+      HealthCheckPath: "/index.html"
+      HealthCheckPort: "traffic-port"
+      HealthCheckProtocol: "HTTP"
+      HealthCheckIntervalSeconds: 30
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 5
+      UnhealthyThresholdCount: 2
+      Matcher: 
+          HttpCode: "200"
+      HealthCheckEnabled: true
+      VpcId: !ImportValue greysongundrumnetworkstack-VPCID
+
+  WebServerAsg:
+    Type: 'AWS::AutoScaling::AutoScalingGroup'
+    Properties:
+      DesiredCapacity: 2
+      HealthCheckType: 'ELB'
+      HealthCheckGracePeriod: 30 
+      LaunchConfigurationName: !Ref WebServersLC
+      MaxSize: 2
+      MinSize: 1
+      TargetGroupARNs:
+        - !Ref MyTargetGroup
+      VPCZoneIdentifier:
+        - !ImportValue greysongundrumnetworkstack-PublicSubnet1
+        - !ImportValue greysongundrumnetworkstack-PublicSubnet2
+        - !ImportValue greysongundrumnetworkstack-PublicSubnet3
+
+  greysongundrumLB:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Scheme: internet-facing
+      Subnets:
+        - !ImportValue greysongundrumnetworkstack-PublicSubnet1
+        - !ImportValue greysongundrumnetworkstack-PublicSubnet2
+        - !ImportValue greysongundrumnetworkstack-PublicSubnet3
+      SecurityGroups:
+        - !ImportValue greysongundrumnetworkstack-PingSG
+
+  greysongundrumALBLISTENER:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref MyTargetGroup
+      LoadBalancerArn: !Ref greysongundrumLB
+      Port: 80
+      Protocol: HTTP
+
+  SecretRole:
+    Type: AWS::IAM::Role
+    Properties: 
+      Description: "Admin Secret Access"
+      ManagedPolicyArns: 
+        - arn:aws:iam::aws:policy/SecretsManagerReadWrite
+        - arn:aws:iam::aws:policy/AmazonSSMFullAccess
+        - arn:aws:iam::aws:policy/AWSKeyManagementServicePowerUser
+      RoleName: SecretRole
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ec2.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+
+  SecretProfileInstance:
+    Type: 'AWS::IAM::InstanceProfile'
+    Properties:
+      Path: /
+      Roles:
+        - !Ref SecretRole
+
+Parameters:
+  AMI:
+    Type: String
+  Keyname:
+    Type: String 
+  PublicHomeIP:
+    Type: String
+  VPCCidr:
+    Type: String
+  PublicSubnetCidr:
+    Type: String
+  PublicSubnetCidr2:
+    Type: String
+  TopLevelReference:
+    Type: AWS::SSM::Parameter::Name
+  FullName:
+    Type: 'AWS::SSM::Parameter::Value<String>'
+  Team:
+    Type: 'AWS::SSM::Parameter::Value<String>'
+  TimeZone:
+    Type: 'AWS::SSM::Parameter::Value<String>'
+  State:
+    Type: 'AWS::SSM::Parameter::Value<String>'
+  StartDate:
+    Type: 'AWS::SSM::Parameter::Value<String>'
+  SSMKey:
+    Type: String
+    Default: '/greyson.gundrum.labs/stelligent-u/lab11/steven-stevenson/middlename'
+

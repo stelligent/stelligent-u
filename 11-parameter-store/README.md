@@ -62,7 +62,6 @@ read them. In the labs below, keep a few things in mind:
 - To establish a convention where we avoid overlapping with other's
   work, prefix your keys with
   `/*your-aws-username*/stelligent-u/lab11/`.
-
 #### Lab 11.1.1: Storing data
 
 Create a new CloudFormation stack that can store a handful
@@ -82,6 +81,10 @@ as if the stack template might be used to store info about each engineer.
   of those limitations in your stack's [parameter properties](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/parameters-section-structure.html),
   too. (E.g. set an AllowedPattern and MaxLength. Can you set any
   other limitations?).
+
+  I have set another limitation to not allow full name to have a space in it becuase it breaks SSM parameter Key name.
+
+  You can set other limitations like Min Value or Max value.
 
 - Store all other keys under that.
 
@@ -113,6 +116,10 @@ Look at ways to read your parameter data.
   [aws ssm](https://docs.aws.amazon.com/cli/latest/reference/ssm/index.html)
   CLI
 
+aws ssm get-parameter --name /greyson.gundrum.labs/stelligent-u/lab11/steven-stevenson
+
+aws ssm get-parameters-by-path --path /greyson.gundrum.labs/stelligent-u/lab11/steven-stevenson
+
 Use all 3 methods to read your parameters individually and to fetch the
 entire subtree with a single query.
 
@@ -120,6 +127,10 @@ entire subtree with a single query.
 
 _When you look at your stack in the CloudFormation console, can you find
 the values of your parameter resources there?_
+
+Underneath the parameters tab you can see all the values of the parameters. 
+
+You can also click the physical resource ID and it will take you the console with the value listed. 
 
 #### Lab 11.1.3: Integration with CloudFormation
 
@@ -185,6 +196,8 @@ hierarchy you created earlier.
   [KMS key](https://docs.aws.amazon.com/kms/latest/developerguide/create-keys.html),
   [generating a new one](https://docs.aws.amazon.com/cli/latest/reference/kms/create-key.html)
   if you have to.
+
+aws ssm put-parameter --name greyson.gundrum.labs/stelligent-u/lab11/steven-stevenson/middlename --value "Stefen" --type SecureString --key-id 94616d70-a7e8-43d9-9e84-5bc652e9177f
 
 Then, in your template, look up the value of "middle-name" and add it to
 the web page served by nginx.
