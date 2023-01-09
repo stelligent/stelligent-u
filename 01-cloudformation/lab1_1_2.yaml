@@ -1,0 +1,12 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Lab 1.1.2 S3 template with parameters in external json file
+Parameters:
+    BucketNameParameter:
+        Description: "S3 Bucket Name"
+        Type: String
+
+Resources:
+    Lab1S3Bucket:
+        Type: AWS::S3::Bucket
+        Properties:
+            BucketName: !Ref BucketNameParameter

@@ -1,0 +1,6 @@
+[
+    {
+        "ParameterKey": "BucketNameParameter",
+        "ParameterValue": "s3bucket-using-cfn-json-param"
+    }
+]

@@ -1,0 +1,10 @@
+[
+    {
+        "ParameterKey": "UserNameParameter",
+        "ParameterValue": "lab123testuser"
+    },
+    {
+        "ParameterKey": "IAMPolicyStackNameParameter",
+        "ParameterValue": "lab1IAMstack-Lab1S3ReadPolicy"
+    }
+]

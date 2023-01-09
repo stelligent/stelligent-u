@@ -1,0 +1,39 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Lab 1.2.2 Describes two resources an IAM User and an IAM Managed Policy
+Parameters:
+  UserNameParameter:
+    Description: User name for a new user
+    Type: String
+Resources:
+    Lab1IAMUser:
+        Type: AWS::IAM::User
+        Properties:
+            UserName: !Ref UserNameParameter
+            ManagedPolicyArns:
+                - !Ref Lab1S3ReadPolicy
+
+    Lab1S3ReadPolicy:
+        Type: AWS::IAM::ManagedPolicy
+        Properties:
+            Description: Policy for Read actions against all S3 Buckets including listing buckets and downloading individual bucket contents
+            ManagedPolicyName: Lab1S3ReadOnlyPolicy
+            PolicyDocument:
+                Version: "2012-10-17"
+                Statement:
+                    - Effect: Allow
+                      Action:
+                      - s3:ListBucket
+                      - s3:GetObject
+                      Resource: '*' 
+Outputs:
+    Lab1S3ReadPolicyName:
+        Description: Lab 1.2.2 IAM Managed Policy Name
+        Value: !Ref Lab1S3ReadPolicy
+        Export:
+            Name:
+                'Fn::Sub': '${AWS::StackName}-Lab1S3ReadPolicy'
+    Lab1IAMUserName:
+        Description: Lab 1.2.2 IAM Username for Lab1IAMUser
+        Value: !Ref Lab1IAMUser
+        Export:
+            Name: !Join [ ":", [ !Ref "AWS::StackName", Lab1IAMUser ] ]

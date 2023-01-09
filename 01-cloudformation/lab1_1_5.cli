@@ -1,0 +1,63 @@
+
+aws cloudformation delete-stack --stack-name lab1s3stackcondition  --profile temp
+
+An error occurred (ValidationError) when calling the DeleteStack operation: Stack [lab1s3stackcondition] cannot be deleted while TerminationProtection is enabled
+
+aws cloudformation list-stacks --stack-status-filter CREATE_COMPLETE --profile temp
+
+aws cloudformation describe-stacks --stack-name lab1s3stackcondition --profile temp
+
+aws cloudformation create-stack --stack-name lab1s3stackcondition --template-body file:///home/local/test/sampletemplate.json  
+[
+    {
+        "StackId": "arn:aws:cloudformation:us-east-2:123456789012:stack/myteststack/466df9e0-0dff-08e3-8e2f-5088487c4896",
+        "Description": "AWS CloudFormation Sample Template S3_Bucket: Sample template showing how to create a publicly accessible S3 bucket. **WARNING** This template creates an S3 bucket.
+You will be billed for the AWS resources used if you create a stack from this template.",
+        "Tags": [],
+        "Outputs": [
+            {
+                "Description": "Name of S3 bucket to hold website content",
+                "OutputKey": "BucketName",
+                "OutputValue": "myteststack-s3bucket-jssofi1zie2w"
+            }
+        ],
+        "StackStatusReason": null,
+        "CreationTime": "2013-08-23T01:02:15.422Z",
+        "Capabilities": [],
+        "StackName": "myteststack",
+        "StackStatus": "CREATE_COMPLETE",
+        "DisableRollback": false
+    }
+]
+
+aws s3 ls s3://324320755747-s3bucket-using-cfn-json-param
+An error occurred (NoSuchBucket) when calling the ListObjectsV2 operation: The specified bucket does not exist
+
+aws s3 ls s3://us-east-2-s3bucket-using-cfn-json-param
+An error occurred (NoSuchBucket) when calling the ListObjectsV2 operation: The specified bucket does not exist
+
+Retrospective 1.1
+-----------------
+1. Why do we prefer the YAML format for CFN templates?
+
+- Supports comments using the # character.
+- Reduce the length of code, increase readability, and make troubleshooting errors easier.
+- Reduce punctuation like curly braces and most of the quotation marks of JSON when you use YAML.
+
+2. What else can you do to prevent resources in a stack from being deleted?
+
+- The DeletionPolicy attribute you can preserve, and in some cases, backup a resource when its stack is deleted.
+- You specify a DeletionPolicy attribute for each resource that you want to control
+
+AWSTemplateFormatVersion: '2010-09-09'
+Resources:
+  myS3Bucket:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Retain
+
+- Update termination protection of stack
+aws cloudformation update-termination-protection --stack-name lab1s3stackcondition --enable-termination-protection
+
+3. How is that different from applying Termination Protection?
+
+It is part of the YAML/Json script, applying Termination Protection is external cli command or setting form aws management console.

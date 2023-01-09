@@ -1,0 +1,16 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Lab 1.1.4 S3 Bucket creation template with parameters in external json file and Join string function with Account ID.
+Parameters:
+    BucketNameParameter:
+        Description: "S3 Bucket Name"
+        Type: String
+    RegionName:
+        Description: "AWS Region Name"
+        Type: String
+Conditions:
+      CreateBucketName: !Equals [ !Ref AWS::Region, !Ref RegionName ]
+Resources:
+    Lab1S3Bucket:
+        Type: AWS::S3::Bucket
+        Properties:
+            BucketName: !If [ CreateBucketName, !Join [ "-", [ !Ref AWS::AccountId, !Ref BucketNameParameter ] ], !Join [ "-", [!Ref AWS::Region, !Ref BucketNameParameter] ] ]

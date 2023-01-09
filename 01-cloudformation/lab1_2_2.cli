@@ -1,0 +1,9 @@
+
+
+aws cloudformation create-stack --stack-name lab1IAMstack --template-body file://lab1_2_2.yaml --parameters file://lab1_2_2.json --capabilities "CAPABILITY_IAM" "CAPABILITY_NAMED_IAM" --profile temp
+
+{
+    "StackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/lab1IAMstack/a5ac3ad0-806a-11ed-b787-0ab7cc53f435"
+}
+
+aws cloudformation update-stack --stack-name lab1IAMstack --template-body file://lab1_2_2.yaml --parameters file://lab1_2_2.json --capabilities "CAPABILITY_IAM" "CAPABILITY_NAMED_IAM" --profile temp

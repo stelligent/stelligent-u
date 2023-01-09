@@ -1,0 +1,17 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Lab 1.2.3 - Describes an IAM User and applies to it the Managed Policy ARN created by and exported from the previous Stack.
+Parameters:
+  UserNameParameter:
+    Description: User name for a new user
+    Type: String
+  IAMPolicyStackNameParameter:
+      Description: Stack name of IAM Policy name exported 
+      Type: String
+Resources:
+    Lab123IAMUser:
+        Type: AWS::IAM::User
+        Properties:
+            UserName: !Ref UserNameParameter
+            ManagedPolicyArns: 
+                - !ImportValue
+                    'Fn::Sub': '${IAMPolicyStackNameParameter}'

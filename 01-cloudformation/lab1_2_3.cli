@@ -1,0 +1,24 @@
+
+
+aws cloudformation create-stack --stack-name lab123IAMstack --template-body file://lab1_2_3.yaml --parameters file://lab1_2_3.json --capabilities "CAPABILITY_IAM" "CAPABILITY_NAMED_IAM" --profile temp
+
+{
+    "StackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/lab123IAMstack/ec1312f0-81ff-11ed-8e8d-123992e77a39"
+}
+
+
+aws cloudformation list-imports --export-name lab1IAMstack-Lab1S3ReadPolicy --profile temp
+{
+    "Imports": [
+        "lab123IAMstack"
+    ]
+}
+
+aws cloudformation delete-stack --stack-name lab1IAMstack  --profile temp
+
+Export lab1IAMstack-Lab1S3ReadPolicy cannot be deleted as it is in use by lab123IAMstack
+
+
+
+aws cloudformation delete-stack --stack-name lab123IAMstack  --profile temp
+
