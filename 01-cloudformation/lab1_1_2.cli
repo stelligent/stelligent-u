@@ -1,0 +1,6 @@
+
+aws cloudformation update-stack --stack-name lab1s3stack --template-body file://lab1_1_2.yaml --parameters file://lab1_1_2.json --profile temp
+
+{
+    "StackId": "arn:aws:cloudformation:us-east-2:324320755747:stack/lab1s3stack/77f14750-7ecd-11ed-9a54-028d57eae246"
+}

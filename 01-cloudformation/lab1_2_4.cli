@@ -1,0 +1,18 @@
+
+aws cloudformation delete-stack --stack-name lab1IAMstack  --profile temp
+
+Export lab1IAMstack-Lab1S3ReadPolicy cannot be deleted as it is in use by lab123IAMstack
+
+
+
+aws cloudformation delete-stack --stack-name lab123IAMstack  --profile temp
+
+
+
+Lab 1.2.4: Import/Export Dependencies
+Delete your CFN stacks in the same order you created them in. Did you succeed? If not, describe how you would identify the problem, and resolve it yourself.
+
+1. Check the status of the stack lab1IAMstack, you can see the Status reason as below.
+Export lab1IAMstack-Lab1S3ReadPolicy cannot be deleted as it is in use by lab123IAMstack
+
+2. Delete the stack lab123IAMstack and delete the stack lab123IAMstack.
