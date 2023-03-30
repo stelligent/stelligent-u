@@ -21,7 +21,7 @@
     },
     {
       "ParameterKey": "EC2KeyName",
-      "ParameterValue": "joels-key-pair-lab"
+      "ParameterValue": "joels-key-pair"
     },
      {
       "ParameterKey": "IAMUserOwnerIp",

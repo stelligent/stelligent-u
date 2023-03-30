@@ -120,6 +120,19 @@ Resources:
         -
           Key: stack
           Value: !Ref "AWS::StackId"
+      UserData:
+      Fn::Base64: !Sub |
+        #!/bin/bash
+        sudo yum update -y
+        sudo yum install -y java-1.8.0-openjdk-devel
+        sudo alternatives --set java /usr/lib/jvm/jre-1.8.0-openjdk.x86_64/bin/java
+        sudo alternatives --set javac /usr/lib/jvm/java-1.8.0-openjdk.x86_64/bin/javac
+        sudo yum install -y wget
+        sudo wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo
+        sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io.key
+        sudo yum install -y jenkins
+        sudo systemctl start jenkins
+        sudo systemctl enable jenkins
   MyNetworkAcl:
     Type: AWS::EC2::NetworkAcl
     Properties:

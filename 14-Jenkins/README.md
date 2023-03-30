@@ -94,6 +94,15 @@ present and you can:
 - Manage "Credentials"
 - View "My Views"
 
+#### I had to re-create the RSA key pair (joels-key-pair) in order to login again
+
+```
+ aws cloudformation create-stack --profile temp --stack-name Joels1411 --template-body file://base.yaml --parameters file://base-params.json --capabilities CAPABILITY_NAMED_IAM
+{
+    "StackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/Joels1411/e8ac7090-cf28-11ed-a8ab-1222a4b30ce5"
+}
+```
+
 #### Lab 14.1.2 - Adding Agents
 
 As it stands, the Jenkins server can be used to execute jobs. Executing jobs
