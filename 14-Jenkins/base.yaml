@@ -121,18 +121,21 @@ Resources:
           Key: stack
           Value: !Ref "AWS::StackId"
       UserData:
-      Fn::Base64: !Sub |
-        #!/bin/bash
-        sudo yum update -y
-        sudo yum install -y java-1.8.0-openjdk-devel
-        sudo alternatives --set java /usr/lib/jvm/jre-1.8.0-openjdk.x86_64/bin/java
-        sudo alternatives --set javac /usr/lib/jvm/java-1.8.0-openjdk.x86_64/bin/javac
-        sudo yum install -y wget
-        sudo wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo
-        sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io.key
-        sudo yum install -y jenkins
-        sudo systemctl start jenkins
-        sudo systemctl enable jenkins
+        Fn::Base64: |
+          #!/bin/bash
+          yum update -y
+          yum install -y java-1.8.0-openjdk-devel
+          alternatives --set java /usr/lib/jvm/jre-1.8.0-openjdk.x86_64/bin/java
+          alternatives --set javac /usr/lib/jvm/java-1.8.0-openjdk.x86_64/bin/javac
+          yum install -y wget
+          wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo
+          rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io.key
+          yum upgrade
+          amazon-linux-extras install java-openjdk11 -y
+          yum install -y jenkins
+          systemctl enable jenkins
+          systemctl start jenkins
+          sed s/  /etc/sysconfig/jenkins
   MyNetworkAcl:
     Type: AWS::EC2::NetworkAcl
     Properties:
@@ -284,6 +287,65 @@ Resources:
         -
           Key: stack
           Value: !Ref "AWS::StackId"
+  # JenkinsArtifactsBucket:
+  #   Type: AWS::S3::Bucket
+  #   Properties:
+  #     BucketName: !Sub "${AWS::StackName}-jenkins-artifacts"
+  # JenkinsBuildPipeline:
+  #   Type: AWS::CodePipeline::Pipeline
+  #   Properties:
+  #     Name: !Sub "${AWS::StackName}-jenkins-build-pipeline"
+  #     RoleArn: !GetAtt [CodePipelineRole, Arn]
+  #     Stages:
+  #       - Name: Source
+  #         Actions:
+  #           - Name: SourceAction
+  #             ActionTypeId:
+  #               Category: Source
+  #               Owner: ThirdParty
+  #               Provider: GitHub
+  #               Version: '1'
+  #             OutputArtifacts:
+  #               - Name: SourceArtifact
+  #             Configuration:
+  #               Owner: !Ref GitHubOwner
+  #               Repo: !Ref GitHubRepo
+  #               Branch: !Ref GitHubBranch
+  #               OAuthToken: !Ref GitHubOAuthToken
+  #             RunOrder: 1
+  #       - Name: Build
+  #         Actions:
+  #           - Name: BuildAction
+  #             ActionTypeId:
+  #               Category: Build
+  #               Owner: Custom
+  #               Provider: Jenkins
+  #               Version: '1'
+  #             Configuration:
+  #               ProjectName: !Ref JenkinsProjectName
+  #               Url: !Ref JenkinsUrl
+  #               Username: !Ref JenkinsUsername
+  #               Password: !Ref JenkinsPassword
+  #             InputArtifacts:
+  #               - Name: SourceArtifact
+  #             OutputArtifacts:
+  #               - Name: BuildArtifact
+  #             RunOrder: 1
+  #       - Name: Deploy
+  #         Actions:
+  #           - Name: DeployAction
+  #             ActionTypeId:
+  #               Category: Deploy
+  #               Owner: AWS
+  #               Provider: S3
+  #               Version: '1'
+  #             Configuration:
+  #               BucketName: !Ref JenkinsArtifactsBucket
+  #               ObjectKey: !Ref S3ObjectKey
+  #               Extract: true
+  #             InputArtifacts:
+  #               - Name: BuildArtifact
+  #             RunOrder: 1
 Outputs:
   MyVpcOutput:
     Description: Id of MyVpc

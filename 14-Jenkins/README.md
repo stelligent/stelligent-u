@@ -70,6 +70,11 @@ For ease of deployment and scalability, we will provision a Jenkins
 environment using CloudFormation templates on the AWS platform. In order
 to do this you will need the following:
 
+Follow these directions instead
+```
+https://www.jenkins.io/doc/tutorials/tutorial-for-installing-jenkins-on-AWS/#downloading-and-installing-jenkins
+```
+
 - EC2 Instance (as the Jenkins Server) -- use the Amazon Linux AMI with JDK installed
   - EIP, for the instance to receive traffic
 - Subnet, containing the Jenkins master instance
