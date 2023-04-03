@@ -123,19 +123,15 @@ Resources:
       UserData:
         Fn::Base64: |
           #!/bin/bash
-          yum update -y
-          yum install -y java-1.8.0-openjdk-devel
-          alternatives --set java /usr/lib/jvm/jre-1.8.0-openjdk.x86_64/bin/java
-          alternatives --set javac /usr/lib/jvm/java-1.8.0-openjdk.x86_64/bin/javac
+          yum -y update
           yum install -y wget
           wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo
           rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io.key
-          yum upgrade
+          yum -y upgrade
           amazon-linux-extras install java-openjdk11 -y
           yum install -y jenkins
           systemctl enable jenkins
           systemctl start jenkins
-          sed s/  /etc/sysconfig/jenkins
   MyNetworkAcl:
     Type: AWS::EC2::NetworkAcl
     Properties:
