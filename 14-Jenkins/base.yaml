@@ -121,6 +121,7 @@ Resources:
           Key: stack
           Value: !Ref "AWS::StackId"
       UserData:
+        #  https://www.jenkins.io/doc/tutorials/tutorial-for-installing-jenkins-on-AWS/#downloading-and-installing-jenkins
         Fn::Base64: |
           #!/bin/bash
           yum -y update
