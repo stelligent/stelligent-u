@@ -1,0 +1,10 @@
+{
+    "Parameters": {
+      "VpcCIDR": "10.0.0.0/16",
+      "PublicSubnetCIDR": "10.0.0.0/24",
+      "PrivateSubnetCIDR": "10.0.1.0/24",
+      "AmiID": "ami-0cff7528ff583bf9a",
+      "InstanceType": "t2.micro",
+      "KeypairName": "fidelis"
+    }
+}
