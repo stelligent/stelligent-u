@@ -1,0 +1,62 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Cloudformation template to create IAM Role with inline policy 
+
+Resources:
+
+  myPolicy:
+      Type: 'AWS::IAM::ManagedPolicy'
+      Properties:
+        ManagedPolicyName: fidelisManagedPolicy
+        Description: Reusing same policy as attachment to Role2 
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+              - Effect: Allow
+                Action:
+                 - 'iam:Get*'
+                 - 'iam:List*'
+                Resource: '*'
+
+  myRole1:
+    Type: 'AWS::IAM::Role'
+    Properties: 
+      RoleName: fidelisRole1
+      AssumeRolePolicyDocument: # (required) only one trust policy with a role
+        Version: '2012-10-17'
+        Statement: 
+          - 
+            Effect: Allow
+            Principal: 
+              Service: 
+                - 'ec2.amazonaws.com'
+            Action: 
+              - 'sts:AssumeRole'
+      Policies:
+         - PolicyName: FidelisIAMRO
+           PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+                 - Effect: Allow
+                   Action:
+                     - 'iam:Get*'
+                     - 'iam:List*'
+                   Resource: '*'
+
+  myRole2:
+    Type: 'AWS::IAM::Role'
+    Properties: 
+      RoleName: fidelisRole2
+      AssumeRolePolicyDocument: # (required) only one trust policy with a role
+        Version: '2012-10-17'
+        Statement: 
+          - 
+            Effect: Allow
+            Principal: 
+              Service: 
+                - 'ec2.amazonaws.com'
+            Action: 
+              - 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - !Ref myPolicy
+
+

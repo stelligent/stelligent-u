@@ -1,0 +1,22 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Cloudformation template to create IAM Role with inline policy 
+
+Resources:
+  
+  myRole321:
+    Type: 'AWS::IAM::Role'
+    Properties: 
+      RoleName: fidelisRole2
+      AssumeRolePolicyDocument: # (required) only one trust policy with a role
+        Version: '2012-10-17'
+        Statement: 
+          - 
+            Effect: Allow
+            Principal: 
+              AWS: arn:aws:iam::324320755747:user/fidelis.ogunsanmi.labs
+            Action: 
+              - 'sts:AssumeRole'
+      ManagedPolicyArns:
+              - arn:aws:iam::aws:policy/IAMReadOnlyAccess
+              - arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess
+            
