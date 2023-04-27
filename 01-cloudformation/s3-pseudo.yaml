@@ -1,0 +1,13 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'AWS CloudFormation Template to create an S3 bucket'
+
+Parameters:
+  BucketName:
+    Type: String
+    Description: The name of the S3 Bucket to create
+
+Resources:
+  S3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Join [ '-', [ !Ref AWS::AccountId, !Ref BucketName ] ]

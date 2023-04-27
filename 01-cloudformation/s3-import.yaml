@@ -1,0 +1,18 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Create IAM user with Read access to all buckets.
+
+Parameters:
+  S3UserName:
+    Type: String
+    Description: The name of the S3 Bucket to create
+    Default: 01-fidelis-user2
+
+Resources:
+
+  S3User:
+    Type: AWS::IAM::User
+    Properties:
+      UserName: !Ref S3UserName
+      ManagedPolicyArns:
+        - Fn::ImportValue: "fidelis-test-lab-MyManagedPolicy"
+      

@@ -75,7 +75,7 @@ and get familiar with the basic parts of a CloudFormation template.
 
 #### Lab 1.1.1: CloudFormation Template Requirements
 
-Create the *most minimal CFN template possible* that can be used to
+Create the _most minimal CFN template possible_ that can be used to
 create an AWS Simple Storage Service (S3) Bucket.
 
 - Always write your CloudFormation [templates in YAML](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-formats.html).
@@ -85,8 +85,8 @@ create an AWS Simple Storage Service (S3) Bucket.
 
 - Note the output provided by creating the Stack.
 
-- Though *functionally* unnecessary, the Description (i.e. its *purpose*)
-  element documents your code's *intent*, so provide one. The Description
+- Though _functionally_ unnecessary, the Description (i.e. its _purpose_)
+  element documents your code's _intent_, so provide one. The Description
   key-value pair should be at the _root level_ of your template. If you place
   it under the definition of a resource, AWS will allow the template's creation
   but your description will not populate anything. See
@@ -213,7 +213,7 @@ Policy's Amazon Resource Name ([ARN](https://docs.aws.amazon.com/general/latest/
 
 #### Lab 1.2.3: Importing another Stack's Exports
 
-Create a *new* CFN template that describes an IAM User and applies to it
+Create a _new_ CFN template that describes an IAM User and applies to it
 the Managed Policy ARN created by and exported from the previous Stack.
 
 - Create this new Stack.
@@ -273,7 +273,7 @@ deploy _a single S3 bucket_.
   using a looping construct to run the template the proper number of times.
 
 - Use an external JSON or YAML configuration file to maintain the target
-  deployment region parameters.  Consider using `jq` or `yq` to parse this file.
+  deployment region parameters. Consider using `jq` or `yq` to parse this file.
 
 - Each bucket name should be of the format
   "_current-Region_-_current-Account_-_friendly-name_"

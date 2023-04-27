@@ -1,0 +1,6 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: 'AWS CloudFormation Template to create an S3 bucket'
+
+Resources:
+  S3Bucket:
+    Type: AWS::S3::Bucket
