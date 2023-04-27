@@ -1,0 +1,44 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Create basic ec2 instance 
+
+Parameters:
+  LinuxAMI:
+    Type: String 
+    Description: AMI ID for ec2 instance 
+
+  Ec2InstanceType: 
+    Type: String 
+    Description: Instance Type for ec2 
+
+  LaunchTemplateVersionNumber:
+    Default: 1
+    Type: String
+
+Resources:
+
+  MyLaunchTemplate:
+    Type: AWS::EC2::LaunchTemplate
+    Properties:
+      LaunchTemplateData:
+        KeyName: fidelis 
+        InstanceType: !Ref Ec2InstanceType
+        ImageId: !Ref LinuxAMI
+        TagSpecifications:
+          - ResourceType: instance
+            Tags:
+              - Key: user
+                Value: fidelis.ogunsanmi.labs
+              - Key: "stelligent-u-lesson"
+                Value: "6"
+
+  MyAutoScalingGroup:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      MinSize: '1'
+      MaxSize: '1'
+      DesiredCapacity: '1'
+      LaunchTemplate:
+        LaunchTemplateId: !Ref MyLaunchTemplate
+        Version: !Ref LaunchTemplateVersionNumber
+      VPCZoneIdentifier:
+        - !ImportValue fidelisPubSubnet       
