@@ -74,7 +74,7 @@
 ## Guidance
 
 - Prerequisites: This module requires a basic understanding of Docker and
-  how to write a Dockerfile.
+  how to write a Dockerfile. Additionally, existing knowledge of Kubernetes is beneficial.
 - Explore the official docs! See the the Kubernetes [Documentation](https://kubernetes.io/docs/home/),
   [API Reference](https://kubernetes.io/docs/concepts/overview/kubernetes-api/),
   and [kubectl](https://kubernetes.io/docs/reference/kubectl/overview/)
@@ -92,16 +92,19 @@
 ### Prerequisites 15.1
 
 - [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
-  needs to be installed.
-- The [eksctl](https://eksctl.io/introduction/#installation) will need to
-  be installed to use the `cluster.yaml` template in the `eksctl` directory.
+  needs to be installed, and is used to manage Kubernetes envrionments
+  running on any platform, not just AWS.
+- [eksctl](https://eksctl.io/introduction/#installation) is an AWS-specific
+tool designed to manage EKS clusters. We will need it installed to use the
+`cluster.yaml` template in the `eksctl` directory.
 - [AWS IAM Authenticator for Kubernetes](https://docs.aws.amazon.com/eks/latest/userguide/install-aws-iam-authenticator.html)
   needs to be installed as well.
 
 ### Practice 15.1
 
-This section gets you started with eksctl. Read more about it on the
-[eksctl website](https://eksctl.io/)
+This section will use [kubectl](https://kubernetes.io/docs/reference/kubectl/overview/)
+and [eksctl](https://eksctl.io/). If you are not already familiar with either
+tool, it is recommended to glance over the docs for the two tools.
 
 Before you can use the eksctl to standup an EKS cluster you'll need to
 setup a default AWS profile.
@@ -117,11 +120,17 @@ steps if you want to use [aws-vault](https://github.com/99designs/aws-vault)**
 
 Theses steps will launch your EKS cluster.
 
-- Change directory to `eksctl`
+- Change directory to `eksctl`. Whenever you are using the `eksctl` command,
+you'll need to be in the same directory that the `cluster.yaml` file resides
+in.
+- Open the YAML file `cluster.yaml` This is the configuration file used by
+EKS to create the cluster and nodemembers.
 - Under the `metadata` section change the `name` field to
-  `<your name>-cluster`. This is what your EKS cluster will be called.
-- Run command `eksctl create cluster -f cluster.yaml`
-  - Creation time is ~16 minutes
+  `<your name>-eks`, This is what your EKS cluster will be called.
+  Update the region attribute to your preferred region.
+- Run command `eksctl create cluster -f cluster.yaml`.
+  - Creation time is ~16 minutes, a cup of coffee or tea is highly
+  recommended if you're into that.
   - During creation, eksctl generates CloudFormation templates that
     contain all the VPC, IAM and EC2 components for the EKS cluster.
 - EKS kubectl access is given to the IAM user that
@@ -129,8 +138,9 @@ Theses steps will launch your EKS cluster.
   - If you want to configure EKS access for another IAM user you will need to use
     this [guide](https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html).
 
-**You may need to specify availability zones in the `cluster.yaml` file
-if you experience an error like the one below:**
+**You may need to specify a different region or individual availability
+zones in the `cluster.yaml` file if you experience an error
+like the one below:**
 
 > Cannot create cluster 'test-cluster' because us-east-1e, the targeted availability
 zone, does not currently have sufficient capacity to support the cluster. Retry and
@@ -162,7 +172,7 @@ running commands against the cluster.
 When you're done testing commands on the EKS cluster, here are the steps
 for deleting it using the `eksctl`.
 
-**Do not delete the cluster unless you're done using it for day. It will
+**Do not delete the cluster unless you're done using it for the day. It will
 be used in later sections.**
 
 - Change directory to `eksctl`
@@ -197,12 +207,10 @@ Run the command `kubectl get pods`.  The results should show that there
 are not any pods deployed in the default namespace.
 
 - Run the command:
-  `kubectl run --generator=run-pod/v1 busybox --image=busybox:latest -- sleep 3000`
+  `kubectl run busybox --image=busybox:latest -- sleep 3000`
 
 > The result of the command should be `pod/busybox created`
 
-- In the `kubectl` command above the option `--generator=run-pod/v1` is
-  used to launch a single pod
 - In the `kubectl` command above the pod is being named `busybox`
 - In the `kubectl` command above the Docker image being used is
   `busybox:latest`
@@ -235,7 +243,8 @@ used to inspect the status of the pod.
 #### Lab 15.2.2: Pulling Definition File of Existing Pod
 
 - Run the command `kubectl get pod busybox -o=yaml > busybox-pod-definition-lab-22.yaml`
-  - Open `busybox-pod-definition-lab-22.yaml` in a text editor.
+  - Open `busybox-pod-definition-lab-22.yaml` in a text editor and take a look
+   at the attributes that were included.
   - This is what a [pod definition file](https://kubernetes.io/docs/concepts/workloads/pods/#pod-templates)
     looks like.
   - This file contains the details of the deployed pod. Most of these
@@ -251,8 +260,8 @@ Definition files are useful because they can be put into version control
 and used in to lock in pod configuration.
 
 - Run the command:
-  `kubectl run --generator=run-pod/v1 busybox --image=busybox:latest \
-  --dry-run -o=yaml -- sleep 3000 > busybox-pod-definition-lab23.yaml`
+  `kubectl run busybox --image=busybox:latest \
+  --dry-run=client -o=yaml -- sleep 3000 > busybox-pod-definition-lab23.yaml`
 
 - Open `busybox-pod-definition-lab22.yaml`
   - Compare this definition file to the file
@@ -293,8 +302,8 @@ Now that we've got a pod definition file create we can launch a pod with it.
 - Run command `kubectl describe pod busybox` to view information about the
   pod.
 
-After you're done inspecting the pod, run the kubectl command that will
-delete the pod.
+After you're done inspecting the pod, go ahead and delete the pod
+(using the same process from earlier labs).
 
 ### Retrospective 15.2
 
@@ -318,9 +327,10 @@ using the same methods.
 - Run the command:
   `kubectl create deployment nginx-deployment --image=nginx:latest`
 
-> The result of the command should be `deployment.apps/nginx-deployment created`
+> The command should return `deployment.apps/nginx-deployment created`
 
-- Try running the [kubectl](https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#-strong-getting-started-strong-)
+- Try using the kubectl command to get all deployments (It's similar
+to the command used to list all pods).
   to get the list of deployments present in the cluster.
   - Your deployment should show up in the list of deployments
 - Run the command: `kubectl describe deployment nginx-deployment`
@@ -358,7 +368,7 @@ the pod definition file of the existing pod definition file was generated
 in the previous lab.
 
 - Try running the `kubectl` command to generate the deployment definition
-  file of your existing deployment in yaml. Put the results into a file
+  file of your existing deployment in yaml (`-o=yaml`). Put the results into a file
   named `nginx-deployment-lab32.yaml`
   - Use the [kubectl](https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#get)
     docs for reference if you need it.
@@ -476,6 +486,9 @@ Make a copy of the `nginx-deployment-lab33.yaml` file and name it
   - Change the image to `nginx:alpine`
   - Change the `replicas` field to have the value `10`
 - Open a second terminal and run the command `watch -n .5 kubectl get pods`
+  - `watch` is generally available on UNIX-compatible shells, but is not
+  necessarily required for this lab. You may need to install it from your
+  package manager if it is not available.
 - Open a third terminal and run the command
   `watch -n .5 kubectl get deployments`
 - Deploy the new definition file `nginx-deployment-lab41.yaml`
@@ -513,7 +526,10 @@ command now to update the deployment.
 
 - Run the command: `kubectl edit deployment nginx-deployment`
   - The command should open the existing configuration of the deployment
-    in a [vim editor](https://github.com/vim/vim)
+    in your shell's editor, which defaults to [vim editor](https://github.com/vim/vim)
+    for most shells. (If you're not familiar with vim, edit the file by
+    pressing the `i` key on your keyboard, to save and exit, press
+    the escape key and then type `:wq` followed by enter.)
   - Scroll down the configuration and update the image to `nginx:perl`
   - After editing, save the changes and the deployment should begin
     updating to the new image.
@@ -555,8 +571,8 @@ on your local machine for this section.
 
 #### Lab 15.5.1: Create ECR Repository
 
-- Deploy the `ecr.yaml` file located in the `ecr` directory of this
-  module.
+- Deploy the CloudFormation template `ecr.yaml` file located in the `ecr`
+directory of this module.
   - You will need to specify a value for the `Prefix` parameter of this
     template.
 
@@ -572,11 +588,25 @@ Once you have navigated to your ECR repository:
 
 - Change to the `sample_app` directory of this module in your terminal.
 - In the AWS console click the `View push commands` and follow the steps
-  for [authenticating](https://docs.aws.amazon.com/AmazonECR/latest/userguide/Registries.html#registry_auth)
+  for building, [authenticating](https://docs.aws.amazon.com/AmazonECR/latest/userguide/Registries.html#registry_auth)
   and [pushing](https://docs.aws.amazon.com/AmazonECR/latest/userguide/docker-push-ecr-image.html)
   to your ECR repository.
 
 Look in your ECR repository and verify that the new images is in the list.
+
+**Note for Apple Silicon Users:** You've created a Kubernetes cluster using the
+ `linux/amd64` instruction set, whereas if you were to build a container on
+ your Apple Silicon computer, it would build a container using `linux/arm64`,
+ which are not cross-compatible. Thankfully, Docker offers an easy way to
+ cross-compile containers.
+
+- Make sure that you're on a fairly recent version of Docker Desktop
+(version 4.0.1 was used when writing this)
+- Create a new builder using `docker buildx create --use`
+- To build the container targeting `linux/amd64`,
+run `docker buildx build --platform linux/amd64 .`
+
+for further information, refer to the [Docker Buildx documentation](https://docs.docker.com/buildx/working-with-buildx/)
 
 ### Retrospective 15.5
 
@@ -613,8 +643,8 @@ definition file.
 - Expose the [container port](https://kubernetes.io/docs/concepts/services-networking/connect-applications-service/#exposing-pods-to-the-cluster)
   `3000` in the pod definition.
 - Add an [env variable](https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/#define-an-environment-variable-for-a-container)
-  to the pod spec named `REACT_APP_BG_COLOR` and set the value to a
-  [Bgcolor value](https://cssgradient.io/)
+  to the pod spec named `REACT_APP_BG_COLOR` and set the value to either a
+  color hexcode or a CSS colorname
 - Set replicas count to `1`
 
 Launch the deployment when the definition file has been completed. Be
@@ -635,7 +665,7 @@ so we can access it externally.
 
 - Run the command:
   `kubectl expose deployment custom-deployment --type=LoadBalancer \
-  --name=custom-service --dry-run -o=yaml >> custom-service.yaml` to
+  --name=custom-service --port=3000 --dry-run -o=yaml >> custom-service.yaml` to
   generate the service definition file.
 - Open the file and inspect the fields.
 - The `type:` field under the `spec:` field specifies what type of service
