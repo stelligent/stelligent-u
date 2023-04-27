@@ -1,0 +1,13 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Resources:
+  MyBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: "fidelis-ogunsanmi-stelligent-u"
+      AccessControl: "BucketOwnerFullControl"
+      Tags:
+        - Key: user
+          Value: fidelis.ogunsanmi
+        - Key: "stelligent-u-lesson"
+          Value: "8"
