@@ -137,10 +137,13 @@ authorized to in the labs account. These tokens will last approximately
   AWS MFA credentials from Option 1.
 1. Try to reduce the amount of manual input as much as possible.
 
+1. TT - n9n-autologin.sh in the scripts directory accomplishes these tasks. Just call the script with the latest MFA
+
 ##### Question 0.1.1: 1
 
 What method did you use to store the aws credentials?  What are some other
 options?
+A: $HOME/.aws/credentials was used here. Other methods include inline declaration, environment variables, or AWS Vault
 
 ###### Question 0.1.1: 2
 
