@@ -36,9 +36,6 @@ login() {
 
 # This deletes the temp json file and deletes the previous temp creds from the AWS cred file
 cleanConfig() {
-    # Remove the temp file
-    rm -rf $tempCredFile
-
     # Edit the AWS cred file inline
     sed -i '1,/temp/!d' $awsCredFile
 }
@@ -54,6 +51,8 @@ editConfig() {
     echo "aws_access_key_id = $accessKey" >> $awsCredFile
     echo "aws_secret_access_key = $secretAccessKey" >> $awsCredFile
     echo "aws_session_token = $sessionToken" >> $awsCredFile
+
+    rm -rf $tempCredFile
 }
 
 ############
